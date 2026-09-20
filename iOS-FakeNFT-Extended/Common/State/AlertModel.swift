@@ -21,12 +21,21 @@ struct AlertModel: Identifiable {
 }
 
 extension AlertModel {
-    static func error(message: String, retry: @escaping () -> Void) -> AlertModel {
+    static func retryError(title: String, onRetry: @escaping () -> Void) -> AlertModel {
         AlertModel(
-            title: String(localized: "Error.title"),
-            message: message,
-            primaryButton: Button(title: String(localized: "Error.repeat"), action: retry),
+            title: title,
+            message: nil,
+            primaryButton: Button(title: String(localized: "Error.repeat"), action: onRetry),
             secondaryButton: Button(title: String(localized: "Alert.cancel"), role: .cancel)
+        )
+    }
+
+    static func info(title: String, message: String? = nil) -> AlertModel {
+        AlertModel(
+            title: title,
+            message: message,
+            primaryButton: Button(title: String(localized: "Alert.ok"), role: .cancel),
+            secondaryButton: nil
         )
     }
 
@@ -34,14 +43,15 @@ extension AlertModel {
         title: String,
         message: String? = nil,
         confirmTitle: String,
+        cancelTitle: String = String(localized: "Alert.cancel"),
         role: ButtonRole? = nil,
-        confirm: @escaping () -> Void
+        onConfirm: @escaping () -> Void
     ) -> AlertModel {
         AlertModel(
             title: title,
             message: message,
-            primaryButton: Button(title: confirmTitle, role: role, action: confirm),
-            secondaryButton: Button(title: String(localized: "Alert.cancel"), role: .cancel)
+            primaryButton: Button(title: confirmTitle, role: role, action: onConfirm),
+            secondaryButton: Button(title: cancelTitle, role: .cancel)
         )
     }
 }
@@ -78,18 +88,23 @@ private struct AlertPreviewHost: View {
     var body: some View {
         VStack(spacing: 16) {
             Button {
-                alert = .error(message: "Произошла ошибка сети") {}
+                alert = .retryError(title: "Не удалось получить данные") {}
             } label: {
                 Text(verbatim: "Ошибка + Повторить")
             }
             Button {
+                alert = .info(title: "Что-то пошло не так(", message: "Не удалось войти в систему")
+            } label: {
+                Text(verbatim: "Сообщение (OK)")
+            }
+            Button {
                 alert = .confirmation(
-                    title: "Удалить NFT?",
-                    confirmTitle: "Удалить",
-                    role: .destructive
+                    title: "Уверены, что хотите выйти?",
+                    confirmTitle: "Выйти",
+                    cancelTitle: "Остаться"
                 ) {}
             } label: {
-                Text(verbatim: "Подтверждение действия")
+                Text(verbatim: "Подтверждение")
             }
         }
         .appAlert(item: $alert)
