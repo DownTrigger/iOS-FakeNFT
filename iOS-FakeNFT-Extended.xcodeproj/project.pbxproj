@@ -143,6 +143,110 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		21D60C98305FF72D0047A3C7 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				ABC5E16B2C31F5AF002B4068 /* iOS_FakeNFT_ExtendedApp.swift */,
+				ABC5E16D2C31F5AF002B4068 /* ContentView.swift */,
+				ABC5E1B42C31FC57002B4068 /* TabBarView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		21D60C99305FF7540047A3C7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				ABC5E16F2C31F5AF002B4068 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		21D60C9A305FF77E0047A3C7 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				21D60C9F305FF7B20047A3C7 /* WebView */,
+				21D60C9E305FF7AB0047A3C7 /* State */,
+				21D60C9D305FF79E0047A3C7 /* Controls */,
+				21D60C9C305FF7980047A3C7 /* Cells */,
+				21D60C9B305FF78F0047A3C7 /* Atoms */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		21D60C9B305FF78F0047A3C7 /* Atoms */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Atoms;
+			sourceTree = "<group>";
+		};
+		21D60C9C305FF7980047A3C7 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		21D60C9D305FF79E0047A3C7 /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Controls;
+			sourceTree = "<group>";
+		};
+		21D60C9E305FF7AB0047A3C7 /* State */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		21D60C9F305FF7B20047A3C7 /* WebView */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = WebView;
+			sourceTree = "<group>";
+		};
+		21D60CA1305FF7D20047A3C7 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				21D60CA5305FF7F10047A3C7 /* Statistics */,
+				21D60CA4305FF7E90047A3C7 /* Profile */,
+				21D60CA3305FF7E30047A3C7 /* Cart */,
+				21D60CA2305FF7DB0047A3C7 /* Catalog */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		21D60CA2305FF7DB0047A3C7 /* Catalog */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Catalog;
+			sourceTree = "<group>";
+		};
+		21D60CA3305FF7E30047A3C7 /* Cart */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Cart;
+			sourceTree = "<group>";
+		};
+		21D60CA4305FF7E90047A3C7 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		21D60CA5305FF7F10047A3C7 /* Statistics */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Statistics;
+			sourceTree = "<group>";
+		};
 		ABC5E15F2C31F5AF002B4068 = {
 			isa = PBXGroup;
 			children = (
@@ -167,14 +271,16 @@
 		ABC5E16A2C31F5AF002B4068 /* iOS-FakeNFT-Extended */ = {
 			isa = PBXGroup;
 			children = (
-				ABC5E16B2C31F5AF002B4068 /* iOS_FakeNFT_ExtendedApp.swift */,
+				21D60CA1305FF7D20047A3C7 /* Features */,
+				21D60C9A305FF77E0047A3C7 /* Common */,
+				21D60C99305FF7540047A3C7 /* Resources */,
+				21D60C98305FF72D0047A3C7 /* App */,
 				ABC5E1E92C32084F002B4068 /* Localizable.strings */,
 				ABC5E1952C31F64A002B4068 /* DesignSystem */,
 				ABC5E19A2C31F687002B4068 /* Foundation */,
 				ABC5E19E2C31F6C1002B4068 /* Models */,
 				ABC5E1A92C31FABA002B4068 /* Services */,
 				ABC5E1B32C31FC03002B4068 /* UI */,
-				ABC5E16F2C31F5AF002B4068 /* Assets.xcassets */,
 				ABC5E1712C31F5AF002B4068 /* Preview Content */,
 			);
 			path = "iOS-FakeNFT-Extended";
@@ -279,8 +385,6 @@
 		ABC5E1B32C31FC03002B4068 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				ABC5E16D2C31F5AF002B4068 /* ContentView.swift */,
-				ABC5E1B42C31FC57002B4068 /* TabBarView.swift */,
 				ABC5E1B82C31FD51002B4068 /* TestCatalogView.swift */,
 				ABC5E1E72C320610002B4068 /* NftDetailBridgeView.swift */,
 				ABC5E1C82C3203E9002B4068 /* NftDetails */,
