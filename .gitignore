@@ -1,2 +1,8 @@
 iOS-FakeNFT-Extended.xcodeproj/xcuserdata/*
 iOS-FakeNFT-Extended.xcodeproj/project.xcworkspace/xcuserdata/*
+
+# macOS
+.DS_Store
+
+# Секреты — не коммитим
+Secrets.xcconfig
