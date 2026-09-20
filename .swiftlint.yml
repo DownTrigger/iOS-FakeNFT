@@ -1,0 +1,28 @@
+opt_in_rules:
+  - force_unwrapping
+  - empty_count
+  - closure_spacing
+  - indentation_width          # отступы (Критерий №9)
+  - redundant_type_annotation
+  - first_where
+  - toggle_bool
+  - fatal_error_message
+
+excluded:
+  - iOS-FakeNFT-Extended/UI               # UIKit-демо, позже удалится
+  - iOS-FakeNFT-ExtendedTests             # шаблонные тесты, заполним в соответствующей таске
+  - iOS-FakeNFT-ExtendedUITests
+  - DerivedData
+  - .build
+
+line_length:
+  warning: 120
+  error: 160
+
+function_body_length:
+  warning: 40
+  error: 60
+
+identifier_name:
+  min_length: 2
+  excluded: [id, x, y, to]
