@@ -1,0 +1,73 @@
+import SwiftUI
+
+struct AlertModel: Identifiable {
+    let id = UUID()
+    let title: String
+    let message: String?
+    let primaryButton: Button
+    let secondaryButton: Button?
+
+    struct Button {
+        let title: String
+        let role: ButtonRole?
+        let action: () -> Void
+
+        init(title: String, role: ButtonRole? = nil, action: @escaping () -> Void = {}) {
+            self.title = title
+            self.role = role
+            self.action = action
+        }
+    }
+}
+
+extension AlertModel {
+    static func error(message: String, retry: @escaping () -> Void) -> AlertModel {
+        AlertModel(
+            title: String(localized: "Error.title"),
+            message: message,
+            primaryButton: Button(title: String(localized: "Error.repeat"), action: retry),
+            secondaryButton: Button(title: String(localized: "Alert.cancel"), role: .cancel)
+        )
+    }
+
+    static func confirmation(
+        title: String,
+        message: String? = nil,
+        confirmTitle: String,
+        role: ButtonRole? = nil,
+        confirm: @escaping () -> Void
+    ) -> AlertModel {
+        AlertModel(
+            title: title,
+            message: message,
+            primaryButton: Button(title: confirmTitle, role: role, action: confirm),
+            secondaryButton: Button(title: String(localized: "Alert.cancel"), role: .cancel)
+        )
+    }
+}
+
+extension View {
+    func appAlert(item: Binding<AlertModel?>) -> some View {
+        alert(
+            item.wrappedValue?.title ?? "",
+            isPresented: Binding(
+                get: { item.wrappedValue != nil },
+                set: { if !$0 { item.wrappedValue = nil } }
+            ),
+            presenting: item.wrappedValue
+        ) { model in
+            SwiftUI.Button(model.primaryButton.title, role: model.primaryButton.role) {
+                model.primaryButton.action()
+            }
+            if let secondary = model.secondaryButton {
+                SwiftUI.Button(secondary.title, role: secondary.role) {
+                    secondary.action()
+                }
+            }
+        } message: { model in
+            if let message = model.message {
+                Text(message)
+            }
+        }
+    }
+}
