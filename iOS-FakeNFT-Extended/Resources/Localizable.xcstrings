@@ -17,6 +17,22 @@
         }
       }
     },
+    "Alert.ok" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
     "Catalog.openNft" : {
       "localizations" : {
         "en" : {
