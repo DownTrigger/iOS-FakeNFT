@@ -71,3 +71,27 @@ extension View {
         }
     }
 }
+
+private struct AlertPreviewHost: View {
+    @State private var alert: AlertModel?
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Button("Ошибка + Повторить") {
+                alert = .error(message: "Произошла ошибка сети") {}
+            }
+            Button("Подтверждение действия") {
+                alert = .confirmation(
+                    title: "Удалить NFT?",
+                    confirmTitle: "Удалить",
+                    role: .destructive
+                ) {}
+            }
+        }
+        .appAlert(item: $alert)
+    }
+}
+
+#Preview {
+    AlertPreviewHost()
+}
