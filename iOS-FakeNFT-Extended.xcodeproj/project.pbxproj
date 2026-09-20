@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		21D60CB1305FF8000047A3C7 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 21D60CB0305FF8000047A3C7 /* Localizable.xcstrings */; };
+		21D60CC1305FF9000047A3C7 /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D60CC0305FF9000047A3C7 /* LoadingState.swift */; };
 		21D60CB730603CFC0047A3C7 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D60CB630603CFC0047A3C7 /* Fonts.swift */; };
 		ABC5E16C2C31F5AF002B4068 /* FakeNFTApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC5E16B2C31F5AF002B4068 /* FakeNFTApp.swift */; };
 		ABC5E16E2C31F5AF002B4068 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC5E16D2C31F5AF002B4068 /* ContentView.swift */; };
@@ -65,6 +66,7 @@
 		21D60C92305FE37F0047A3C7 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		21D60CA6305FFF750047A3C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "iOS-FakeNFT-Extended/Info.plist"; sourceTree = SOURCE_ROOT; };
 		21D60CB0305FF8000047A3C7 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		21D60CC0305FF9000047A3C7 /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
 		21D60CB630603CFC0047A3C7 /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		ABC5E1682C31F5AF002B4068 /* iOS-FakeNFT-Extended.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS-FakeNFT-Extended.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABC5E16B2C31F5AF002B4068 /* FakeNFTApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeNFTApp.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 		21D60C9E305FF7AB0047A3C7 /* State */ = {
 			isa = PBXGroup;
 			children = (
+				21D60CC0305FF9000047A3C7 /* LoadingState.swift */,
 			);
 			path = State;
 			sourceTree = "<group>";
@@ -624,6 +627,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				21D60CB730603CFC0047A3C7 /* Fonts.swift in Sources */,
+				21D60CC1305FF9000047A3C7 /* LoadingState.swift in Sources */,
 				ABC5E1CF2C32041D002B4068 /* NftDetailViewController.swift in Sources */,
 				ABC5E1B72C31FC70002B4068 /* ServicesAssembly.swift in Sources */,
 				ABC5E19D2C31F6A6002B4068 /* NftStorage.swift in Sources */,
