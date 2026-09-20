@@ -77,15 +77,19 @@ private struct AlertPreviewHost: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Button("Ошибка + Повторить") {
+            Button {
                 alert = .error(message: "Произошла ошибка сети") {}
+            } label: {
+                Text(verbatim: "Ошибка + Повторить")
             }
-            Button("Подтверждение действия") {
+            Button {
                 alert = .confirmation(
                     title: "Удалить NFT?",
                     confirmTitle: "Удалить",
                     role: .destructive
                 ) {}
+            } label: {
+                Text(verbatim: "Подтверждение действия")
             }
         }
         .appAlert(item: $alert)
