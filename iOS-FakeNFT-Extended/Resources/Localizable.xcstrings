@@ -38,13 +38,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open Nft"
+            "value" : "Open NFT"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Открыть Nft"
+            "value" : "Открыть NFT"
           }
         }
       }

@@ -5,7 +5,7 @@ struct EmptyStateView: View {
 
     var body: some View {
         Text(message)
-            .font(Font(UIFont.bold17 as CTFont))
+            .font(.bold17)
             .foregroundStyle(Color(.fnText))
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
