@@ -9,7 +9,6 @@ opt_in_rules:
   - fatal_error_message
 
 excluded:
-  - iOS-FakeNFT-Extended/UI               # UIKit-демо, позже удалится
   - iOS-FakeNFT-ExtendedTests             # шаблонные тесты, заполним в соответствующей таске
   - iOS-FakeNFT-ExtendedUITests
   - DerivedData

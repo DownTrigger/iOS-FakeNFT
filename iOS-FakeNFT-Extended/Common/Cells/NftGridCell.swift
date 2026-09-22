@@ -36,12 +36,12 @@ struct NftGridCell: View {
         HStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(model.name)
-                    .font(Font(UIFont.bold17 as CTFont))
-                    .foregroundStyle(Color(.fnText)) // шрифты нужно поменять будет после удаления UIKit модулей
+                    .font(.bold17)
+                    .foregroundStyle(Color(.fnText))
                     .lineLimit(1)
 
                 Text(model.priceText)
-                    .font(Font(UIFont.medium10 as CTFont)) // шрифты нужно поменять будет после удаления UIKit модулей
+                    .font(.medium10)
                     .foregroundStyle(Color(.fnText))
             }
 
