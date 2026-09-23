@@ -7,30 +7,8 @@
 
 import SwiftUI
 
-enum LocalizedText {
-    case login
-    case register
-    case resetPassword
-    case pay
-    case save
-    var key: LocalizedStringKey {
-        switch self {
-        case .login:
-            "button.login"
-        case .register:
-            "button.register"
-        case .resetPassword:
-            "button.reset_password"
-        case .pay:
-            "button.pay"
-        case .save:
-            "button.save"
-        }
-    }
-}
-
 struct PrimaryButton: View {
-    let title: LocalizedText
+    let title: PrimaryButtonLocalizedText
     let action: () -> Void
     var isDisabled: Bool = false
     var body: some View {
