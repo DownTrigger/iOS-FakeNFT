@@ -5,9 +5,9 @@ struct CatalogView: View {
 
     var body: some View {
         List(viewModel.collections) { collection in
-            Text(collection.name)
-                .font(.bold17)
-                .foregroundStyle(Color(.fnText))
+            CollectionCell(collection: collection)
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 17, trailing: 16))
+                .listRowSeparator(.hidden)
                 .listRowBackground(Color(.fnBackground))
         }
         .listStyle(.plain)
