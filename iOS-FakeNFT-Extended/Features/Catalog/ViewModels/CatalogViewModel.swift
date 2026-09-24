@@ -3,6 +3,12 @@ import Foundation
 @MainActor
 @Observable
 final class CatalogViewModel {
+    private(set) var sortOption: CatalogSortOption = .byNftCount
+
+    func selectSort(_ option: CatalogSortOption) {
+        sortOption = option
+    }
+
     private(set) var collections: [NftCollection] = [
         NftCollection(
             id: "1",
