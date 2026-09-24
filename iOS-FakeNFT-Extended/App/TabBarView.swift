@@ -30,7 +30,9 @@ struct TabBarView: View {
                     }
                 }
 
-            StatisticsView()
+            NavigationStack {
+                StatisticsView()
+            }
                 .tabItem {
                     Label {
                         Text(TabLocalizedText.statistics.key)

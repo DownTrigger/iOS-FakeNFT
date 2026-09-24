@@ -59,6 +59,7 @@
 		21D60DDA3062D33B0047A3C7 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		21D60DDE3062D3F10047A3C7 /* iOS-FakeNFT-ExtendedTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "iOS-FakeNFT-ExtendedTests"; sourceTree = "<group>"; };
 		21D60DE13062D3F50047A3C7 /* iOS-FakeNFT-ExtendedUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "iOS-FakeNFT-ExtendedUITests"; sourceTree = "<group>"; };
+		88F41C1030656EE8003EBAD0 /* ViewModels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ViewModels; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +130,7 @@
 				21D60DCE3062D3260047A3C7 /* Services */,
 				ABC5E1712C31F5AF002B4068 /* Preview Content */,
 				21D60DD63062D32C0047A3C7 /* UI */,
+				88F41C1030656EE8003EBAD0 /* ViewModels */,
 			);
 			path = "iOS-FakeNFT-Extended";
 			sourceTree = "<group>";
@@ -169,6 +171,7 @@
 				21D60DCE3062D3260047A3C7 /* Services */,
 				21D60DD63062D32C0047A3C7 /* UI */,
 				21D60DDA3062D33B0047A3C7 /* Resources */,
+				88F41C1030656EE8003EBAD0 /* ViewModels */,
 			);
 			name = "iOS-FakeNFT-Extended";
 			packageProductDependencies = (

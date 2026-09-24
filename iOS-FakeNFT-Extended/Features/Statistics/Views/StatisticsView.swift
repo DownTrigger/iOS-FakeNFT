@@ -2,30 +2,75 @@ import SwiftUI
 
 struct StatisticsView: View {
     @State private var viewModel: StatisticsViewModel
+    @State private var isSortSheetPresented = false
     
     init(viewModel: StatisticsViewModel = StatisticsViewModel()) {
         _viewModel = State(initialValue: viewModel)
     }
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 8) {
-                ForEach(viewModel.statistics) { statistic in
-                    UserStatisticView(
-                        position: statistic.position,
-                        name: statistic.user.username,
-                        avatar: Image(
-                            statistic.user.avatar ?? "imgAvatarPlaceholder"
-                        ),
-                        countNft: statistic.countNft
-                    )
+        ZStack(alignment: .bottom) {
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    ForEach(viewModel.statistics) { statistic in
+                        UserStatisticView(
+                            position: statistic.position,
+                            name: statistic.user.username,
+                            avatar: Image(
+                                statistic.user.avatar ?? "imgAvatarPlaceholder"
+                            ),
+                            countNft: statistic.countNft
+                        )
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 20)
+                .padding(.bottom, 8)
+            }
+            .background(.background)
+            
+            if isSortSheetPresented {
+                Color(.fnOverlay)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        isSortSheetPresented = false
+                    }
+                
+                SortBottomSheet(
+                    screenTitle: .sorting,
+                    options: [
+                        StatisticsSortOption.byName,
+                        StatisticsSortOption.byRating
+                    ],
+                    onSelect: { option in
+                        switch option {
+                        case .byName:
+                            viewModel.sortStatisticsByName()
+                            
+                        case .byRating:
+                            viewModel.sortStatisticsByRating()
+                        }
+                        
+                        withAnimation {
+                            isSortSheetPresented = false
+                        }
+                    },
+                    onClose: {
+                        isSortSheetPresented = false
+                    }
+                )
+                .transition(.move(edge: .bottom))
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationSortButton {
+                    withAnimation {
+                        isSortSheetPresented = true
+                    }
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 20)
-            .padding(.bottom, 8)
         }
-        .background(.background)
     }
 }
 
