@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
     "Alert.cancel" : {
       "localizations" : {
         "en" : {

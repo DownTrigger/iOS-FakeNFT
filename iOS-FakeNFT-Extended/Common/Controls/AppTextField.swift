@@ -44,9 +44,9 @@ struct AppTextField: View {
     private var field: some View {
         let prompt = Text(placeholder).foregroundStyle(Color(.fnGray))
         if isSecure {
-            SecureField("", text: $text, prompt: prompt)
+            SecureField(text: $text, prompt: prompt) { Text(placeholder) }
         } else {
-            TextField("", text: $text, prompt: prompt, axis: isMultiline ? .vertical : .horizontal)
+            TextField(text: $text, prompt: prompt, axis: isMultiline ? .vertical : .horizontal) { Text(placeholder) }
         }
     }
 }
