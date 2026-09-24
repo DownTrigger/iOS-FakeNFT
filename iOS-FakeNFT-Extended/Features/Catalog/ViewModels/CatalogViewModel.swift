@@ -5,28 +5,25 @@ import Foundation
 final class CatalogViewModel {
     private(set) var sortOption: CatalogSortOption = .byNftCount
 
+    private let paginator: Paginator<NftCollection>
+
+    var collections: [NftCollection] { paginator.items }
+
+    init(service: CollectionsService) {
+        paginator = Paginator(pageSize: 10) { page, size in
+            try await service.loadCollections(page: page, size: size)
+        }
+    }
+
     func selectSort(_ option: CatalogSortOption) {
         sortOption = option
     }
 
-    private(set) var collections: [NftCollection] = [
-        NftCollection(
-            id: "1",
-            name: "Peach",
-            cover: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Peach.png"),
-            nfts: (1...11).map(String.init)
-        ),
-        NftCollection(
-            id: "2",
-            name: "Blue",
-            cover: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Blue.png"),
-            nfts: (1...6).map(String.init)
-        ),
-        NftCollection(
-            id: "3",
-            name: "Brown",
-            cover: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Brown.png"),
-            nfts: (1...8).map(String.init)
-        )
-    ]
+    func loadNextPage() async {
+        try? await paginator.loadNextPage()
+    }
+
+    func loadNextPageIfNeeded(currentItem: NftCollection) async {
+        try? await paginator.loadNextPageIfNeeded(currentItem: currentItem)
+    }
 }

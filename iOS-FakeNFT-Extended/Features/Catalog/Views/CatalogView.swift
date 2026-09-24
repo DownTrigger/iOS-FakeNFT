@@ -1,8 +1,12 @@
 import SwiftUI
 
 struct CatalogView: View {
-    @State private var viewModel = CatalogViewModel()
+    @State private var viewModel: CatalogViewModel
     @State private var isSortSheetPresented = false
+
+    init(service: CollectionsService) {
+        _viewModel = State(initialValue: CatalogViewModel(service: service))
+    }
 
     var body: some View {
         List(viewModel.collections) { collection in
@@ -10,10 +14,12 @@ struct CatalogView: View {
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 17, trailing: 16))
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color(.fnBackground))
+                .task { await viewModel.loadNextPageIfNeeded(currentItem: collection) }
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color(.fnBackground))
+        .task { await viewModel.loadNextPage() }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationSortButton {
@@ -30,8 +36,24 @@ struct CatalogView: View {
     }
 }
 
+private struct PreviewCollectionsService: CollectionsService {
+    func loadCollections(page: Int, size: Int) async throws -> [NftCollection] {
+        let names = ["Peach", "Blue", "Brown", "Beige", "Pink", "Grey", "White", "Yellow", "Green", "Orange"]
+        let start = page * size
+        guard start < names.count else { return [] }
+        return names[start..<min(start + size, names.count)].enumerated().map { offset, name in
+            NftCollection(
+                id: String(start + offset),
+                name: name,
+                cover: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/\(name).png"),
+                nfts: (1...(offset + 3)).map(String.init)
+            )
+        }
+    }
+}
+
 #Preview {
     NavigationStack {
-        CatalogView()
+        CatalogView(service: PreviewCollectionsService())
     }
 }
