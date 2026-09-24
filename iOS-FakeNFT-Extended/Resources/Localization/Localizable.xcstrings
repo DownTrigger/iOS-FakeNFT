@@ -113,22 +113,6 @@
         }
       }
     },
-    "Catalog.openNft" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open NFT"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Открыть NFT"
-          }
-        }
-      }
-    },
     "Error.network" : {
       "localizations" : {
         "en" : {
