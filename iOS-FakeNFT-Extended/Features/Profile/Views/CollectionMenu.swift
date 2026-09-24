@@ -6,38 +6,38 @@
 import SwiftUI
 
 struct CollectionMenu: View {
-    
-    let viewModel: UserInformationViewViewModel
-    
+
+    let nftCount: Int
+    let favouritesCount: Int
+    let onMyNFTs: () -> Void
+    let onFavouriteNFTs: () -> Void
+
     var body: some View {
         VStack(spacing: 0) {
             CollectionMenuRow(
-                action: viewModel.openMyNFTs,
-                title: "Мои NFT",
-                count: viewModel.user.nftCount
+                item: UserCollectionMenuModel(title: "Мои NFT", count: nftCount),
+                action: onMyNFTs
             )
             CollectionMenuRow(
-                action: viewModel.openFavouriteNFTs,
-                title: "Избранные NFT",
-                count: viewModel.user.favouritesCount
+                item: UserCollectionMenuModel(title: "Избранные NFT", count: favouritesCount),
+                action: onFavouriteNFTs
             )
         }
     }
 }
 
 struct CollectionMenuRow: View {
+    let item: UserCollectionMenuModel
     let action: () -> Void
-    let title: String
-    let count: Int
-    
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
-                Text(title)
-                Text("(\(count))")
-                
+                Text(item.title)
+                Text("(\(item.count))")
+
                 Spacer()
-                
+
                 Image(systemName: "chevron.right")
             }
             .font(.system(size: 17, weight: .bold))
@@ -50,11 +50,14 @@ struct CollectionMenuRow: View {
 }
 
 #Preview("Main") {
-    let vm = UserInformationViewViewModel()
-    vm.user = UserModel(avatar: nil, username: "Preview", bio: "", userWebSite: nil, nftCount: 5, favouritesCount: 3)
-    return CollectionMenu(viewModel: vm)
+    CollectionMenu(
+        nftCount: 5,
+        favouritesCount: 3,
+        onMyNFTs: {},
+        onFavouriteNFTs: {}
+    )
 }
 
 #Preview("Row") {
-    CollectionMenuRow(action: {}, title: "My NFTs", count: 112)
+    CollectionMenuRow(item: UserCollectionMenuModel(title: "My NFTs", count: 112), action: {})
 }

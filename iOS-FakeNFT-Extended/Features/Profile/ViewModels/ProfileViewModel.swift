@@ -1,12 +1,12 @@
 //
-//  UserInformationViewViewModel.swift
+//  ProfileViewModel.swift
 //  iOS-FakeNFT-Extended
 //
 
 import SwiftUI
 
 @Observable
-final class UserInformationViewViewModel {
+final class ProfileViewModel {
     
     // Data
     var user: UserModel = UserModel(
