@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CatalogView: View {
     @State private var viewModel = CatalogViewModel()
+    @State private var isSortSheetPresented = false
 
     var body: some View {
         List(viewModel.collections) { collection in
@@ -13,9 +14,24 @@ struct CatalogView: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color(.fnBackground))
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationSortButton {
+                    isSortSheetPresented = true
+                }
+            }
+        }
+        .sortSheet(
+            isPresented: $isSortSheetPresented,
+            options: [CatalogSortOption.byTitle, .byNftCount]
+        ) { option in
+            viewModel.selectSort(option)
+        }
     }
 }
 
 #Preview {
-    CatalogView()
+    NavigationStack {
+        CatalogView()
+    }
 }
