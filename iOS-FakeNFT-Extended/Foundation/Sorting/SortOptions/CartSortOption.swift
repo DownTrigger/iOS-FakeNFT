@@ -10,11 +10,11 @@ enum CartSortOption: String, SortOptionProtocol {
     case byTitle
     case byRating
     case byPrice
-    
+
     var id: String {
         rawValue
     }
-    
+
     var title: SortingLocalizedText {
         switch self {
         case .byTitle:

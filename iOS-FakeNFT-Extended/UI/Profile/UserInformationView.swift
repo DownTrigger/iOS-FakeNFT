@@ -13,7 +13,7 @@ struct UserInformationView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 16) {
-                
+
                 if let avatar = user.avatar, !avatar.isEmpty, let url = URL(string: avatar) {
                     AsyncImage(url: url)
                         .frame(width: UserInformationView.imageSize, height: UserInformationView.imageSize)

@@ -10,10 +10,10 @@ import SwiftUI
 struct SortBottomSheet<Option: SortOptionProtocol>: View {
     let screenTitle: ScreenLocalizedText
     let options: [Option]
-    
+
     let onSelect: (Option) -> Void
     let onClose: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 8) {
             VStack(spacing: 0) {
@@ -22,9 +22,9 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
                     .tracking(-0.08)
                     .foregroundStyle(.secondary)
                     .frame(height: 38)
-                
+
                 Divider()
-                
+
                 ForEach(options) { option in
                     Button {
                         onSelect(option)
@@ -36,7 +36,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 54)
                     }
-                    
+
                     if option.id != options.last?.id {
                         Divider()
                     }
@@ -44,7 +44,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
             }
             .background(.thinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 13))
-            
+
             Button {
                 onClose()
             } label: {
@@ -67,7 +67,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
     ZStack {
         Color.black.opacity(0.35)
             .ignoresSafeArea()
-        
+
         SortBottomSheet(
             screenTitle: .sorting,
             options: [
@@ -84,7 +84,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
     ZStack {
         Color.black.opacity(0.35)
             .ignoresSafeArea()
-        
+
         SortBottomSheet(
             screenTitle: .sorting,
             options: [
@@ -102,7 +102,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
     ZStack {
         Color.black.opacity(0.35)
             .ignoresSafeArea()
-        
+
         SortBottomSheet(
             screenTitle: .profilePhoto,
             options: [
@@ -120,7 +120,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
     ZStack {
         Color.black.opacity(0.35)
             .ignoresSafeArea()
-        
+
         SortBottomSheet(
             screenTitle: .sorting,
             options: [
