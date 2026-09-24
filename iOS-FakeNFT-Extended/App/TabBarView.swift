@@ -12,7 +12,9 @@ struct TabBarView: View {
                     }
                 }
 
-            CatalogSmokeView()
+            NavigationStack {
+                CatalogSmokeView()
+            }
                 .tabItem {
                     Label {
                         Text(TabLocalizedText.catalog.key)
@@ -21,7 +23,9 @@ struct TabBarView: View {
                     }
                 }
 
-            CartView()
+            NavigationStack {
+                CartView()
+            }
                 .tabItem {
                     Label {
                         Text(TabLocalizedText.cart.key)
@@ -30,7 +34,9 @@ struct TabBarView: View {
                     }
                 }
 
-            StatisticsView()
+            NavigationStack {
+                StatisticsView()
+            }
                 .tabItem {
                     Label {
                         Text(TabLocalizedText.statistics.key)

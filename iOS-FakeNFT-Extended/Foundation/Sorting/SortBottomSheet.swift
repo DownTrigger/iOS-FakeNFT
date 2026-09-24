@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SortBottomSheet<Option: SortOptionProtocol>: View {
+    @Environment(\.colorScheme) private var colorScheme
+    
     let screenTitle: ScreenLocalizedText
     let options: [Option]
 
@@ -42,7 +44,11 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
                     }
                 }
             }
-            .background(.thinMaterial)
+            .background(
+                colorScheme == .light
+                ? AnyShapeStyle(.thinMaterial)
+                : AnyShapeStyle(.fnSheetBackground)
+            )
             .clipShape(RoundedRectangle(cornerRadius: 13))
 
             Button {
@@ -55,7 +61,11 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
             }
-            .background(.background)
+            .background(
+                colorScheme == .light
+                ? AnyShapeStyle(.background)
+                : AnyShapeStyle(.fnSheetBackground)
+            )
             .clipShape(RoundedRectangle(cornerRadius: 13))
         }
         .padding(.horizontal, 8)
