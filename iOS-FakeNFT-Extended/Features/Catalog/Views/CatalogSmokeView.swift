@@ -12,6 +12,7 @@ struct CatalogSmokeView: View {
                 .foregroundStyle(Color(.fnText))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.fnBackground))
         .sheet(isPresented: $isDetailPresented) {
             NftDetailSmokeView()
         }
