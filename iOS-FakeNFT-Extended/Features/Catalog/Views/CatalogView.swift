@@ -31,13 +31,13 @@ struct CatalogView: View {
             isPresented: $isSortSheetPresented,
             options: [CatalogSortOption.byTitle, .byNftCount]
         ) { option in
-            viewModel.selectSort(option)
+            Task { await viewModel.selectSort(option) }
         }
     }
 }
 
 private struct PreviewCollectionsService: CollectionsService {
-    func loadCollections(page: Int, size: Int) async throws -> [NftCollection] {
+    func loadCollections(page: Int, size: Int, sortBy: String?) async throws -> [NftCollection] {
         let names = ["Peach", "Blue", "Brown", "Beige", "Pink", "Grey", "White", "Yellow", "Green", "Orange"]
         let start = page * size
         guard start < names.count else { return [] }
