@@ -1,5 +1,5 @@
 //
-//  UserStatisticCell.swift
+//  UserStatisticView.swift
 //  iOS-FakeNFT-Extended
 //
 //  Created by Irina Muravyeva on 24.09.2026.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct UserStatisticCell: View {
+struct UserStatisticView: View {
     let position: Int
     let name: String
     let avatar: Image
@@ -51,21 +51,21 @@ struct UserStatisticCell: View {
 
 #Preview {
     VStack(spacing: 8) {
-        UserStatisticCell(
+        UserStatisticView(
             position: 1,
             name: "Alex",
             avatar: Image("imgAvatarPlaceholder"),
             countNft: 112
         )
         
-        UserStatisticCell(
+        UserStatisticView(
             position: 2,
             name: "Maria",
             avatar: Image("imgAvatarPlaceholder"),
             countNft: 98
         )
         
-        UserStatisticCell(
+        UserStatisticView(
             position: 3,
             name: "Ivan",
             avatar: Image("imgAvatarPlaceholder"),
