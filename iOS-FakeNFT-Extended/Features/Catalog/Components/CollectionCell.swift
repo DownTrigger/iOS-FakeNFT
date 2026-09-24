@@ -31,7 +31,7 @@ struct CollectionCell: View {
             id: "1",
             name: "Peach",
             cover: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Peach.png"),
-            nftCount: 11
+            nfts: (1...11).map(String.init)
         )
     )
     .padding()
