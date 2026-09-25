@@ -113,6 +113,22 @@
         }
       }
     },
+    "Error.loadData" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to load data"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось получить данные"
+          }
+        }
+      }
+    },
     "Error.network" : {
       "localizations" : {
         "en" : {
