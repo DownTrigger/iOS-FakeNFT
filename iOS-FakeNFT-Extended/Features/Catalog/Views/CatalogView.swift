@@ -36,6 +36,8 @@ struct CatalogView: View {
         .overlay {
             if viewModel.isInitialLoading {
                 AppLoadingView()
+            } else if viewModel.isEmpty {
+                EmptyStateView(message: String(localized: "Catalog.empty"))
             }
         }
         .task(id: sortOption) { await viewModel.applySort(sortOption) }

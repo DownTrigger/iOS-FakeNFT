@@ -113,6 +113,22 @@
         }
       }
     },
+    "Catalog.empty" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No collections yet"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Коллекций пока нет"
+          }
+        }
+      }
+    },
     "Error.loadData" : {
       "localizations" : {
         "en" : {

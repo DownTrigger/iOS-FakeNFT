@@ -23,6 +23,10 @@ final class CatalogViewModel {
 
     var isInitialLoading: Bool { paginator?.isLoading == true && paginator?.items.isEmpty == true }
     var isLoadingNextPage: Bool { paginator?.isLoading == true && paginator?.items.isEmpty == false }
+    var isEmpty: Bool {
+        guard let paginator else { return false }
+        return !paginator.isLoading && paginator.items.isEmpty && !paginator.hasMorePages
+    }
 
     init(service: CollectionsService) {
         self.service = service
