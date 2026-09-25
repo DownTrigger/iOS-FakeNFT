@@ -11,7 +11,19 @@ struct ProfileView: View {
 
     var body: some View {
         VStack(spacing: 40) {
-            UserInformationView(user: viewModel.user)
+            VStack(alignment: .leading, spacing: 8) {
+                UserInformationView(user: viewModel.user)
+                if let website = viewModel.user.userWebSite, !website.isEmpty, let url = URL(string: website) {
+                    NavigationLink {
+                        WebViewScreen(url: url)
+                    } label: {
+                        Text(website)
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundStyle(.blue)
+                            .padding(.horizontal, 16)
+                    }
+                }
+            }
             CollectionMenu(
                 nftCount: viewModel.user.nftCount,
                 favouritesCount: viewModel.user.favouritesCount,

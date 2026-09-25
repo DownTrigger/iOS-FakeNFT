@@ -24,20 +24,8 @@ struct UserInformationView: View {
                     .font(.system(size: 22, weight: .bold))
             }
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text(user.bio)
-                    .font(.system(size: 13, weight: .regular))
-
-                if let website = user.userWebSite, !website.isEmpty, let url = URL(string: website) {
-                    NavigationLink {
-                        WebViewScreen(url: url)
-                    } label: {
-                        Text(website)
-                            .font(.system(size: 15, weight: .regular))
-                            .foregroundStyle(.blue)
-                    }
-                }
-            }
+            Text(user.bio)
+                .font(.system(size: 13, weight: .regular))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
