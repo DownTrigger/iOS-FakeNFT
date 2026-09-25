@@ -10,7 +10,6 @@ final class Paginator<Item: Identifiable> {
     private let pageSize: Int
     private let loadPage: (_ page: Int, _ size: Int) async throws -> [Item]
     private var nextPage = 0
-    private var generation = 0
 
     init(pageSize: Int, loadPage: @escaping (_ page: Int, _ size: Int) async throws -> [Item]) {
         self.pageSize = pageSize
@@ -20,34 +19,17 @@ final class Paginator<Item: Identifiable> {
     func loadNextPage() async throws {
         guard !isLoading, hasMorePages else { return }
         isLoading = true
-        let currentGeneration = generation
+        defer { isLoading = false }
 
-        do {
-            let page = try await loadPage(nextPage, pageSize)
-            guard currentGeneration == generation else { return }
-            items.append(contentsOf: page)
-            nextPage += 1
-            hasMorePages = page.count == pageSize
-            isLoading = false
-        } catch {
-            if currentGeneration == generation {
-                isLoading = false
-            }
-            throw error
-        }
+        let page = try await loadPage(nextPage, pageSize)
+        items.append(contentsOf: page)
+        nextPage += 1
+        hasMorePages = page.count == pageSize
     }
 
     func loadNextPageIfNeeded(currentItem: Item) async throws {
         guard currentItem.id == items.last?.id else { return }
         try await loadNextPage()
-    }
-
-    func reset() {
-        generation += 1
-        items = []
-        nextPage = 0
-        hasMorePages = true
-        isLoading = false
     }
 }
 
