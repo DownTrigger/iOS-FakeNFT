@@ -3,14 +3,21 @@
 //  iOS-FakeNFT-Extended
 //
 
+import Foundation
 import Observation
 
+@MainActor
 @Observable
 final class ProfileEditViewModel {
     var name: String
     var bio: String
     var website: String
     var avatarURL: String
+
+    var avatarImageURL: URL? {
+        guard !avatarURL.isEmpty else { return nil }
+        return URL(string: avatarURL)
+    }
 
     private let original: UserModel
 

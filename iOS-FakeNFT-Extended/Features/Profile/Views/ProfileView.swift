@@ -13,11 +13,11 @@ struct ProfileView: View {
         VStack(spacing: 40) {
             VStack(alignment: .leading, spacing: 8) {
                 ReusableUserInformationView(user: viewModel.user)
-                if let website = viewModel.user.userWebSite, !website.isEmpty, let url = URL(string: website) {
+                if let url = viewModel.websiteURL {
                     NavigationLink {
                         WebViewScreen(url: url)
                     } label: {
-                        Text(website)
+                        Text(url.absoluteString)
                             .font(.system(size: 15, weight: .regular))
                             .foregroundStyle(.blue)
                             .padding(.horizontal, 16)
@@ -34,12 +34,15 @@ struct ProfileView: View {
             Spacer()
         }
         .padding(.top, 20)
+        .background(Color(.fnBackground))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {
                     ProfileEditView(user: viewModel.user, onSave: viewModel.updateUser)
                 } label: {
-                    Image(.icEdit)
+                    Image(systemName: "square.and.pencil")
+                        .frame(width: 42, height: 42)
+                        .foregroundStyle(Color(.label))
                 }
             }
         }

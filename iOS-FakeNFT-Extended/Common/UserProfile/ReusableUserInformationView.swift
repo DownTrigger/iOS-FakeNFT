@@ -14,11 +14,19 @@ struct ReusableUserInformationView: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 16) {
 
-                if let avatar = user.avatar, !avatar.isEmpty, let url = URL(string: avatar) {
-                    AsyncImage(url: url)
-                        .frame(width: ReusableUserInformationView.imageSize, height: ReusableUserInformationView.imageSize)
-                        .clipShape(Circle())
+                Group {
+                    if let avatar = user.avatar, !avatar.isEmpty, let url = URL(string: avatar) {
+                        AsyncImage(url: url) { image in
+                            image.resizable().scaledToFill()
+                        } placeholder: {
+                            Image(.imgAvatarPlaceholder).resizable().scaledToFill()
+                        }
+                    } else {
+                        Image(.imgAvatarPlaceholder).resizable().scaledToFill()
+                    }
                 }
+                .frame(width: ReusableUserInformationView.imageSize, height: ReusableUserInformationView.imageSize)
+                .clipShape(Circle())
 
                 Text(user.username)
                     .font(.system(size: 22, weight: .bold))

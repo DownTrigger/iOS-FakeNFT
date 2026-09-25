@@ -3,12 +3,13 @@
 //  iOS-FakeNFT-Extended
 //
 
+import Foundation
 import Observation
 
+@MainActor
 @Observable
 final class ProfileViewModel {
 
-    // Data
     var user: UserModel = UserModel(
         avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIMUe7M2kZo-Yb2FPmD6bbleK3Ri3tQNR0Gtp8aFiQ2UAF5VHukRALrltv&s=10",
         username: "Joaquin Phoenix",
@@ -18,7 +19,11 @@ final class ProfileViewModel {
         favouritesCount: 11
     )
 
-    // Actions for buttons
+    var websiteURL: URL? {
+        guard let website = user.userWebSite, !website.isEmpty else { return nil }
+        return URL(string: website)
+    }
+
     func updateUser(_ user: UserModel) {
         self.user = user
     }

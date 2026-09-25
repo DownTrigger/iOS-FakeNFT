@@ -39,6 +39,7 @@ struct ProfileEditView: View {
             }
             .padding(.vertical, 16)
         }
+        .background(Color(.fnBackground))
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
@@ -97,7 +98,7 @@ struct ProfileEditView: View {
                             .font(.system(size: 12, weight: .medium))
                             .foregroundStyle(Color(.label))
                             .padding(6)
-                            .background(.white, in: Circle())
+                            .background(Color(.fnLightGray), in: Circle())
                     }
             }
             .buttonStyle(.plain)
@@ -108,25 +109,26 @@ struct ProfileEditView: View {
 
     @ViewBuilder
     private var avatarImage: some View {
-        if !viewModel.avatarURL.isEmpty, let url = URL(string: viewModel.avatarURL) {
-            AsyncImage(url: url) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
-                Circle().fill(Color(.fnLightGray))
+        Group {
+            if let url = viewModel.avatarImageURL {
+                AsyncImage(url: url) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: {
+                    Image(.imgAvatarPlaceholder).resizable().scaledToFill()
+                }
+            } else {
+                Image(.imgAvatarPlaceholder).resizable().scaledToFill()
             }
-            .frame(width: 70, height: 70)
-            .clipShape(Circle())
-        } else {
-            Circle()
-                .fill(Color(.fnLightGray))
-                .frame(width: 70, height: 70)
         }
+        .frame(width: 70, height: 70)
+        .clipShape(Circle())
     }
 
     private func fieldSection(title: String, text: Binding<String>, isMultiline: Bool) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.bold22)
+                .foregroundStyle(Color(.fnText))
             AppTextField(placeholder: title, text: text, isMultiline: isMultiline)
         }
     }
