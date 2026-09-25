@@ -1,11 +1,10 @@
 import Foundation
 
-protocol CollectionsService {
+protocol CollectionsService: Sendable {
     func loadCollections(page: Int, size: Int, sortBy: String?) async throws -> [NftCollection]
 }
 
-@MainActor
-final class CollectionsServiceImpl: CollectionsService {
+actor CollectionsServiceImpl: CollectionsService {
     private let networkClient: NetworkClient
 
     init(networkClient: NetworkClient) {
