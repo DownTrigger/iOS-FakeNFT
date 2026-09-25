@@ -8,14 +8,13 @@ import SwiftUI
 struct ProfileView: View {
     
     @State private var viewModel = ProfileViewModel()
-    @State private var isPresented: Bool = false
-    
+
     var body: some View {
         HStack {
             Spacer()
-            
+
             Button {
-                isPresented = true
+                viewModel.openEditProfile()
             } label: {
                 Image(.icEdit)
                     .frame(width: 42, height: 42)

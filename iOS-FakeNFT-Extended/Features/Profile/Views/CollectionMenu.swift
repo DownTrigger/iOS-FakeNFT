@@ -15,11 +15,11 @@ struct CollectionMenu: View {
     var body: some View {
         VStack(spacing: 0) {
             CollectionMenuRow(
-                item: UserCollectionMenuModel(title: "Мои NFT", count: nftCount),
+                item: UserCollectionMenuModel(title: ScreenLocalizedText.myNFTs.key, count: nftCount),
                 action: onMyNFTs
             )
             CollectionMenuRow(
-                item: UserCollectionMenuModel(title: "Избранные NFT", count: favouritesCount),
+                item: UserCollectionMenuModel(title: ScreenLocalizedText.favouriteNFTs.key, count: favouritesCount),
                 action: onFavouriteNFTs
             )
         }

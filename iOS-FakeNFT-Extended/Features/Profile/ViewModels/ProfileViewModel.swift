@@ -3,11 +3,11 @@
 //  iOS-FakeNFT-Extended
 //
 
-import SwiftUI
+import Observation
 
 @Observable
 final class ProfileViewModel {
-    
+
     // Data
     var user: UserModel = UserModel(
         avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIMUe7M2kZo-Yb2FPmD6bbleK3Ri3tQNR0Gtp8aFiQ2UAF5VHukRALrltv&s=10",
@@ -17,12 +17,16 @@ final class ProfileViewModel {
         nftCount: 123,
         favouritesCount: 11
     )
-    
+
     // Actions for buttons
+    func openEditProfile() {
+        // TODO: nav to edit profile
+    }
+
     func openMyNFTs() {
         // TODO: nav to nft list
     }
-    
+
     func openFavouriteNFTs() {
         // TODO: nav to nft list
     }

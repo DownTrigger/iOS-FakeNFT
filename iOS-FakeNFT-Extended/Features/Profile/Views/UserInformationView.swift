@@ -29,9 +29,13 @@ struct UserInformationView: View {
                     .font(.system(size: 13, weight: .regular))
 
                 if let website = user.userWebSite, !website.isEmpty, let url = URL(string: website) {
-                    Link(website, destination: url)
-                        .font(.system(size: 15, weight: .regular))
-                        .foregroundStyle(.blue)
+                    NavigationLink {
+                        WebViewScreen(url: url)
+                    } label: {
+                        Text(website)
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundStyle(.blue)
+                    }
                 }
             }
         }

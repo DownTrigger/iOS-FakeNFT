@@ -3,7 +3,9 @@ import SwiftUI
 struct TabBarView: View {
     var body: some View {
         TabView {
-            ProfileView()
+            NavigationStack {
+                ProfileView()
+            }
                 .tabItem {
                     Label {
                         Text(TabLocalizedText.profile.key)

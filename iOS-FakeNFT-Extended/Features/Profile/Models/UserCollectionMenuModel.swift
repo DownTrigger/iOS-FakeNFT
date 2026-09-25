@@ -3,7 +3,9 @@
 //  iOS-FakeNFT-Extended
 //
 
-struct UserCollectionMenuModel: Sendable, Hashable {
-    let title: String
+import SwiftUI
+
+struct UserCollectionMenuModel {
+    let title: LocalizedStringKey
     let count: Int
 }
