@@ -1,8 +1,11 @@
 import SwiftUI
 
 struct CatalogView: View {
+    private static let sortOptionKey = "catalog.sortOption"
+
     @State private var viewModel: CatalogViewModel
     @State private var isSortSheetPresented = false
+    @AppStorage(Self.sortOptionKey) private var sortOption: CatalogSortOption = .byNftCount
 
     init(service: CollectionsService) {
         _viewModel = State(initialValue: CatalogViewModel(service: service))
@@ -35,7 +38,7 @@ struct CatalogView: View {
                 AppLoadingView()
             }
         }
-        .task { await viewModel.loadNextPage() }
+        .task(id: sortOption) { await viewModel.applySort(sortOption) }
         .appAlert(item: $viewModel.alert)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -48,7 +51,7 @@ struct CatalogView: View {
             isPresented: $isSortSheetPresented,
             options: [CatalogSortOption.byTitle, .byNftCount]
         ) { option in
-            Task { await viewModel.selectSort(option) }
+            sortOption = option
         }
     }
 }

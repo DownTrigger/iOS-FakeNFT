@@ -3,52 +3,44 @@ import Foundation
 @MainActor
 @Observable
 final class CatalogViewModel {
-    private static let sortOptionKey = "catalog.sortOption"
-    private static let pageSize = 10
+    private static let pageSize = 5
 
-    private(set) var sortOption: CatalogSortOption
+    private(set) var sortOption: CatalogSortOption = .byNftCount
     var alert: AlertModel?
 
     private let service: CollectionsService
-    private let defaults: UserDefaults
-    private var paginator: Paginator<NftCollection>
+    private var paginator: Paginator<NftCollection>?
     private var paginatorSortBy: String?
 
     var collections: [NftCollection] {
         switch sortOption {
         case .byTitle:
-            paginator.items
+            paginator?.items ?? []
         case .byNftCount:
-            paginator.items.sorted { $0.nftCount > $1.nftCount }
+            (paginator?.items ?? []).sorted { $0.nftCount > $1.nftCount }
         }
     }
 
-    var isInitialLoading: Bool { paginator.isLoading && paginator.items.isEmpty }
-    var isLoadingNextPage: Bool { paginator.isLoading && !paginator.items.isEmpty }
+    var isInitialLoading: Bool { paginator?.isLoading == true && paginator?.items.isEmpty == true }
+    var isLoadingNextPage: Bool { paginator?.isLoading == true && paginator?.items.isEmpty == false }
 
-    init(service: CollectionsService, defaults: UserDefaults = .standard) {
-        let savedOption = defaults.string(forKey: Self.sortOptionKey).flatMap(CatalogSortOption.init(rawValue:))
-        let sortOption = savedOption ?? .byNftCount
-
+    init(service: CollectionsService) {
         self.service = service
-        self.defaults = defaults
-        self.sortOption = sortOption
-        self.paginatorSortBy = sortOption.serverSortBy
-        self.paginator = Self.makePaginator(service: service, sortBy: sortOption.serverSortBy)
     }
 
-    func selectSort(_ option: CatalogSortOption) async {
-        guard option != sortOption else { return }
+    func applySort(_ option: CatalogSortOption) async {
         sortOption = option
-        defaults.set(option.rawValue, forKey: Self.sortOptionKey)
-
-        guard let sortBy = option.serverSortBy, sortBy != paginatorSortBy else { return }
-        paginatorSortBy = sortBy
-        paginator = Self.makePaginator(service: service, sortBy: sortBy)
+        let sortBy = option.serverSortBy
+        if paginator == nil || (sortBy != nil && sortBy != paginatorSortBy) {
+            paginatorSortBy = sortBy
+            paginator = Self.makePaginator(service: service, sortBy: sortBy)
+        }
+        guard paginator?.items.isEmpty == true else { return }
         await loadNextPage()
     }
 
     func loadNextPage() async {
+        guard let paginator else { return }
         do {
             try await paginator.loadNextPage()
         } catch {
