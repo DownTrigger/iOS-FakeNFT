@@ -47,7 +47,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Войти"
           }
         }
@@ -63,7 +63,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Оплатить"
           }
         }
@@ -79,7 +79,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Зарегистрироваться"
           }
         }
@@ -95,7 +95,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Сбросить пароль"
           }
         }
@@ -111,7 +111,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Сохранить"
           }
         }
@@ -197,8 +197,46 @@
         }
       }
     },
+    "nft_collection.count" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NFT Collection"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Коллекция NFT"
+          }
+        }
+      }
+    },
+    "nft_collection.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NFT Collection"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Коллекция NFT"
+          }
+        }
+      }
+    },
     "sorting.close" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -209,6 +247,12 @@
     },
     "sorting.profilePhoto" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile photo"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -219,6 +263,12 @@
     },
     "sorting.sortByName" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorting by name"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -229,6 +279,12 @@
     },
     "sorting.sortByNFTCount" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorting by NFT count"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -239,6 +295,12 @@
     },
     "sorting.sortByPrice" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorting by price"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -249,6 +311,12 @@
     },
     "sorting.sortByRating" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorting by rating"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -260,6 +328,12 @@
     "sorting.sortByTitle" : {
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorting by title"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -270,6 +344,12 @@
     },
     "sorting.sorting" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorting"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -338,6 +418,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Статистика"
+          }
+        }
+      }
+    },
+    "website.open_user" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open website"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перейти на сайт пользователя"
           }
         }
       }
