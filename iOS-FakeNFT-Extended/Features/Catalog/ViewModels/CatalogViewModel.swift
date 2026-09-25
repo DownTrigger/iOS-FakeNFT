@@ -7,6 +7,7 @@ final class CatalogViewModel {
     private static let pageSize = 10
 
     private(set) var sortOption: CatalogSortOption
+    var alert: AlertModel?
 
     private let service: CollectionsService
     private let defaults: UserDefaults
@@ -21,6 +22,9 @@ final class CatalogViewModel {
             paginator.items.sorted { $0.nftCount > $1.nftCount }
         }
     }
+
+    var isInitialLoading: Bool { paginator.isLoading && paginator.items.isEmpty }
+    var isLoadingNextPage: Bool { paginator.isLoading && !paginator.items.isEmpty }
 
     init(service: CollectionsService, defaults: UserDefaults = .standard) {
         let savedOption = defaults.string(forKey: Self.sortOptionKey).flatMap(CatalogSortOption.init(rawValue:))
@@ -45,7 +49,14 @@ final class CatalogViewModel {
     }
 
     func loadNextPage() async {
-        try? await paginator.loadNextPage()
+        do {
+            try await paginator.loadNextPage()
+        } catch {
+            guard !Self.isCancellation(error) else { return }
+            alert = .retryError(title: String(localized: "Error.loadData")) { [weak self] in
+                Task { await self?.loadNextPage() }
+            }
+        }
     }
 
     func loadNextPageIfNeeded(currentItem: NftCollection) async {
@@ -57,6 +68,10 @@ final class CatalogViewModel {
         Paginator(pageSize: pageSize) { page, size in
             try await service.loadCollections(page: page, size: size, sortBy: sortBy)
         }
+    }
+
+    private static func isCancellation(_ error: Error) -> Bool {
+        error is CancellationError || (error as? URLError)?.code == .cancelled
     }
 }
 

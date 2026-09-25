@@ -9,17 +9,34 @@ struct CatalogView: View {
     }
 
     var body: some View {
-        List(viewModel.collections) { collection in
-            CollectionCell(collection: collection)
-                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 17, trailing: 16))
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color(.fnBackground))
-                .task { await viewModel.loadNextPageIfNeeded(currentItem: collection) }
+        List {
+            ForEach(viewModel.collections) { collection in
+                CollectionCell(collection: collection)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 17, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color(.fnBackground))
+                    .task { await viewModel.loadNextPageIfNeeded(currentItem: collection) }
+            }
+
+            if viewModel.isLoadingNextPage {
+                ProgressView()
+                    .tint(Color(.fnText))
+                    .frame(maxWidth: .infinity)
+                    .id(viewModel.collections.count)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color(.fnBackground))
+            }
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color(.fnBackground))
+        .overlay {
+            if viewModel.isInitialLoading {
+                AppLoadingView()
+            }
+        }
         .task { await viewModel.loadNextPage() }
+        .appAlert(item: $viewModel.alert)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationSortButton {
