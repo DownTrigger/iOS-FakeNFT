@@ -12,7 +12,7 @@ struct ProfileView: View {
     var body: some View {
         VStack(spacing: 40) {
             VStack(alignment: .leading, spacing: 8) {
-                UserInformationView(user: viewModel.user)
+                ReusableUserInformationView(user: viewModel.user)
                 if let website = viewModel.user.userWebSite, !website.isEmpty, let url = URL(string: website) {
                     NavigationLink {
                         WebViewScreen(url: url)

@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-struct UserInformationView: View {
+struct ReusableUserInformationView: View {
     let user: UserModel
 
     static let imageSize: CGFloat = 70
@@ -16,7 +16,7 @@ struct UserInformationView: View {
 
                 if let avatar = user.avatar, !avatar.isEmpty, let url = URL(string: avatar) {
                     AsyncImage(url: url)
-                        .frame(width: UserInformationView.imageSize, height: UserInformationView.imageSize)
+                        .frame(width: ReusableUserInformationView.imageSize, height: ReusableUserInformationView.imageSize)
                         .clipShape(Circle())
                 }
 
@@ -33,7 +33,7 @@ struct UserInformationView: View {
 }
 
 #Preview {
-    UserInformationView(user: UserModel(
+    ReusableUserInformationView(user: UserModel(
         avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIMUe7M2kZo-Yb2FPmD6bbleK3Ri3tQNR0Gtp8aFiQ2UAF5VHukRALrltv&s=10",
         username: "Joaquin Phoenix",
         bio: "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT.",
