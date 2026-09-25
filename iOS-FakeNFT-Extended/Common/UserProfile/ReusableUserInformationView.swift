@@ -16,7 +16,6 @@ struct ReusableUserInformationView: View {
 
                 if let avatar = user.avatar, !avatar.isEmpty, let url = URL(string: avatar) {
                     AsyncImage(url: url)
-                        .frame(width: UserInformationView.imageSize, height: UserInformationView.imageSize)
                         .frame(width: ReusableUserInformationView.imageSize, height: ReusableUserInformationView.imageSize)
                         .clipShape(Circle())
                 }
