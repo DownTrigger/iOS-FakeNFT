@@ -43,13 +43,15 @@ final class StatisticsViewModel {
 // mock - данные
 extension StatisticsViewModel {
     static var preview: StatisticsViewModel {
-        
+
         let users: [UserModel] = [
             UserModel(
-                avatar: "imgAvatarPlaceholder",
+                avatar: "https://i.pravatar.cc/150?img=12",
                 username: "Alex",
-                bio: "",
-                userWebSite: nil
+                bio: "Дизайнер из Казани, люблю цифровое искусство и бейглы." +
+                " В моей коллекции уже 100+ NFT,и еще больше — на моём сайте." +
+                " Открыт к коллаборациям.",
+                userWebSite: "https://www.apple.com"
             ),
             UserModel(
                 avatar: nil,
