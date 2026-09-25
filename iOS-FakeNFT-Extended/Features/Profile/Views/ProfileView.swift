@@ -10,18 +10,6 @@ struct ProfileView: View {
     @State private var viewModel = ProfileViewModel()
 
     var body: some View {
-        HStack {
-            Spacer()
-
-            Button {
-                viewModel.openEditProfile()
-            } label: {
-                Image(.icEdit)
-                    .frame(width: 42, height: 42)
-            }
-        }
-        .padding(.trailing, 9)
-        
         VStack(spacing: 40) {
             UserInformationView(user: viewModel.user)
             CollectionMenu(
@@ -30,10 +18,19 @@ struct ProfileView: View {
                 onMyNFTs: viewModel.openMyNFTs,
                 onFavouriteNFTs: viewModel.openFavouriteNFTs
             )
-            
+
             Spacer()
         }
         .padding(.top, 20)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink {
+                    ProfileEditView(user: viewModel.user, onSave: viewModel.updateUser)
+                } label: {
+                    Image(.icEdit)
+                }
+            }
+        }
     }
 }
 

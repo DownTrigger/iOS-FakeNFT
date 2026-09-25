@@ -19,8 +19,8 @@ final class ProfileViewModel {
     )
 
     // Actions for buttons
-    func openEditProfile() {
-        // TODO: nav to edit profile
+    func updateUser(_ user: UserModel) {
+        self.user = user
     }
 
     func openMyNFTs() {
