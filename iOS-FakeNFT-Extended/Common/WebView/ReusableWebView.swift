@@ -28,5 +28,11 @@ struct WebViewScreen: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(false)
             .toolbar(.hidden, for: .tabBar)
+            .toolbarBackground(Color(.fnBackground), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
     }
+}
+
+#Preview() {
+    WebViewScreen(url: URL(string: "https://example.com")!)
 }
