@@ -40,10 +40,10 @@ struct UserStatisticDetailView: View {
 
 #Preview("Alex — Website") {
     NavigationStack {
-        let statistic = StatisticsViewModel.preview.statistics.first {
-            $0.user.username == "Alex"
-        }!
-        
-        UserStatisticDetailView(user: statistic.user)
+        if let statistic = StatisticsViewModel.preview.statistics.first(
+            where: { $0.user.username == "Alex" }
+        ) {
+            UserStatisticDetailView(user: statistic.user)
+        }
     }
 }

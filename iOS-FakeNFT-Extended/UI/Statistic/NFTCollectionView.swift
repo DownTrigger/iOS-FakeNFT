@@ -10,7 +10,7 @@ import SwiftUI
 struct NFTCollectionView: View {
     let user: UserModel
     
-    // TODO: Временные мок-данные. Заменить на загрузку
+    // Временные мок-данные. Заменить на загрузку
     private let nftItems: [NftGridCellModel] = NftGridCellModel.preview
     
     private let columns = [
@@ -45,10 +45,10 @@ struct NFTCollectionView: View {
 
 #Preview {
     NavigationStack {
-        let statistic = StatisticsViewModel.preview.statistics.first {
-            $0.user.username == "Alex"
-        }!
-
-        NFTCollectionView(user: statistic.user)
+        if let statistic = StatisticsViewModel.preview.statistics.first(
+            where: { $0.user.username == "Alex" }
+        ) {
+            NFTCollectionView(user: statistic.user)
+        }
     }
 }

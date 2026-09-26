@@ -45,10 +45,10 @@ struct NFTCollectionNavigationLink: View {
 
 #Preview("Alex") {
     NavigationStack {
-        let statistic = StatisticsViewModel.preview.statistics.first {
-            $0.user.username == "Alex"
-        }!
-        
-        NFTCollectionNavigationLink(user: statistic.user)
+        if let statistic = StatisticsViewModel.preview.statistics.first(
+            where: { $0.user.username == "Alex" }
+        ) {
+            NFTCollectionNavigationLink(user: statistic.user)
+        }
     }
 }

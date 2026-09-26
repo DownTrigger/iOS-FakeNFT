@@ -9,7 +9,6 @@ import Observation
 
 @Observable
 final class StatisticsViewModel {
-    
     // mock данные заменить на реальный код
     var statistics: [UserStatisticItem] = []
     
@@ -43,7 +42,6 @@ final class StatisticsViewModel {
 // mock - данные
 extension StatisticsViewModel {
     static var preview: StatisticsViewModel {
-
         let users: [UserModel] = [
             UserModel(
                 avatar: "https://i.pravatar.cc/150?img=12",
