@@ -113,18 +113,34 @@
         }
       }
     },
-    "Catalog.openNft" : {
+    "Catalog.empty" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open NFT"
+            "value" : "No collections yet"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Открыть NFT"
+            "value" : "Коллекций пока нет"
+          }
+        }
+      }
+    },
+    "Error.loadData" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to load data"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось получить данные"
           }
         }
       }
