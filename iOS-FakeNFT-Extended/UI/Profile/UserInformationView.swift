@@ -15,25 +15,49 @@ struct UserInformationView: View {
             HStack(spacing: 16) {
                 
                 if let avatar = user.avatar, !avatar.isEmpty, let url = URL(string: avatar) {
-                    AsyncImage(url: url)
-                        .frame(width: UserInformationView.imageSize, height: UserInformationView.imageSize)
+                    AsyncImage(url: url) {
+                        phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                            
+                        case .empty, .failure:
+                            Image(.imgAvatarPlaceholder)
+                                .resizable()
+                                .scaledToFill()
+                            
+                        @unknown default:
+                            Image(.imgAvatarPlaceholder)
+                                .resizable()
+                                .scaledToFill()
+                        }
+                    }
+                    .frame(width: UserInformationView.imageSize, height: UserInformationView.imageSize)
+                    .clipShape(Circle())
+                } else {
+                    Image(.imgAvatarPlaceholder)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(
+                            width: UserInformationView.imageSize,
+                            height: UserInformationView.imageSize
+                        )
                         .clipShape(Circle())
                 }
 
                 Text(user.username)
                     .font(.system(size: 22, weight: .bold))
+                    .tracking(0.35)
             }
 
             VStack(alignment: .leading, spacing: 8) {
                 Text(user.bio)
                     .font(.system(size: 13, weight: .regular))
-
-                if let website = user.userWebSite, !website.isEmpty, let url = URL(string: website) {
-                    Link(website, destination: url)
-                        .font(.system(size: 15, weight: .regular))
-                        .foregroundStyle(.blue)
-                }
+                    .tracking(-0.08)
             }
+            .frame(height: 72)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
