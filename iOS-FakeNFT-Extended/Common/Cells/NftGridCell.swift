@@ -26,6 +26,7 @@ struct NftGridCell: View {
                     .scaledToFill()
             }
             .aspectRatio(1, contentMode: .fit)
+            .frame(width: 108, height: 108)
             .clipShape(RoundedRectangle(cornerRadius: 12))
 
             LikeButton(isLiked: model.isLiked, action: onLike)
