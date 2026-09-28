@@ -19,10 +19,10 @@ struct ReusableUserInformationView: View {
                         AsyncImage(url: url) { image in
                             image.resizable().scaledToFill()
                         } placeholder: {
-                            Image(.imgAvatarPlaceholder).resizable().scaledToFill()
+                            imagePlaceholder
                         }
                     } else {
-                        Image(.imgAvatarPlaceholder).resizable().scaledToFill()
+                        imagePlaceholder
                     }
                 }
                 .frame(width: ReusableUserInformationView.imageSize, height: ReusableUserInformationView.imageSize)
@@ -37,6 +37,10 @@ struct ReusableUserInformationView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
+    }
+    
+    private var imagePlaceholder: some View {
+        Image(.imgAvatarPlaceholder).resizable().scaledToFill()
     }
 }
 

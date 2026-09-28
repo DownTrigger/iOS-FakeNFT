@@ -26,7 +26,7 @@ struct CollectionMenu: View {
     }
 }
 
-struct CollectionMenuRow: View {
+private struct CollectionMenuRow: View {
     let item: UserCollectionMenuModel
     let action: () -> Void
 

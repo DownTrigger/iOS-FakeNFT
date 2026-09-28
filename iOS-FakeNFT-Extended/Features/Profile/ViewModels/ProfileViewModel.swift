@@ -10,7 +10,7 @@ import Observation
 @Observable
 final class ProfileViewModel {
 
-    var user: UserModel = UserModel(
+    var user = UserModel(
         avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIMUe7M2kZo-Yb2FPmD6bbleK3Ri3tQNR0Gtp8aFiQ2UAF5VHukRALrltv&s=10",
         username: "Joaquin Phoenix",
         bio: "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT.",

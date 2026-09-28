@@ -6,13 +6,13 @@ struct TabBarView: View {
             NavigationStack {
                 ProfileView()
             }
-                .tabItem {
-                    Label {
-                        Text(TabLocalizedText.profile.key)
-                    } icon: {
-                        Image(.icTabProfile)
-                    }
+            .tabItem {
+                Label {
+                    Text(TabLocalizedText.profile.key)
+                } icon: {
+                    Image(.icTabProfile)
                 }
+            }
 
             NavigationStack {
                 CatalogSmokeView()

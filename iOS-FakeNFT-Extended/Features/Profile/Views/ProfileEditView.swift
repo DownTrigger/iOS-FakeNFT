@@ -12,7 +12,7 @@ struct ProfileEditView: View {
     @State private var showAvatarOptions = false
     @State private var showURLInput = false
     @State private var showExitAlert = false
-    @State private var pendingAvatarURL = ""
+    @State private var pendingAvatarURLString = ""
 
     @Environment(\.dismiss) private var dismiss
 
@@ -63,7 +63,7 @@ struct ProfileEditView: View {
             titleVisibility: .visible
         ) {
             Button("Изменить фото") {
-                pendingAvatarURL = viewModel.avatarURL
+                pendingAvatarURLString = viewModel.avatarURL
                 showURLInput = true
             }
             Button("Удалить фото", role: .destructive) {
@@ -76,11 +76,11 @@ struct ProfileEditView: View {
             Button("Выйти") { dismiss() }
         }
         .alert("Ссылка на фото", isPresented: $showURLInput) {
-            TextField("http://www.example.com", text: $pendingAvatarURL)
+            TextField("http://www.example.com", text: $pendingAvatarURLString)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
             Button("Сохранить") {
-                viewModel.avatarURL = pendingAvatarURL
+                viewModel.avatarURL = pendingAvatarURLString
             }
             Button("Отмена", role: .cancel) {}
         }
