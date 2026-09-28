@@ -9,6 +9,13 @@ final class CollectionViewModel {
 
     private let nftService: NftService
 
+    var isLoading: Bool { state.isLoading }
+
+    var isEmpty: Bool {
+        guard case let .loaded(nfts) = state else { return false }
+        return nfts.isEmpty
+    }
+
     var cells: [NftGridCellModel] {
         guard case let .loaded(nfts) = state else { return [] }
         return nfts.map(Self.makeCellModel)
@@ -20,7 +27,7 @@ final class CollectionViewModel {
     }
 
     func loadNfts() async {
-        guard !state.isLoading else { return }
+        guard state.canStartLoading else { return }
         state = .loading
         do {
             let loaded = try await Self.loadNfts(ids: collection.nfts, service: nftService)
@@ -73,5 +80,14 @@ private extension LoadingState {
     var isLoading: Bool {
         if case .loading = self { return true }
         return false
+    }
+
+    var canStartLoading: Bool {
+        switch self {
+        case .idle, .failed:
+            true
+        case .loading, .loaded:
+            false
+        }
     }
 }
