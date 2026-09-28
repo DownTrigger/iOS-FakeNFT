@@ -10,7 +10,7 @@ import SwiftUI
 enum ScreenLocalizedText {
     case sorting
     case profilePhoto
-    
+
     var key: LocalizedStringKey {
         switch self {
         case .sorting:
