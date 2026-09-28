@@ -113,6 +113,22 @@
         }
       }
     },
+    "Catalog.collectionAuthor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collection author:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Автор коллекции:"
+          }
+        }
+      }
+    },
     "Catalog.empty" : {
       "localizations" : {
         "en" : {
