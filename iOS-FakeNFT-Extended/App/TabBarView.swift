@@ -3,14 +3,16 @@ import SwiftUI
 struct TabBarView: View {
     var body: some View {
         TabView {
-            ProfileView()
-                .tabItem {
-                    Label {
-                        Text(TabLocalizedText.profile.key)
-                    } icon: {
-                        Image(.icTabProfile)
-                    }
+            NavigationStack {
+                ProfileView()
+            }
+            .tabItem {
+                Label {
+                    Text(TabLocalizedText.profile.key)
+                } icon: {
+                    Image(.icTabProfile)
                 }
+            }
 
             NavigationStack {
                 CatalogSmokeView()
