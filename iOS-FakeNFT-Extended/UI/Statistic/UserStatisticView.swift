@@ -10,7 +10,7 @@ import SwiftUI
 struct UserStatisticView: View {
     let position: Int
     let name: String
-    let avatar: Image
+    let avatar: String?
     let countNft: Int
 
     var body: some View {
@@ -22,12 +22,34 @@ struct UserStatisticView: View {
                 .frame(width: 22)
 
             HStack(spacing: 10) {
+                if let avatar, !avatar.isEmpty, let url = URL(string: avatar) {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
 
-                avatar
-                    .resizable()
-                    .scaledToFill()
+                        case .empty, .failure:
+                            Image(.imgAvatarPlaceholder)
+                                .resizable()
+                                .scaledToFill()
+
+                        @unknown default:
+                            Image(.imgAvatarPlaceholder)
+                                .resizable()
+                                .scaledToFill()
+                        }
+                    }
                     .frame(width: 28, height: 28)
                     .clipShape(Circle())
+                } else {
+                    Image(.imgAvatarPlaceholder)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 28, height: 28)
+                        .clipShape(Circle())
+                }
 
                 Text(name)
                     .font(.bold22)
@@ -54,21 +76,21 @@ struct UserStatisticView: View {
         UserStatisticView(
             position: 1,
             name: "Alex",
-            avatar: Image("imgAvatarPlaceholder"),
+            avatar: "",
             countNft: 112
         )
 
         UserStatisticView(
             position: 2,
             name: "Maria",
-            avatar: Image("imgAvatarPlaceholder"),
+            avatar: "",
             countNft: 98
         )
 
         UserStatisticView(
             position: 3,
             name: "Ivan",
-            avatar: Image("imgAvatarPlaceholder"),
+            avatar: "",
             countNft: 76
         )
     }

@@ -20,9 +20,7 @@ struct StatisticsView: View {
                         UserStatisticView(
                             position: statistic.position,
                             name: statistic.user.username,
-                            avatar: Image(
-                                statistic.user.avatar ?? "imgAvatarPlaceholder"
-                            ),
+                            avatar: statistic.user.avatar,
                             countNft: statistic.countNft
                         )
                     }
