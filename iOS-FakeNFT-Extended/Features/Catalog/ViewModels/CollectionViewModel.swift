@@ -9,6 +9,11 @@ final class CollectionViewModel {
 
     private let nftService: NftService
 
+    var cells: [NftGridCellModel] {
+        guard case let .loaded(nfts) = state else { return [] }
+        return nfts.map(Self.makeCellModel)
+    }
+
     init(collection: NftCollection, nftService: NftService) {
         self.collection = collection
         self.nftService = nftService
@@ -45,6 +50,18 @@ final class CollectionViewModel {
             }
             return loaded
         }
+    }
+
+    private static func makeCellModel(from nft: Nft) -> NftGridCellModel {
+        NftGridCellModel(
+            id: nft.id,
+            imageURL: nft.images.first,
+            name: nft.name,
+            rating: nft.rating,
+            priceText: PriceFormatter.string(from: nft.price),
+            isLiked: false,
+            isInCart: false
+        )
     }
 
     private static func isCancellation(_ error: Error) -> Bool {
