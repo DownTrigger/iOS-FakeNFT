@@ -3,6 +3,7 @@ import SwiftUI
 struct CatalogView: View {
     private static let sortOptionKey = "catalog.sortOption"
 
+    @Environment(Router<CatalogRoute>.self) private var router
     @State private var viewModel: CatalogViewModel
     @State private var isSortSheetPresented = false
     @AppStorage(Self.sortOptionKey) private var sortOption: CatalogSortOption = .byNftCount
@@ -14,11 +15,16 @@ struct CatalogView: View {
     var body: some View {
         List {
             ForEach(viewModel.collections) { collection in
-                CollectionCell(collection: collection)
-                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 17, trailing: 16))
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color(.fnBackground))
-                    .task { await viewModel.loadNextPageIfNeeded(currentItem: collection) }
+                Button {
+                    router.push(.collection(collection))
+                } label: {
+                    CollectionCell(collection: collection)
+                }
+                .buttonStyle(.plain)
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 17, trailing: 16))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color(.fnBackground))
+                .task { await viewModel.loadNextPageIfNeeded(currentItem: collection) }
             }
 
             if viewModel.isLoadingNextPage {
@@ -42,6 +48,7 @@ struct CatalogView: View {
         }
         .task(id: sortOption) { await viewModel.applySort(sortOption) }
         .appAlert(item: $viewModel.alert)
+        .toolbarRole(.editor)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationSortButton {
@@ -88,4 +95,5 @@ private struct PreviewCollectionsService: CollectionsService {
     NavigationStack {
         CatalogView(service: PreviewCollectionsService())
     }
+    .environment(Router<CatalogRoute>())
 }

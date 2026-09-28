@@ -3,6 +3,7 @@ import SwiftUI
 struct CollectionView: View {
     private static let columns: [GridItem] = Array(repeating: GridItem(.flexible(), spacing: 9), count: 3)
 
+    @Environment(Router<CatalogRoute>.self) private var router
     @State private var viewModel: CollectionViewModel
 
     init(collection: NftCollection, nftService: NftService) {
@@ -12,15 +13,21 @@ struct CollectionView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                CollectionHeaderView(collection: viewModel.collection, onAuthorTap: {})
+                CollectionHeaderView(collection: viewModel.collection, onAuthorTap: openAuthorWebsite)
                 nfts
             }
             .padding(.bottom, 16)
         }
         .ignoresSafeArea(edges: .top)
         .background(Color(.fnBackground))
+        .toolbar(.hidden, for: .tabBar)
         .task { await viewModel.loadNfts() }
         .appAlert(item: $viewModel.alert)
+    }
+
+    private func openAuthorWebsite() {
+        guard let url = viewModel.collection.websiteURL else { return }
+        router.push(.website(url))
     }
 
     @ViewBuilder
@@ -59,5 +66,8 @@ private struct PreviewNftService: NftService {
         author: "John Doe",
         website: "https://fakenfts.org/"
     )
-    CollectionView(collection: collection, nftService: PreviewNftService())
+    NavigationStack {
+        CollectionView(collection: collection, nftService: PreviewNftService())
+    }
+    .environment(Router<CatalogRoute>())
 }
