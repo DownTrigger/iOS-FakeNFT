@@ -59,18 +59,28 @@ struct CatalogView: View {
 }
 
 private struct PreviewCollectionsService: CollectionsService {
+    private static let names: [String] = ["Peach", "Blue", "Brown", "Beige", "Pink", "Grey", "White", "Yellow"]
+
     func loadCollections(page: Int, size: Int, sortBy: String?) async throws -> [NftCollection] {
-        let names = ["Peach", "Blue", "Brown", "Beige", "Pink", "Grey", "White", "Yellow", "Green", "Orange"]
-        let start = page * size
-        guard start < names.count else { return [] }
-        return names[start..<min(start + size, names.count)].enumerated().map { offset, name in
-            NftCollection(
-                id: String(start + offset),
-                name: name,
-                cover: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/\(name).png"),
-                nfts: (1...(offset + 3)).map(String.init)
-            )
-        }
+        let start: Int = page * size
+        guard start < Self.names.count else { return [] }
+        let end: Int = min(start + size, Self.names.count)
+        return (start..<end).map { Self.makeCollection(index: $0) }
+    }
+
+    private static func makeCollection(index: Int) -> NftCollection {
+        let name: String = names[index]
+        let cover: URL? = URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/\(name).png")
+        let nfts: [String] = (0..<(index % 3 + 3)).map { String($0) }
+        return NftCollection(
+            id: String(index),
+            name: name,
+            cover: cover,
+            nfts: nfts,
+            description: "Sample NFT collection",
+            author: "Lourdes Harper",
+            website: "https://lourdes_harper.fakenfts.org/"
+        )
     }
 }
 
