@@ -26,11 +26,11 @@ extension View {
 }
 private struct SortSheetModifier<Option: SortOptionProtocol>: ViewModifier {
     @Binding var isPresented: Bool
-    
+
     let screenTitle: ScreenLocalizedText
     let options: [Option]
     let onSelect: (Option) -> Void
-    
+
     func body(content: Content) -> some View {
         content
             .overlay {
@@ -43,13 +43,13 @@ private struct SortSheetModifier<Option: SortOptionProtocol>: ViewModifier {
                                     isPresented = false
                                 }
                             }
-                        
+
                         SortBottomSheet(
                             screenTitle: screenTitle,
                             options: options,
                             onSelect: { option in
                                 onSelect(option)
-                                
+
                                 withAnimation {
                                     isPresented = false
                                 }
@@ -63,11 +63,11 @@ private struct SortSheetModifier<Option: SortOptionProtocol>: ViewModifier {
                         .transition(.move(edge: .bottom))
                     }
                     .transition(.opacity)
-                    
+
                 }
             }
     }
-    
+
 }
 
 #Preview {

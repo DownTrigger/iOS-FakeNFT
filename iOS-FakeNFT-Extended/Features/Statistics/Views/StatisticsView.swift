@@ -3,11 +3,11 @@ import SwiftUI
 struct StatisticsView: View {
     @State private var viewModel: StatisticsViewModel
     @State private var isSortSheetPresented = false
-    
+
     init(viewModel: StatisticsViewModel = StatisticsViewModel()) {
         _viewModel = State(initialValue: viewModel)
     }
-    
+
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
@@ -44,7 +44,7 @@ struct StatisticsView: View {
                 switch option {
                 case .byName:
                     viewModel.sortStatisticsByName()
-                    
+
                 case .byRating:
                     viewModel.sortStatisticsByRating()
                 }

@@ -11,7 +11,7 @@ enum StatisticLocalizedText {
     case title
     case collectionCount
     case openUserWebsite
-    
+
     var key: LocalizedStringKey {
         switch self {
         case .title:

@@ -14,7 +14,7 @@ enum SortingLocalizedText {
     case sortByNFTCount
     case sortByPrice
     case close
-    
+
     var key: LocalizedStringKey {
         switch self {
         case .sortByName:

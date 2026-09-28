@@ -9,14 +9,14 @@ import SwiftUI
 
 struct UserStatisticDetailView: View {
     let user: UserModel
-    
+
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 0) {
                     UserInformationView(user: user)
                         .padding(.top, 20)
-                    
+
                     if let website = user.userWebSite,
                        !website.isEmpty,
                        let url = URL(string: website) {
@@ -25,7 +25,7 @@ struct UserStatisticDetailView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 NFTCollectionNavigationLink(user: user)
                     .position(
                         x: geometry.size.width / 2,
@@ -35,6 +35,7 @@ struct UserStatisticDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .navigationBarBackButtonHidden(false)
+        .toolbar(.hidden, for: .tabBar)
     }
 }
 

@@ -13,7 +13,7 @@ enum PrimaryButtonLocalizedText {
     case resetPassword
     case pay
     case save
-    
+
     var key: LocalizedStringKey {
         switch self {
         case .login:

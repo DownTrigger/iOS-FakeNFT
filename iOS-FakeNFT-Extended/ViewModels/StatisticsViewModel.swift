@@ -11,17 +11,17 @@ import Observation
 final class StatisticsViewModel {
     // mock данные заменить на реальный код
     var statistics: [UserStatisticItem] = []
-    
+
     init() {
         //        self.statistics = []
         //        loadStatistics()
         self.statistics = Self.preview.statistics
     }
-    
+
     fileprivate init(statistics: [UserStatisticItem]) {
         self.statistics = statistics
     }
-    
+
     func sortStatisticsByName(ascending: Bool = true) {
         statistics = sortBy(
             statistics,
@@ -29,7 +29,7 @@ final class StatisticsViewModel {
             ascending: ascending
         )
     }
-    
+
     func sortStatisticsByRating(ascending: Bool = false) {
         statistics = sortBy(
             statistics,
@@ -88,7 +88,7 @@ extension StatisticsViewModel {
                 userWebSite: nil
             )
         ]
-        
+
         let nftCounts = [
             ("Zoya", 112),
             ("Petr", 98),
@@ -98,7 +98,7 @@ extension StatisticsViewModel {
             ("Alex", 23),
             ("Olya", 11)
         ]
-        
+
         let statistics = users
             .compactMap { user -> UserStatisticItem? in
                 guard let countNft = nftCounts.first(
@@ -106,7 +106,7 @@ extension StatisticsViewModel {
                 )?.1 else {
                     return nil
                 }
-                
+
                 return UserStatisticItem(
                     position: 0,
                     user: user,
@@ -124,7 +124,7 @@ extension StatisticsViewModel {
                     countNft: statistic.countNft
                 )
             }
-        
+
         return StatisticsViewModel(
             statistics: statistics
         )

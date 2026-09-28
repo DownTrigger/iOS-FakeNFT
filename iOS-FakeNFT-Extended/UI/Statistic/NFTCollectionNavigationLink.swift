@@ -9,10 +9,10 @@ import SwiftUI
 
 struct NFTCollectionNavigationLink: View {
     let user: UserModel
-    
+
     // Временно для разработки экрана
     private let nftCount = 3
-    
+
     var body: some View {
         NavigationLink {
             NFTCollectionView(user: user)
@@ -28,14 +28,13 @@ struct NFTCollectionNavigationLink: View {
                     )
                 )
                 .font(.bold22)
-                
+
                 Spacer()
-                
+
                 Image(systemName: "chevron.forward")
                     .font(.system(size: 22, weight: .semibold))
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
+            .padding(16)
             .contentShape(Rectangle())
         }
         .foregroundStyle(.fnText)

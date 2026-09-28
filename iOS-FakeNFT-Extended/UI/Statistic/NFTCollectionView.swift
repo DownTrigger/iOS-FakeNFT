@@ -9,16 +9,16 @@ import SwiftUI
 
 struct NFTCollectionView: View {
     let user: UserModel
-    
+
     // Временные мок-данные. Заменить на загрузку
     private let nftItems: [NftGridCellModel] = NftGridCellModel.preview
-    
+
     private let columns = [
         GridItem(.flexible(), spacing: 8),
         GridItem(.flexible(), spacing: 8),
         GridItem(.flexible(), spacing: 8)
     ]
-    
+
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 16) {
@@ -26,10 +26,10 @@ struct NFTCollectionView: View {
                     NftGridCell(
                         model: model,
                         onLike: {
-                            // TODO: обработка Like
+                            // обработка Like
                         },
                         onCart: {
-                            // TODO: обработка Cart
+                            // обработка Cart
                         }
                     )
                 }
@@ -40,6 +40,7 @@ struct NFTCollectionView: View {
         .navigationTitle(StatisticLocalizedText.title.key)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(false)
+        .toolbar(.hidden, for: .tabBar)
     }
 }
 

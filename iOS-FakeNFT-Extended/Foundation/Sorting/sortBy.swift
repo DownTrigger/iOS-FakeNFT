@@ -10,7 +10,7 @@ func sortBy<T, V: Comparable>(
     keyPath: KeyPath<T, V>,
     ascending: Bool = true
 ) -> [T] {
-    
+
     items.sorted {
         ascending
         ? $0[keyPath: keyPath] < $1[keyPath: keyPath]

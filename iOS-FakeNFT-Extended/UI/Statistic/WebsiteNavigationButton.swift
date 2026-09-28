@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WebsiteNavigationButton: View {
     let url: URL
-    
+
     var body: some View {
         NavigationLink {
             // WebView(url: url) Саша загрузит в девелоп общий WebView

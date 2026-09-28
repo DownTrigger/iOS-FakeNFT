@@ -13,21 +13,20 @@ struct UserInformationView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 16) {
-                
+
                 if let avatar = user.avatar, !avatar.isEmpty, let url = URL(string: avatar) {
-                    AsyncImage(url: url) {
-                        phase in
+                    AsyncImage(url: url) { phase in
                         switch phase {
                         case .success(let image):
                             image
                                 .resizable()
                                 .scaledToFill()
-                            
+
                         case .empty, .failure:
                             Image(.imgAvatarPlaceholder)
                                 .resizable()
                                 .scaledToFill()
-                            
+
                         @unknown default:
                             Image(.imgAvatarPlaceholder)
                                 .resizable()
