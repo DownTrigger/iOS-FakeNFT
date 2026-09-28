@@ -1,4 +1,3 @@
-import Kingfisher
 import SwiftUI
 
 struct CollectionCell: View {
@@ -6,17 +5,18 @@ struct CollectionCell: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            KFImage(collection.cover)
-                .placeholder {
-                    Image(.imgNFTPlaceholder)
-                        .resizable()
-                        .scaledToFill()
-                }
-                .resizable()
-                .scaledToFill()
-                .frame(height: 140)
-                .frame(maxWidth: .infinity)
-                .clipShape(.rect(cornerRadius: 12))
+            AsyncImage(url: collection.cover) { image in
+                image
+                    .resizable()
+                    .scaledToFill()
+            } placeholder: {
+                Image(.imgNFTPlaceholder)
+                    .resizable()
+                    .scaledToFill()
+            }
+            .frame(height: 140)
+            .frame(maxWidth: .infinity)
+            .clipShape(.rect(cornerRadius: 12))
 
             Text(verbatim: "\(collection.name) (\(collection.nftCount))")
                 .font(.bold17)
