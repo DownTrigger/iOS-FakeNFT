@@ -12,9 +12,7 @@ struct TabBarView: View {
                     }
                 }
 
-            NavigationStack {
-                CatalogSmokeView()
-            }
+            CatalogRootView()
                 .tabItem {
                     Label {
                         Text(TabLocalizedText.catalog.key)

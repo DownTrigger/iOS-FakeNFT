@@ -113,18 +113,34 @@
         }
       }
     },
-    "Catalog.openNft" : {
+    "Catalog.empty" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open NFT"
+            "value" : "No collections yet"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Открыть NFT"
+            "value" : "Коллекций пока нет"
+          }
+        }
+      }
+    },
+    "Error.loadData" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to load data"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось получить данные"
           }
         }
       }
@@ -196,6 +212,12 @@
     "sorting.cancel" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -206,6 +228,12 @@
     },
     "sorting.close" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -216,6 +244,12 @@
     },
     "sorting.profilePhoto" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile photo"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -226,6 +260,12 @@
     },
     "sorting.sortByName" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By name"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -236,6 +276,12 @@
     },
     "sorting.sortByNFTCount" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By NFT count"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -246,6 +292,12 @@
     },
     "sorting.sortByPrice" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By price"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -256,6 +308,12 @@
     },
     "sorting.sortByRating" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By rating"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -267,6 +325,12 @@
     "sorting.sortByTitle" : {
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By title"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -277,6 +341,12 @@
     },
     "sorting.sorting" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sort"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
