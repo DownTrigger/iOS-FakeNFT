@@ -31,6 +31,27 @@ struct CartView: View {
         .task(id: sortOption) { viewModel.applySort(sortOption) }
         .task { await viewModel.load(using: services.cartService) }
         .appAlert(item: $viewModel.alert)
+        .fullScreenCover(isPresented: isDeleteConfirmationPresented) {
+            if let nft = viewModel.nftToDelete {
+                CartDeleteConfirmationView(
+                    nft: nft,
+                    onDelete: { viewModel.cancelDelete() },
+                    onCancel: { viewModel.cancelDelete() }
+                )
+                .presentationBackground(.ultraThinMaterial)
+            }
+        }
+    }
+
+    private var isDeleteConfirmationPresented: Binding<Bool> {
+        Binding(
+            get: { viewModel.nftToDelete != nil },
+            set: { isPresented in
+                if !isPresented {
+                    viewModel.cancelDelete()
+                }
+            }
+        )
     }
 
     @ViewBuilder
@@ -50,7 +71,9 @@ struct CartView: View {
     private func cartList(_ items: [Nft]) -> some View {
         VStack(spacing: 0) {
             List(items, id: \.id) { nft in
-                CartItemCell(nft: nft) {}
+                CartItemCell(nft: nft) {
+                    viewModel.requestDelete(nft)
+                }
                     .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)

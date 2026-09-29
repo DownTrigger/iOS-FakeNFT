@@ -5,6 +5,7 @@ import Foundation
 final class CartViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
     private(set) var sortOption: CartSortOption = .byTitle
+    private(set) var nftToDelete: Nft?
     var alert: AlertModel?
 
     var items: [Nft] {
@@ -27,6 +28,14 @@ final class CartViewModel {
 
     func applySort(_ option: CartSortOption) {
         sortOption = option
+    }
+
+    func requestDelete(_ nft: Nft) {
+        nftToDelete = nft
+    }
+
+    func cancelDelete() {
+        nftToDelete = nil
     }
 
     func load(using service: CartService) async {
