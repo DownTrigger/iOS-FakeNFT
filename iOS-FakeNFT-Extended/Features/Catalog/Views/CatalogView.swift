@@ -28,6 +28,7 @@ struct CatalogView: View {
             }
         }
         .listStyle(.plain)
+        .refreshable { await viewModel.refresh() }
         .scrollContentBackground(.hidden)
         .background(Color(.fnBackground))
         .safeAreaInset(edge: .bottom) {

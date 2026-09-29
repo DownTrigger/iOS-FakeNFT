@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 @MainActor
 @Observable
@@ -51,6 +51,22 @@ final class CatalogViewModel {
             guard !error.isCancellation else { return }
             alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
                 Task { await self?.loadNextPage() }
+            }
+        }
+    }
+
+    func refresh() async {
+        let freshPaginator = Self.makePaginator(service: service, sortBy: paginatorSortBy)
+        do {
+            try await freshPaginator.loadNextPage()
+            guard freshPaginator.items != paginator?.items else { return }
+            withAnimation {
+                paginator = freshPaginator
+            }
+        } catch {
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
+                Task { await self?.refresh() }
             }
         }
     }
