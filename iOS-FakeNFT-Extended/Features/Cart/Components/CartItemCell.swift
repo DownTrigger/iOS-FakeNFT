@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CartItemCell: View {
-    let nft: CartNft
+    let nft: Nft
     let onDelete: () -> Void
 
     private let imageSize: CGFloat = 108
@@ -17,7 +17,7 @@ struct CartItemCell: View {
     }
 
     private var image: some View {
-        AsyncImage(url: nft.imageURL) { image in
+        AsyncImage(url: nft.images.first) { image in
             image
                 .resizable()
                 .scaledToFill()
@@ -59,16 +59,15 @@ struct CartItemCell: View {
 }
 
 #Preview {
-    CartItemCell(nft: .preview) {}
-        .padding(.horizontal, 16)
-}
-
-extension CartNft {
-    static let preview = CartNft(
-        id: "1",
-        name: "April",
-        images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")].compactMap { $0 },
-        rating: 3,
-        price: 1.78
-    )
+    CartItemCell(
+        nft: Nft(
+            id: "1",
+            name: "April",
+            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")].compactMap { $0 },
+            rating: 3,
+            price: 1.78,
+            author: "1"
+        )
+    ) {}
+    .padding(.horizontal, 16)
 }

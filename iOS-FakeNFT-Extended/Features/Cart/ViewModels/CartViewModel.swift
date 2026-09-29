@@ -3,10 +3,10 @@ import Foundation
 @MainActor
 @Observable
 final class CartViewModel {
-    private(set) var state: LoadingState<[CartNft]> = .idle
+    private(set) var state: LoadingState<[Nft]> = .idle
     var alert: AlertModel?
 
-    var items: [CartNft] {
+    var items: [Nft] {
         if case let .loaded(items) = state {
             return items
         }

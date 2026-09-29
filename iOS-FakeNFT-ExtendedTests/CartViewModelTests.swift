@@ -67,15 +67,15 @@ final class CartViewModelTests: XCTestCase {
 }
 
 private struct CartServiceStub: CartService {
-    let result: Result<[CartNft], Error>
+    let result: Result<[Nft], Error>
 
-    func loadCart() async throws -> [CartNft] {
+    func loadCart() async throws -> [Nft] {
         try result.get()
     }
 }
 
-extension CartNft {
-    static func stub(id: String, price: Double) -> CartNft {
-        CartNft(id: id, name: "NFT \(id)", images: [], rating: 3, price: price)
+extension Nft {
+    static func stub(id: String, price: Double = 1) -> Nft {
+        Nft(id: id, name: "NFT \(id)", images: [], rating: 3, price: price, author: "1")
     }
 }

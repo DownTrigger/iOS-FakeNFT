@@ -37,9 +37,9 @@ struct CartView: View {
         }
     }
 
-    private func cartList(_ items: [CartNft]) -> some View {
+    private func cartList(_ items: [Nft]) -> some View {
         VStack(spacing: 0) {
-            List(items) { nft in
+            List(items, id: \.id) { nft in
                 CartItemCell(nft: nft) {}
                     .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                     .listRowSeparator(.hidden)
