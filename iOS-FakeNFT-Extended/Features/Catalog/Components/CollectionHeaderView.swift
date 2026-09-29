@@ -9,7 +9,7 @@ struct CollectionHeaderView: View {
             CoverImageView(url: collection.cover)
                 .frame(height: 310)
                 .frame(maxWidth: .infinity)
-                .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 12, bottomTrailingRadius: 12))
+                .clipShape(.rect(cornerRadius: 12))
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(collection.name)
