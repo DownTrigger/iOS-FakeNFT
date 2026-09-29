@@ -31,7 +31,7 @@ struct CollectionHeaderView: View {
                     .padding(.top, 16)
 
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text(String(localized: "Catalog.collectionAuthor"))
+                    Text(CatalogLocalizedText.collectionAuthor.key)
                         .font(.regular13)
                         .foregroundStyle(Color(.fnText))
 

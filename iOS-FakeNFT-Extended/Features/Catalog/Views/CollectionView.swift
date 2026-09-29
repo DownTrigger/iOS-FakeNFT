@@ -50,7 +50,7 @@ struct CollectionView: View {
                 .tint(Color(.fnText))
                 .frame(maxWidth: .infinity)
         } else if viewModel.isEmpty {
-            EmptyStateView(message: String(localized: "Catalog.collectionEmpty"))
+            EmptyStateView(message: CatalogLocalizedText.collectionEmpty.text)
         } else {
             LazyVGrid(columns: Self.columns, spacing: 8) {
                 ForEach(viewModel.cells) { cell in

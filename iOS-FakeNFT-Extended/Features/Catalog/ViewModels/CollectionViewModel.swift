@@ -38,7 +38,7 @@ final class CollectionViewModel {
                 return
             }
             state = .failed(error)
-            alert = .retryError(title: String(localized: "Error.loadData")) { [weak self] in
+            alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
                 Task { await self?.loadNfts() }
             }
         }

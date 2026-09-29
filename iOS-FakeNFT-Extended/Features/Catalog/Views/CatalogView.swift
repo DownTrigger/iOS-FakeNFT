@@ -43,7 +43,7 @@ struct CatalogView: View {
             if viewModel.isInitialLoading {
                 AppLoadingView()
             } else if viewModel.isEmpty {
-                EmptyStateView(message: String(localized: "Catalog.empty"))
+                EmptyStateView(message: CatalogLocalizedText.empty.text)
             }
         }
         .task(id: sortOption) { await viewModel.applySort(sortOption) }
