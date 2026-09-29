@@ -5,18 +5,10 @@ struct CollectionCell: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            AsyncImage(url: collection.cover) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                Image(.imgNFTPlaceholder)
-                    .resizable()
-                    .scaledToFill()
-            }
-            .frame(height: 140)
-            .frame(maxWidth: .infinity)
-            .clipShape(.rect(cornerRadius: 12))
+            CoverImageView(url: collection.cover)
+                .frame(height: 140)
+                .frame(maxWidth: .infinity)
+                .clipShape(.rect(cornerRadius: 12))
 
             Text(verbatim: "\(collection.name) (\(collection.nftCount))")
                 .font(.bold17)

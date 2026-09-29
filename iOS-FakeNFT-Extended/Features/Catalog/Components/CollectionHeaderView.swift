@@ -6,18 +6,10 @@ struct CollectionHeaderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            AsyncImage(url: collection.cover) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                Image(.imgNFTPlaceholder)
-                    .resizable()
-                    .scaledToFill()
-            }
-            .frame(height: 310)
-            .frame(maxWidth: .infinity)
-            .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 12, bottomTrailingRadius: 12))
+            CoverImageView(url: collection.cover)
+                .frame(height: 310)
+                .frame(maxWidth: .infinity)
+                .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 12, bottomTrailingRadius: 12))
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(collection.name)

@@ -26,19 +26,17 @@ struct CatalogView: View {
                 .listRowBackground(Color(.fnBackground))
                 .task { await viewModel.loadNextPageIfNeeded(currentItem: collection) }
             }
-
-            if viewModel.isLoadingNextPage {
-                ProgressView()
-                    .tint(Color(.fnText))
-                    .frame(maxWidth: .infinity)
-                    .id(viewModel.collections.count)
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color(.fnBackground))
-            }
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color(.fnBackground))
+        .safeAreaInset(edge: .bottom) {
+            if viewModel.isLoadingNextPage {
+                ProgressView()
+                    .tint(Color(.fnText))
+                    .padding(.vertical, 8)
+            }
+        }
         .overlay {
             if viewModel.isInitialLoading {
                 AppLoadingView()
