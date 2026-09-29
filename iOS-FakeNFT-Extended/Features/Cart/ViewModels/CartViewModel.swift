@@ -6,6 +6,7 @@ final class CartViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
     private(set) var sortOption: CartSortOption = .byTitle
     private(set) var nftToDelete: Nft?
+    private(set) var isDeleting = false
     var alert: AlertModel?
 
     var items: [Nft] {
@@ -36,6 +37,29 @@ final class CartViewModel {
 
     func cancelDelete() {
         nftToDelete = nil
+    }
+
+    func confirmDelete(using service: CartService) async {
+        guard let nft = nftToDelete, case let .loaded(items) = state, !isDeleting else {
+            return
+        }
+        isDeleting = true
+        defer { isDeleting = false }
+
+        let remaining = items.filter { $0.id != nft.id }
+        do {
+            try await service.updateOrder(nftIds: remaining.map(\.id))
+            state = .loaded(remaining)
+            nftToDelete = nil
+        } catch {
+            nftToDelete = nil
+            alert = .retryError(title: CartLocalizedText.deleteError.text) { [weak self] in
+                Task {
+                    self?.requestDelete(nft)
+                    await self?.confirmDelete(using: service)
+                }
+            }
+        }
     }
 
     func load(using service: CartService) async {

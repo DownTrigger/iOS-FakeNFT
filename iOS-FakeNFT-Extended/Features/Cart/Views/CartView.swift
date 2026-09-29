@@ -35,7 +35,10 @@ struct CartView: View {
             if let nft = viewModel.nftToDelete {
                 CartDeleteConfirmationView(
                     nft: nft,
-                    onDelete: { viewModel.cancelDelete() },
+                    isDeleting: viewModel.isDeleting,
+                    onDelete: {
+                        Task { await viewModel.confirmDelete(using: services.cartService) }
+                    },
                     onCancel: { viewModel.cancelDelete() }
                 )
                 .presentationBackground(.ultraThinMaterial)

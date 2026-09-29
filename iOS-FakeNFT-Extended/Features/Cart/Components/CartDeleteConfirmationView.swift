@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CartDeleteConfirmationView: View {
     let nft: Nft
+    var isDeleting = false
     let onDelete: () -> Void
     let onCancel: () -> Void
 
@@ -22,6 +23,7 @@ struct CartDeleteConfirmationView: View {
                 button(CartLocalizedText.delete, color: Color(.fnRed), action: onDelete)
                 button(CartLocalizedText.back, color: Color(.fnBackground), action: onCancel)
             }
+            .disabled(isDeleting)
         }
         .offset(y: verticalOffset)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

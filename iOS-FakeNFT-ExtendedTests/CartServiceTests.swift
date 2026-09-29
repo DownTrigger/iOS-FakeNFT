@@ -38,10 +38,28 @@ final class CartServiceTests: XCTestCase {
         }
     }
 
+    func testOrderUpdateRequestBodyContainsAllIds() throws {
+        // Given
+        let request = OrderUpdateRequest(nftIds: ["a", "b"])
+
+        // Then
+        XCTAssertEqual(request.httpMethod, .put)
+        XCTAssertEqual(String(bytes: try XCTUnwrap(request.rawBody), encoding: .utf8), "nfts=a&nfts=b")
+    }
+
+    func testOrderUpdateRequestBodyIsEmptyForEmptyCart() throws {
+        // Given
+        let request = OrderUpdateRequest(nftIds: [])
+
+        // Then
+        XCTAssertEqual(try XCTUnwrap(request.rawBody), Data())
+    }
+
     private func makeService(orderIds: [String], failingNftId: String? = nil) -> CartServiceImpl {
         CartServiceImpl(
             networkClient: OrderNetworkClientStub(orderIds: orderIds),
-            nftService: NftServiceStub(failingNftId: failingNftId)
+            nftService: NftServiceStub(failingNftId: failingNftId),
+            orderUpdater: OrderUpdaterStub()
         )
     }
 }
@@ -70,4 +88,8 @@ private struct NftServiceStub: NftService {
         }
         return .stub(id: id)
     }
+}
+
+private struct OrderUpdaterStub: CartOrderUpdater {
+    func updateOrder(nftIds: [String]) async throws {}
 }

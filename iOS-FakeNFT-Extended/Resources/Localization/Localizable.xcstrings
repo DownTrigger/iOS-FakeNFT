@@ -487,6 +487,23 @@
           }
         }
       }
+    },
+    "cart.deleteError" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to remove NFT"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось удалить NFT"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

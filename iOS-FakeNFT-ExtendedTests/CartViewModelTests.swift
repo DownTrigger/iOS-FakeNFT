@@ -111,11 +111,94 @@ extension CartViewModelTests {
     }
 }
 
-private struct CartServiceStub: CartService {
+extension CartViewModelTests {
+
+    func testConfirmDeleteRemovesNftAndSendsRemainingIds() async {
+        // Given
+        let service = CartServiceStub(result: .success([.stub(id: "1", price: 1), .stub(id: "2", price: 2)]))
+        let viewModel = CartViewModel()
+        await viewModel.load(using: service)
+        viewModel.requestDelete(.stub(id: "1", price: 1))
+
+        // When
+        await viewModel.confirmDelete(using: service)
+
+        // Then
+        let sentOrders = await service.sentOrders
+        XCTAssertEqual(sentOrders, [["2"]])
+        XCTAssertEqual(viewModel.items.map(\.id), ["2"])
+        XCTAssertEqual(viewModel.totalPrice, 2, accuracy: 0.001)
+        XCTAssertNil(viewModel.nftToDelete)
+    }
+
+    func testConfirmDeleteLastNftMakesCartEmpty() async {
+        // Given
+        let service = CartServiceStub(result: .success([.stub(id: "1")]))
+        let viewModel = CartViewModel()
+        await viewModel.load(using: service)
+        viewModel.requestDelete(.stub(id: "1"))
+
+        // When
+        await viewModel.confirmDelete(using: service)
+
+        // Then
+        let sentOrders = await service.sentOrders
+        XCTAssertEqual(sentOrders, [[]])
+        XCTAssertTrue(viewModel.items.isEmpty)
+    }
+
+    func testConfirmDeleteFailureKeepsItemsAndShowsAlert() async {
+        // Given
+        let service = CartServiceStub(
+            result: .success([.stub(id: "1"), .stub(id: "2")]),
+            updateError: NetworkClientError.httpStatusCode(500)
+        )
+        let viewModel = CartViewModel()
+        await viewModel.load(using: service)
+        viewModel.requestDelete(.stub(id: "1"))
+
+        // When
+        await viewModel.confirmDelete(using: service)
+
+        // Then
+        XCTAssertEqual(viewModel.items.map(\.id), ["1", "2"])
+        XCTAssertNotNil(viewModel.alert)
+        XCTAssertNil(viewModel.nftToDelete)
+        XCTAssertFalse(viewModel.isDeleting)
+    }
+
+    func testCancelDeleteClearsSelection() {
+        // Given
+        let viewModel = CartViewModel()
+        viewModel.requestDelete(.stub(id: "1"))
+
+        // When
+        viewModel.cancelDelete()
+
+        // Then
+        XCTAssertNil(viewModel.nftToDelete)
+    }
+}
+
+private actor CartServiceStub: CartService {
     let result: Result<[Nft], Error>
+    let updateError: Error?
+    private(set) var sentOrders: [[String]] = []
+
+    init(result: Result<[Nft], Error>, updateError: Error? = nil) {
+        self.result = result
+        self.updateError = updateError
+    }
 
     func loadCart() async throws -> [Nft] {
         try result.get()
+    }
+
+    func updateOrder(nftIds: [String]) async throws {
+        sentOrders.append(nftIds)
+        if let updateError {
+            throw updateError
+        }
     }
 }
 

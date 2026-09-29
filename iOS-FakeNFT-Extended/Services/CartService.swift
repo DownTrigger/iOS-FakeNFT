@@ -2,20 +2,27 @@ import Foundation
 
 protocol CartService: Sendable {
     func loadCart() async throws -> [Nft]
+    func updateOrder(nftIds: [String]) async throws
 }
 
 actor CartServiceImpl: CartService {
     private let networkClient: NetworkClient
     private let nftService: NftService
+    private let orderUpdater: CartOrderUpdater
 
-    init(networkClient: NetworkClient, nftService: NftService) {
+    init(networkClient: NetworkClient, nftService: NftService, orderUpdater: CartOrderUpdater) {
         self.networkClient = networkClient
         self.nftService = nftService
+        self.orderUpdater = orderUpdater
     }
 
     func loadCart() async throws -> [Nft] {
         let order: Order = try await networkClient.send(request: OrderRequest())
         return try await loadNfts(ids: order.nfts)
+    }
+
+    func updateOrder(nftIds: [String]) async throws {
+        try await orderUpdater.updateOrder(nftIds: nftIds)
     }
 
     // MARK: - Private

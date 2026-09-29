@@ -23,6 +23,10 @@ final class ServicesAssembly {
     }
 
     var cartService: CartService {
-        CartServiceImpl(networkClient: networkClient, nftService: nftService)
+        CartServiceImpl(
+            networkClient: networkClient,
+            nftService: nftService,
+            orderUpdater: CartOrderUpdaterImpl()
+        )
     }
 }

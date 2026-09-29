@@ -9,6 +9,7 @@ enum CartLocalizedText {
     case deleteConfirmation
     case delete
     case back
+    case deleteError
 
     var key: LocalizedStringKey {
         switch self {
@@ -28,6 +29,8 @@ enum CartLocalizedText {
             "cart.delete"
         case .back:
             "cart.back"
+        case .deleteError:
+            "cart.deleteError"
         }
     }
 
@@ -49,6 +52,8 @@ enum CartLocalizedText {
             String(localized: "cart.delete")
         case .back:
             String(localized: "cart.back")
+        case .deleteError:
+            String(localized: "cart.deleteError")
         }
     }
 }
