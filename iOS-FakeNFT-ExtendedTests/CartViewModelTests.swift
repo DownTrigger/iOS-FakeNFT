@@ -66,6 +66,51 @@ final class CartViewModelTests: XCTestCase {
     }
 }
 
+extension CartViewModelTests {
+
+    func testSortByTitleIsDefault() async {
+        // Given
+        let viewModel = await loadedViewModel()
+
+        // Then
+        XCTAssertEqual(viewModel.sortOption, .byTitle)
+        XCTAssertEqual(viewModel.items.map(\.name), ["April", "Greena", "Spring"])
+    }
+
+    func testSortByPriceDescending() async {
+        // Given
+        let viewModel = await loadedViewModel()
+
+        // When
+        viewModel.applySort(.byPrice)
+
+        // Then
+        XCTAssertEqual(viewModel.items.map(\.name), ["Greena", "Spring", "April"])
+    }
+
+    func testSortByRatingDescending() async {
+        // Given
+        let viewModel = await loadedViewModel()
+
+        // When
+        viewModel.applySort(.byRating)
+
+        // Then
+        XCTAssertEqual(viewModel.items.map(\.name), ["Spring", "April", "Greena"])
+    }
+
+    private func loadedViewModel() async -> CartViewModel {
+        let service = CartServiceStub(result: .success([
+            Nft(id: "1", name: "Spring", images: [], rating: 5, price: 2, author: "1"),
+            Nft(id: "2", name: "April", images: [], rating: 3, price: 1, author: "1"),
+            Nft(id: "3", name: "Greena", images: [], rating: 1, price: 3, author: "1")
+        ]))
+        let viewModel = CartViewModel()
+        await viewModel.load(using: service)
+        return viewModel
+    }
+}
+
 private struct CartServiceStub: CartService {
     let result: Result<[Nft], Error>
 

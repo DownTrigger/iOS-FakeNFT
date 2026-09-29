@@ -4,17 +4,29 @@ import Foundation
 @Observable
 final class CartViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
+    private(set) var sortOption: CartSortOption = .byTitle
     var alert: AlertModel?
 
     var items: [Nft] {
-        if case let .loaded(items) = state {
-            return items
+        guard case let .loaded(items) = state else {
+            return []
         }
-        return []
+        switch sortOption {
+        case .byTitle:
+            return sortBy(items, keyPath: \.name)
+        case .byRating:
+            return sortBy(items, keyPath: \.rating, ascending: false)
+        case .byPrice:
+            return sortBy(items, keyPath: \.price, ascending: false)
+        }
     }
 
     var totalPrice: Double {
         items.reduce(0) { $0 + $1.price }
+    }
+
+    func applySort(_ option: CartSortOption) {
+        sortOption = option
     }
 
     func load(using service: CartService) async {

@@ -1,9 +1,12 @@
 import SwiftUI
 
 struct CartView: View {
+    private static let sortOptionKey = "cart.sortOption"
+
     @Environment(ServicesAssembly.self) private var services
     @State private var viewModel = CartViewModel()
     @State private var isSortSheetPresented = false
+    @AppStorage(Self.sortOptionKey) private var sortOption: CartSortOption = .byTitle
 
     var body: some View {
         ZStack {
@@ -19,6 +22,13 @@ struct CartView: View {
                 }
             }
         }
+        .sortSheet(
+            isPresented: $isSortSheetPresented,
+            options: [CartSortOption.byPrice, .byRating, .byTitle]
+        ) { option in
+            sortOption = option
+        }
+        .task(id: sortOption) { viewModel.applySort(sortOption) }
         .task { await viewModel.load(using: services.cartService) }
         .appAlert(item: $viewModel.alert)
     }
@@ -30,8 +40,8 @@ struct CartView: View {
             AppLoadingView()
         case .loaded(let items) where items.isEmpty:
             EmptyStateView(message: CartLocalizedText.empty.text)
-        case .loaded(let items):
-            cartList(items)
+        case .loaded:
+            cartList(viewModel.items)
         case .failed:
             Color.clear
         }
