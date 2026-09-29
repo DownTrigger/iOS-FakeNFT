@@ -180,6 +180,46 @@ extension CartViewModelTests {
     }
 }
 
+extension CartViewModelTests {
+
+    func testRefreshUpdatesItems() async {
+        // Given
+        let viewModel = CartViewModel()
+        await viewModel.load(using: CartServiceStub(result: .success([.stub(id: "1")])))
+
+        // When
+        await viewModel.refresh(using: CartServiceStub(result: .success([.stub(id: "1"), .stub(id: "2")])))
+
+        // Then
+        XCTAssertEqual(viewModel.items.map(\.id), ["1", "2"])
+    }
+
+    func testRefreshFailureKeepsItemsAndShowsAlert() async {
+        // Given
+        let viewModel = CartViewModel()
+        await viewModel.load(using: CartServiceStub(result: .success([.stub(id: "1")])))
+
+        // When
+        await viewModel.refresh(using: CartServiceStub(result: .failure(NetworkClientError.urlSessionError)))
+
+        // Then
+        XCTAssertEqual(viewModel.items.map(\.id), ["1"])
+        XCTAssertNotNil(viewModel.alert)
+    }
+
+    func testRequestDeleteIsIgnoredWhileAnotherIsSelected() {
+        // Given
+        let viewModel = CartViewModel()
+        viewModel.requestDelete(.stub(id: "1"))
+
+        // When
+        viewModel.requestDelete(.stub(id: "2"))
+
+        // Then
+        XCTAssertEqual(viewModel.nftToDelete?.id, "1")
+    }
+}
+
 private actor CartServiceStub: CartService {
     let result: Result<[Nft], Error>
     let updateError: Error?

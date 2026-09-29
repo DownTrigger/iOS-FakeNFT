@@ -32,6 +32,9 @@ final class CartViewModel {
     }
 
     func requestDelete(_ nft: Nft) {
+        guard nftToDelete == nil, !isDeleting else {
+            return
+        }
         nftToDelete = nft
     }
 
@@ -64,18 +67,36 @@ final class CartViewModel {
 
     func load(using service: CartService) async {
         state = .loading
+        await fetch(using: service)
+    }
+
+    func refresh(using service: CartService) async {
+        await fetch(using: service)
+    }
+
+    // MARK: - Private
+
+    private func fetch(using service: CartService) async {
         do {
             let items = try await service.loadCart()
             state = .loaded(items)
         } catch is CancellationError {
-            state = .idle
+            resetLoadingState()
         } catch let error as URLError where error.code == .cancelled {
-            state = .idle
+            resetLoadingState()
         } catch {
-            state = .failed(error)
+            if case .loading = state {
+                state = .failed(error)
+            }
             alert = .retryError(title: CartLocalizedText.loadError.text) { [weak self] in
                 Task { await self?.load(using: service) }
             }
+        }
+    }
+
+    private func resetLoadingState() {
+        if case .loading = state {
+            state = .idle
         }
     }
 }

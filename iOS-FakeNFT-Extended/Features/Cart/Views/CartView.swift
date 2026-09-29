@@ -82,6 +82,7 @@ struct CartView: View {
                     .listRowBackground(Color.clear)
             }
             .listStyle(.plain)
+            .refreshable { await viewModel.refresh(using: services.cartService) }
 
             CartSummaryPanel(count: items.count, totalPrice: viewModel.totalPrice) {}
         }
