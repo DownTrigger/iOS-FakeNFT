@@ -1,9 +1,6 @@
 import SwiftUI
 
 struct CollectionHeaderView: View {
-    private static let coverHeight: CGFloat = 310
-    private static let cornerRadius: CGFloat = 12
-
     let collection: NftCollection
     let onAuthorTap: () -> Void
 
@@ -18,11 +15,9 @@ struct CollectionHeaderView: View {
                     .resizable()
                     .scaledToFill()
             }
-            .frame(height: Self.coverHeight)
+            .frame(height: 310)
             .frame(maxWidth: .infinity)
-            .clipShape(
-                UnevenRoundedRectangle(bottomLeadingRadius: Self.cornerRadius, bottomTrailingRadius: Self.cornerRadius)
-            )
+            .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 12, bottomTrailingRadius: 12))
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(collection.name)
