@@ -6,20 +6,35 @@ struct CoverImageView: View {
     @State private var reloadID = 0
 
     var body: some View {
-        AsyncImage(url: url) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-            case .failure(let error) where error.isCancellation:
-                placeholder
-                    .onAppear { reloadID += 1 }
-            default:
-                placeholder
+        if let url {
+            AsyncImage(url: url, transaction: Transaction(animation: .easeInOut)) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .transition(.opacity)
+                case .failure(let error) where error.isCancellation:
+                    loadingView
+                        .onAppear { reloadID += 1 }
+                case .failure:
+                    placeholder
+                default:
+                    loadingView
+                }
             }
+            .id(reloadID)
+        } else {
+            placeholder
         }
-        .id(reloadID)
+    }
+
+    private var loadingView: some View {
+        ZStack {
+            Color(.fnLightGray)
+            ProgressView()
+                .tint(Color(.fnText))
+        }
     }
 
     private var placeholder: some View {
