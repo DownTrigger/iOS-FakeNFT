@@ -142,8 +142,8 @@ struct ProfileEditView: View {
                 username: "Joaquin Phoenix",
                 bio: "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT.",
                 userWebSite: "https://example.com",
-                nftCount: 123,
-                favouritesCount: 11
+                nfts: [],
+                likes: []
             ),
             onSave: { _ in }
         )

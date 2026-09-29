@@ -1,10 +1,12 @@
 import SwiftUI
 
 struct TabBarView: View {
+    @Environment(ServicesAssembly.self) private var services
+
     var body: some View {
         TabView {
             NavigationStack {
-                ProfileView()
+                ProfileView(userService: services.userService)
             }
             .tabItem {
                 Label {

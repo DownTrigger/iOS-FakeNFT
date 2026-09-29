@@ -10,22 +10,45 @@ import Observation
 @Observable
 final class ProfileViewModel {
 
-    var user = UserModel(
-        avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIMUe7M2kZo-Yb2FPmD6bbleK3Ri3tQNR0Gtp8aFiQ2UAF5VHukRALrltv&s=10",
-        username: "Joaquin Phoenix",
-        bio: "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT.",
-        userWebSite: "https://example.com",
-        nftCount: 123,
-        favouritesCount: 11
-    )
-
+    var state: LoadingState<UserModel> = .idle
+    var isUpdating = false
+    private var userService: UserService
+    
+    init(userService: UserService) {
+        self.userService = userService
+    }
+    
+    var user: UserModel? {
+        if case .loaded(let user) = state { return user }
+        return nil
+    }
+    
     var websiteURL: URL? {
-        guard let website = user.userWebSite, !website.isEmpty else { return nil }
+        guard let website = user?.userWebSite, !website.isEmpty else { return nil }
         return URL(string: website)
     }
-
+    
+    func loadUser() async {
+        state = .loading
+        do {
+            let user = try await userService.loadUser()
+            state = .loaded(user)
+        } catch {
+            state = .failed(error)
+        }
+    }
+    
     func updateUser(_ user: UserModel) {
-        self.user = user
+        Task {
+            isUpdating = true
+            do {
+                let updated = try await userService.updateUser(user)
+                state = .loaded(updated)
+            } catch {
+                state = .failed(error)
+            }
+            isUpdating = false
+        }
     }
 
     func openMyNFTs() {

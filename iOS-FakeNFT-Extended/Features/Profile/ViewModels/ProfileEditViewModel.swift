@@ -42,8 +42,8 @@ final class ProfileEditViewModel {
             username: name,
             bio: bio,
             userWebSite: website.isEmpty ? nil : website,
-            nftCount: original.nftCount,
-            favouritesCount: original.favouritesCount
+            nfts: original.nfts,
+            likes: original.likes
         )
     }
 }
