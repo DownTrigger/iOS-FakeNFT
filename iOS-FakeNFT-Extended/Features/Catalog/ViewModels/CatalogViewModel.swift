@@ -48,7 +48,7 @@ final class CatalogViewModel {
         do {
             try await paginator.loadNextPage()
         } catch {
-            guard !Self.isCancellation(error) else { return }
+            guard !error.isCancellation else { return }
             alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
                 Task { await self?.loadNextPage() }
             }
@@ -64,10 +64,6 @@ final class CatalogViewModel {
         Paginator(pageSize: pageSize) { page, size in
             try await service.loadCollections(page: page, size: size, sortBy: sortBy)
         }
-    }
-
-    private static func isCancellation(_ error: Error) -> Bool {
-        error is CancellationError || (error as? URLError)?.code == .cancelled
     }
 }
 

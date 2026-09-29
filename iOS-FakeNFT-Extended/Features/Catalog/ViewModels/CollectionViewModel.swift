@@ -33,7 +33,7 @@ final class CollectionViewModel {
             let loaded = try await Self.loadNfts(ids: collection.nfts, service: nftService)
             state = .loaded(collection.nfts.compactMap { loaded[$0] })
         } catch {
-            guard !Self.isCancellation(error) else {
+            guard !error.isCancellation else {
                 state = .idle
                 return
             }
@@ -69,10 +69,6 @@ final class CollectionViewModel {
             isLiked: false,
             isInCart: false
         )
-    }
-
-    private static func isCancellation(_ error: Error) -> Bool {
-        error is CancellationError || (error as? URLError)?.code == .cancelled
     }
 }
 
