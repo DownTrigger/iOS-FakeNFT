@@ -19,8 +19,21 @@ struct CollectionView: View {
             .padding(.bottom, 16)
         }
         .ignoresSafeArea(edges: .top)
+        .hiddenTopScrollEdgeEffect()
         .background(Color(.fnBackground))
         .toolbar(.hidden, for: .tabBar)
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    router.pop()
+                } label: {
+                    Image(.icBack)
+                        .renderingMode(.template)
+                        .foregroundStyle(Color(.fnText))
+                }
+            }
+        }
         .task { await viewModel.loadNfts() }
         .appAlert(item: $viewModel.alert)
     }
@@ -45,6 +58,17 @@ struct CollectionView: View {
                 }
             }
             .padding(.horizontal, 16)
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func hiddenTopScrollEdgeEffect() -> some View {
+        if #available(iOS 26, *) {
+            scrollEdgeEffectHidden(true, for: .top)
+        } else {
+            self
         }
     }
 }

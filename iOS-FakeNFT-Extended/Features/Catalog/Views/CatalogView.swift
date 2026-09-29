@@ -48,7 +48,6 @@ struct CatalogView: View {
         }
         .task(id: sortOption) { await viewModel.applySort(sortOption) }
         .appAlert(item: $viewModel.alert)
-        .toolbarRole(.editor)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationSortButton {
