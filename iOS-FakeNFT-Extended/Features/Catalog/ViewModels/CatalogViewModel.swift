@@ -59,7 +59,8 @@ final class CatalogViewModel {
         let freshPaginator = Self.makePaginator(service: service, sortBy: paginatorSortBy)
         do {
             try await freshPaginator.loadNextPage()
-            guard freshPaginator.items != paginator?.items else { return }
+            let currentFirstPage = paginator.map { Array($0.items.prefix(freshPaginator.items.count)) }
+            guard freshPaginator.items != currentFirstPage else { return }
             withAnimation {
                 paginator = freshPaginator
             }
