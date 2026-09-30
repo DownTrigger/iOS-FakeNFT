@@ -8,6 +8,7 @@ import SwiftUI
 struct ProfileView: View {
 
     @State private var viewModel: ProfileViewModel
+    @Environment(ServicesAssembly.self) private var services
 
     init(userService: UserService) {
         _viewModel = State(initialValue: ProfileViewModel(userService: userService))
@@ -32,6 +33,16 @@ struct ProfileView: View {
             if viewModel.isUpdating {
                 AppLoadingView()
                     .background(Color(.fnBackground).opacity(0.5))
+            }
+        }
+        .navigationDestination(isPresented: $viewModel.showMyNFTs) {
+            if let user = viewModel.user {
+                MyNFTsView(
+                    nftIds: user.nfts,
+                    likedIds: user.likes,
+                    username: user.username,
+                    nftService: services.nftService
+                )
             }
         }
         .toolbar {
