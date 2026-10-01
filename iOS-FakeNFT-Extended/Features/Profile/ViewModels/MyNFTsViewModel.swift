@@ -31,9 +31,9 @@ final class MyNFTsViewModel {
     var sortedNfts: [Nft] {
         guard case .loaded(let nfts) = state else { return [] }
         switch sortOption {
-        case .byPrice:  return nfts.sorted { $0.price < $1.price }
-        case .byRating: return nfts.sorted { $0.rating > $1.rating }
-        case .byName:   return nfts.sorted { $0.name < $1.name }
+        case .byPrice: return sortBy(nfts, keyPath: \.price)
+        case .byRating: return sortBy(nfts, keyPath: \.rating)
+        case .byName: return sortBy(nfts, keyPath: \.name)
         }
     }
     
