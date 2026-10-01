@@ -10,14 +10,18 @@ import Observation
 @Observable
 final class MyNFTsViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
-    private(set) var sortOption: MyNFTsSortOption = .byRating
-    
+    private(set) var sortOption: MyNFTsSortOption
+
     private let nftIds: [String]
     private var likedIds: Set<String>
     let username: String
     private let nftService: NftService
-    
+
+    private static let sortOptionKey = "myNFTs.sortOption"
+
     init(nftIds: [String], likedIds: [String], username: String, nftService: NftService) {
+        let saved = UserDefaults.standard.string(forKey: Self.sortOptionKey)
+        self.sortOption = MyNFTsSortOption(rawValue: saved ?? "") ?? .byRating
         self.nftIds = nftIds
         self.likedIds = Set(likedIds)
         self.username = username
@@ -35,6 +39,7 @@ final class MyNFTsViewModel {
     
     func setSortOption(_ option: MyNFTsSortOption) {
         sortOption = option
+        UserDefaults.standard.set(option.rawValue, forKey: Self.sortOptionKey)
     }
 
     func isLiked(_ nft: Nft) -> Bool {
