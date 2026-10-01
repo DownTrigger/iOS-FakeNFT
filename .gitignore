@@ -6,4 +6,4 @@ iOS-FakeNFT-Extended.xcodeproj/project.xcworkspace/xcuserdata/*
 
 # Секреты — не коммитим
 Secrets.xcconfig
-Configuration/Config.xcconfig
+Configuration/Secrets.xcconfig
