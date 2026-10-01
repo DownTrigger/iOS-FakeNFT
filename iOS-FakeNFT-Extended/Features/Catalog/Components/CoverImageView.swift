@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct CoverImageView: View {
+    private static let maxReloadAttempts = 3
+
     let url: URL?
 
-    @State private var reloadID = 0
+    @State private var reloadAttempt = 0
 
     var body: some View {
         if let url {
@@ -14,16 +16,16 @@ struct CoverImageView: View {
                         .resizable()
                         .scaledToFill()
                         .transition(.opacity)
-                case .failure(let error) where error.isCancellation:
+                case .failure(let error) where error.isCancellation && reloadAttempt < Self.maxReloadAttempts:
                     loadingView
-                        .onAppear { reloadID += 1 }
+                        .onAppear { reloadAttempt += 1 }
                 case .failure:
                     placeholder
                 default:
                     loadingView
                 }
             }
-            .id(reloadID)
+            .id(reloadAttempt)
         } else {
             placeholder
         }
