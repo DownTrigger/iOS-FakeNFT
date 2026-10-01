@@ -40,7 +40,7 @@ struct MyNFTsView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button { dismiss() } label: {
-                    Image(systemName: "chevron.backward")
+                    Image(.icBack)
                         .foregroundStyle(Color(.fnText))
                 }
             }
@@ -52,7 +52,7 @@ struct MyNFTsView: View {
         }
         .sortSheet(
             isPresented: $showSortSheet,
-            options: MyNFTsSortOption.allCases
+            options: [CartSortOption.byPrice, .byRating, .byName]
         ) { option in
             viewModel.setSortOption(option)
         }

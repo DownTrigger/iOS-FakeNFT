@@ -10,7 +10,7 @@ import Observation
 @Observable
 final class MyNFTsViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
-    private(set) var sortOption: MyNFTsSortOption
+    private(set) var sortOption: CartSortOption
 
     private let nftIds: [String]
     private var likedIds: Set<String>
@@ -21,7 +21,7 @@ final class MyNFTsViewModel {
 
     init(nftIds: [String], likedIds: [String], username: String, nftService: NftService) {
         let saved = UserDefaults.standard.string(forKey: Self.sortOptionKey)
-        self.sortOption = MyNFTsSortOption(rawValue: saved ?? "") ?? .byRating
+        self.sortOption = CartSortOption(rawValue: saved ?? "") ?? .byRating
         self.nftIds = nftIds
         self.likedIds = Set(likedIds)
         self.username = username
@@ -31,13 +31,13 @@ final class MyNFTsViewModel {
     var sortedNfts: [Nft] {
         guard case .loaded(let nfts) = state else { return [] }
         switch sortOption {
-        case .byPrice: return sortBy(nfts, keyPath: \.price)
-        case .byRating: return sortBy(nfts, keyPath: \.rating)
-        case .byName: return sortBy(nfts, keyPath: \.name)
+        case .byPrice:          return sortBy(nfts, keyPath: \.price)
+        case .byRating:         return sortBy(nfts, keyPath: \.rating)
+        case .byName, .byTitle: return sortBy(nfts, keyPath: \.name)
         }
     }
     
-    func setSortOption(_ option: MyNFTsSortOption) {
+    func setSortOption(_ option: CartSortOption) {
         sortOption = option
         UserDefaults.standard.set(option.rawValue, forKey: Self.sortOptionKey)
     }
