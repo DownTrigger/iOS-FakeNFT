@@ -40,7 +40,7 @@ struct MyNFTListCell: View {
                 .font(.bold17)
                 .foregroundStyle(Color(.fnText))
             RatingView(rating: nft.rating)
-            Text("от \(username)")
+            Text("от \(nft.author)")
                 .font(.regular13)
                 .foregroundStyle(Color(.fnText))
         }

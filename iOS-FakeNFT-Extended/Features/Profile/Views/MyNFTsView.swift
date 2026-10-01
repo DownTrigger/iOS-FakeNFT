@@ -87,7 +87,8 @@ private struct PreviewNftService: NftService {
             images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")!],
             description: "Test NFT",
             rating: Int.random(in: 1...5),
-            price: 1.78
+            price: 1.78,
+            author: "Lin Gen"
         )
     }
 }
