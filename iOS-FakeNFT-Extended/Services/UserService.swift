@@ -5,13 +5,12 @@
 
 import Foundation
 
-protocol UserService {
+protocol UserService: Sendable {
     func loadUser() async throws -> UserModel
     func updateUser(_ user: UserModel) async throws -> UserModel
 }
 
-@MainActor
-final class UserServiceImpl: UserService {
+actor UserServiceImpl: UserService {
     private let networkClient: NetworkClient
 
     init(networkClient: NetworkClient) {
