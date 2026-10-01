@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 @MainActor
 @Observable
@@ -48,9 +48,26 @@ final class CatalogViewModel {
         do {
             try await paginator.loadNextPage()
         } catch {
-            guard !Self.isCancellation(error) else { return }
-            alert = .retryError(title: String(localized: "Error.loadData")) { [weak self] in
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
                 Task { await self?.loadNextPage() }
+            }
+        }
+    }
+
+    func refresh() async {
+        let freshPaginator = Self.makePaginator(service: service, sortBy: paginatorSortBy)
+        do {
+            try await freshPaginator.loadNextPage()
+            let currentFirstPage = paginator.map { Array($0.items.prefix(freshPaginator.items.count)) }
+            guard freshPaginator.items != currentFirstPage else { return }
+            withAnimation {
+                paginator = freshPaginator
+            }
+        } catch {
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
+                Task { await self?.refresh() }
             }
         }
     }
@@ -64,10 +81,6 @@ final class CatalogViewModel {
         Paginator(pageSize: pageSize) { page, size in
             try await service.loadCollections(page: page, size: size, sortBy: sortBy)
         }
-    }
-
-    private static func isCancellation(_ error: Error) -> Bool {
-        error is CancellationError || (error as? URLError)?.code == .cancelled
     }
 }
 
