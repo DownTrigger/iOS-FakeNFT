@@ -30,12 +30,15 @@ final class ProfileViewModel {
     }
     
     func loadUser() async {
-        state = .loading
+        let isFirstLoad = user == nil
+        if isFirstLoad { state = .loading }
+
         do {
-            let user = try await userService.loadUser()
-            state = .loaded(user)
+            let fetched = try await userService.loadUser()
+            state = .loaded(fetched)
         } catch {
-            state = .failed(error)
+            if isFirstLoad { state = .failed(error) }
+            // при фоновом обновлении ошибка не сбрасывает уже загруженный профиль
         }
     }
     
