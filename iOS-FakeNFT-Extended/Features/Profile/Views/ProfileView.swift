@@ -9,6 +9,7 @@ struct ProfileView: View {
 
     @State private var viewModel: ProfileViewModel
     @Environment(ServicesAssembly.self) private var services
+    @Environment(Router<ProfileRoute>.self) private var router
 
     init(userService: UserService) {
         _viewModel = State(initialValue: ProfileViewModel(userService: userService))
@@ -25,6 +26,21 @@ struct ProfileView: View {
                 EmptyStateView(message: ProfileLocalizedText.profileLoadError.key)
             }
         }
+        .navigationDestination(for: ProfileRoute.self) { route in
+            switch route {
+            case .myNFTs(let nftIds, let likedIds, let username):
+                MyNFTsView(
+                    nftIds: nftIds,
+                    likedIds: likedIds,
+                    username: username,
+                    nftService: services.nftService
+                )
+            case .editProfile(let user):
+                ProfileEditView(user: user, onSave: viewModel.updateUser)
+            case .website(let url):
+                WebViewScreen(url: url)
+            }
+        }
         .task {
             await viewModel.loadUser()
         }
@@ -35,21 +51,11 @@ struct ProfileView: View {
                     .background(Color(.fnBackground).opacity(0.5))
             }
         }
-        .navigationDestination(isPresented: $viewModel.showMyNFTs) {
-            if let user = viewModel.user {
-                MyNFTsView(
-                    nftIds: user.nfts,
-                    likedIds: user.likes,
-                    username: user.username,
-                    nftService: services.nftService
-                )
-            }
-        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if let user = viewModel.user {
-                    NavigationLink {
-                        ProfileEditView(user: user, onSave: viewModel.updateUser)
+                    Button {
+                        router.push(.editProfile(user: user))
                     } label: {
                         Image(systemName: "square.and.pencil")
                             .frame(width: 42, height: 42)
@@ -65,8 +71,8 @@ struct ProfileView: View {
             VStack(alignment: .leading, spacing: 8) {
                 ReusableUserInformationView(user: user)
                 if let url = viewModel.websiteURL {
-                    NavigationLink {
-                        WebViewScreen(url: url)
+                    Button {
+                        router.push(.website(url: url))
                     } label: {
                         Text(url.absoluteString)
                             .font(.system(size: 15, weight: .regular))
@@ -76,13 +82,20 @@ struct ProfileView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 16)
                     }
+                    .buttonStyle(.plain)
                 }
             }
             CollectionMenu(
                 nftCount: user.nftCount,
                 favouritesCount: user.favouritesCount,
-                onMyNFTs: viewModel.openMyNFTs,
-                onFavouriteNFTs: viewModel.openFavouriteNFTs
+                onMyNFTs: {
+                    router.push(.myNFTs(
+                        nftIds: user.nfts,
+                        likedIds: user.likes,
+                        username: user.username
+                    ))
+                },
+                onFavouriteNFTs: {}
             )
             Spacer()
         }

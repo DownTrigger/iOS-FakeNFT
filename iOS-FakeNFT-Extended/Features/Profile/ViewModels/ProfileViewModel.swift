@@ -12,7 +12,6 @@ final class ProfileViewModel {
 
     var state: LoadingState<UserModel> = .idle
     var isUpdating = false
-    var showMyNFTs = false
     private var userService: UserService
     
     init(userService: UserService) {
@@ -55,11 +54,4 @@ final class ProfileViewModel {
         }
     }
 
-    func openMyNFTs() {
-        showMyNFTs = true
-    }
-
-    func openFavouriteNFTs() {
-        // TODO: nav to nft list
-    }
 }

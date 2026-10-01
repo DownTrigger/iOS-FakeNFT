@@ -2,12 +2,14 @@ import SwiftUI
 
 struct TabBarView: View {
     @Environment(ServicesAssembly.self) private var services
+    @State private var profileRouter = Router<ProfileRoute>()
 
     var body: some View {
         TabView {
-            NavigationStack {
+            NavigationStack(path: $profileRouter.path) {
                 ProfileView(userService: services.userService)
             }
+            .environment(profileRouter)
             .tabItem {
                 Label {
                     Text(TabLocalizedText.profile.key)
