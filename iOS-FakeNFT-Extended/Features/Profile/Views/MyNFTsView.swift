@@ -26,15 +26,15 @@ struct MyNFTsView: View {
                 AppLoadingView()
             case .loaded:
                 if viewModel.sortedNfts.isEmpty {
-                    EmptyStateView(message: "У вас ещё нет NFT")
+                    EmptyStateView(message: ProfileLocalizedText.myNFTsEmpty.key)
                 } else {
                     nftList
                 }
             case .failed:
-                EmptyStateView(message: "Не удалось загрузить NFT")
+                EmptyStateView(message: ProfileLocalizedText.myNFTsLoadError.key)
             }
         }
-        .navigationTitle("Мои NFT")
+        .navigationTitle(ScreenLocalizedText.myNFTs.key)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {

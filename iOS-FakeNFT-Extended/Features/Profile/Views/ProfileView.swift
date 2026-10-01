@@ -22,7 +22,7 @@ struct ProfileView: View {
             case .loaded(let user):
                 profileContent(user: user)
             case .failed:
-                EmptyStateView(message: "Не удалось загрузить профиль")
+                EmptyStateView(message: ProfileLocalizedText.profileLoadError.key)
             }
         }
         .task {
@@ -53,7 +53,7 @@ struct ProfileView: View {
                     } label: {
                         Image(systemName: "square.and.pencil")
                             .frame(width: 42, height: 42)
-                            .foregroundStyle(Color(.label))
+                            .foregroundStyle(Color(.fnBlack))
                     }
                 }
             }
