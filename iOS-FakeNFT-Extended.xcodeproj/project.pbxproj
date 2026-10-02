@@ -48,7 +48,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				NftService.swift,
-				Requests/NftByIdRequest.swift,
 			);
 			target = ABC5E1672C31F5AF002B4068 /* iOS-FakeNFT-Extended */;
 		};

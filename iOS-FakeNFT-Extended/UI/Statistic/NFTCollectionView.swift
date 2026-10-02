@@ -11,8 +11,9 @@ struct NFTCollectionView: View {
     let user: UserModel
     let nfts: [String]
 
-    // Временные мок-данные. Заменить на загрузку
-    private let nftItems: [NftGridCellModel] = NftGridCellModel.preview
+    @Environment(ServicesAssembly.self) private var services
+
+    @State private var viewModel: NFTCollectionViewModel
 
     private let columns = [
         GridItem(.flexible(), spacing: 8),
@@ -20,10 +21,20 @@ struct NFTCollectionView: View {
         GridItem(.flexible(), spacing: 8)
     ]
 
+    init(user: UserModel, nfts: [String]) {
+        self.user = user
+        self.nfts = nfts
+        _viewModel = State(
+            initialValue: NFTCollectionViewModel(
+                networkClient: DefaultNetworkClient()
+            )
+        )
+    }
+
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(nftItems) { model in
+                ForEach(viewModel.nftItems) { model in
                     NftGridCell(
                         model: model,
                         onLike: {
@@ -42,6 +53,22 @@ struct NFTCollectionView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(false)
         .toolbar(.hidden, for: .tabBar)
+        .task {
+            await viewModel.load(nftIDs: nfts)
+        }
+        .overlay {
+            if viewModel.isLoading {
+                ZStack {
+                    Color.black.opacity(0.2)
+                        .ignoresSafeArea()
+
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .tint(.fnText)
+                        .frame(width: 30, height: 30)
+                }
+            }
+        }
     }
 }
 
