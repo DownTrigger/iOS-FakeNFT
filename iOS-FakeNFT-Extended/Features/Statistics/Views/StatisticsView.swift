@@ -26,15 +26,13 @@ struct StatisticsView: View {
             LazyVStack(spacing: 8) {
                 ForEach(viewModel.statistics) { statistic in
                     NavigationLink {
-                        UserStatisticDetailView(
-                            user: statistic.user
-                        )
+                        UserStatisticDetailView(statistic: statistic)
                     } label: {
                         UserStatisticView(
                             position: statistic.position,
                             name: statistic.user.username,
                             avatar: statistic.user.avatar,
-                            countNft: statistic.countNft
+                            countNft: statistic.nfts.count
                         )
                     }
                     .buttonStyle(.plain)

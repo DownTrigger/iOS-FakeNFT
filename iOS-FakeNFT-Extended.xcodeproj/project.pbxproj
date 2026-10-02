@@ -44,6 +44,14 @@
 			);
 			target = ABC5E1672C31F5AF002B4068 /* iOS-FakeNFT-Extended */;
 		};
+		88A4551C306FC386003B5A4F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				NftService.swift,
+				Requests/NftByIdRequest.swift,
+			);
+			target = ABC5E1672C31F5AF002B4068 /* iOS-FakeNFT-Extended */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -54,7 +62,7 @@
 		21D60DB73062D30C0047A3C7 /* DesignSystem */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DesignSystem; sourceTree = "<group>"; };
 		21D60DBF3062D3130047A3C7 /* Features */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Features; sourceTree = "<group>"; };
 		21D60DC53062D31D0047A3C7 /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
-		21D60DCE3062D3260047A3C7 /* Services */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Services; sourceTree = "<group>"; };
+		21D60DCE3062D3260047A3C7 /* Services */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (88A4551C306FC386003B5A4F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Services; sourceTree = "<group>"; };
 		21D60DD63062D32C0047A3C7 /* UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UI; sourceTree = "<group>"; };
 		21D60DDA3062D33B0047A3C7 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		21D60DDE3062D3F10047A3C7 /* iOS-FakeNFT-ExtendedTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "iOS-FakeNFT-ExtendedTests"; sourceTree = "<group>"; };

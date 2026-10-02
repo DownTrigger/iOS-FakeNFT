@@ -52,18 +52,18 @@ final class StatisticsViewModel {
                             bio: user.description ?? "",
                             userWebSite: user.website
                         ),
-                        countNft: user.nfts.count
+                        nfts: user.nfts
                     )
                 }
                 .sorted {
-                    $0.countNft > $1.countNft
+                    $0.nfts.count > $1.nfts.count
                 }
                 .enumerated()
                 .map { index, statistic in
                     UserStatisticItem(
                         position: index + 1,
                         user: statistic.user,
-                        countNft: statistic.countNft
+                        nfts: statistic.nfts
                     )
                 }
 
@@ -93,7 +93,7 @@ final class StatisticsViewModel {
     func sortStatisticsByRating(ascending: Bool = false) {
         statistics = sortBy(
             statistics,
-            keyPath: \.countNft,
+            keyPath: \.nfts.count,
             ascending: ascending
         )
     }

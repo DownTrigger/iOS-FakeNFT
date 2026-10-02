@@ -208,7 +208,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Коллекция NFT"
+            "value" : "Коллекция NFT (%@)"
           }
         }
       }

@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct UserStatisticDetailView: View {
-    let user: UserModel
+    let statistic: UserStatisticItem
 
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 0) {
-                    UserInformationView(user: user)
+                    UserInformationView(user: statistic.user)
                         .padding(.top, 20)
 
-                    if let website = user.userWebSite,
+                    if let website = statistic.user.userWebSite,
                        !website.isEmpty,
                        let url = URL(string: website) {
                         WebsiteNavigationButton(url: url)
@@ -26,7 +26,10 @@ struct UserStatisticDetailView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                NFTCollectionNavigationLink(user: user)
+                NFTCollectionNavigationLink(
+                    user: statistic.user,
+                    nfts: statistic.nfts
+                )
                     .position(
                         x: geometry.size.width / 2,
                         y: geometry.size.height / 2
@@ -44,7 +47,7 @@ struct UserStatisticDetailView: View {
         if let statistic = StatisticsViewModel.preview.statistics.first(
             where: { $0.user.username == "Alex" }
         ) {
-            UserStatisticDetailView(user: statistic.user)
+            UserStatisticDetailView(statistic: statistic)
         }
     }
 }

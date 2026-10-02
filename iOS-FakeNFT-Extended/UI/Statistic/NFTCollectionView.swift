@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NFTCollectionView: View {
     let user: UserModel
+    let nfts: [String]
 
     // Временные мок-данные. Заменить на загрузку
     private let nftItems: [NftGridCellModel] = NftGridCellModel.preview
@@ -49,7 +50,10 @@ struct NFTCollectionView: View {
         if let statistic = StatisticsViewModel.preview.statistics.first(
             where: { $0.user.username == "Alex" }
         ) {
-            NFTCollectionView(user: statistic.user)
+            NFTCollectionView(
+                user: statistic.user,
+                nfts: statistic.nfts
+            )
         }
     }
 }
