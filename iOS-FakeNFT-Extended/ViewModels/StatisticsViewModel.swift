@@ -9,17 +9,53 @@ import Observation
 
 @Observable
 final class StatisticsViewModel {
-    // mock данные заменить на реальный код
     var statistics: [UserStatisticItem] = []
 
-    init() {
-        //        self.statistics = []
-        //        loadStatistics()
-        self.statistics = Self.preview.statistics
+    private let userService: UserServiceProtocol
+
+    init(userService: UserServiceProtocol) {
+        self.userService = userService
     }
 
+    // MARK: - Preview init
     fileprivate init(statistics: [UserStatisticItem]) {
         self.statistics = statistics
+        self.userService = PreviewUserService()
+    }
+
+    func loadStatistics() async {
+        do {
+            let users = try await userService.loadUsers()
+
+            let statistics = users
+                .map { user in
+                    UserStatisticItem(
+                        position: 0,
+                        user: UserModel(
+                            avatar: user.avatar,
+                            username: user.name,
+                            bio: user.description ?? "",
+                            userWebSite: user.website
+                        ),
+                        countNft: user.nfts.count
+                    )
+                }
+                .sorted {
+                    $0.countNft > $1.countNft
+                }
+                .enumerated()
+                .map { index, statistic in
+                    UserStatisticItem(
+                        position: index + 1,
+                        user: statistic.user,
+                        countNft: statistic.countNft
+                    )
+                }
+
+            self.statistics = statistics
+        } catch {
+            print("Failed to load statistics: \(error)")
+        }
     }
 
     func sortStatisticsByName(ascending: Bool = true) {
@@ -39,94 +75,13 @@ final class StatisticsViewModel {
     }
 }
 
-// mock - данные
+// MARK: mock - данные
 extension StatisticsViewModel {
     static var preview: StatisticsViewModel {
-        let users: [UserModel] = [
-            UserModel(
-                avatar: "https://i.pravatar.cc/150?img=12",
-                username: "Alex",
-                bio: "Дизайнер из Казани, люблю цифровое искусство и бейглы." +
-                " В моей коллекции уже 100+ NFT,и еще больше — на моём сайте." +
-                " Открыт к коллаборациям.",
-                userWebSite: "https://www.apple.com"
-            ),
-            UserModel(
-                avatar: nil,
-                username: "Igor",
-                bio: "",
-                userWebSite: nil
-            ),
-            UserModel(
-                avatar: nil,
-                username: "Natasha",
-                bio: "",
-                userWebSite: nil
-            ),
-            UserModel(
-                avatar: "imgAvatarPlaceholder",
-                username: "Petr",
-                bio: "",
-                userWebSite: nil
-            ),
-            UserModel(
-                avatar: "imgAvatarPlaceholder",
-                username: "Timothey",
-                bio: "",
-                userWebSite: nil
-            ),
-            UserModel(
-                avatar: "imgAvatarPlaceholder",
-                username: "Olya",
-                bio: "",
-                userWebSite: nil
-            ),
-            UserModel(
-                avatar: "imgAvatarPlaceholder",
-                username: "Zoya",
-                bio: "",
-                userWebSite: nil
-            )
-        ]
-
-        let nftCounts = [
-            ("Zoya", 112),
-            ("Petr", 98),
-            ("Igor", 72),
-            ("Natasha", 71),
-            ("Timothey", 51),
-            ("Alex", 23),
-            ("Olya", 11)
-        ]
-
-        let statistics = users
-            .compactMap { user -> UserStatisticItem? in
-                guard let countNft = nftCounts.first(
-                    where: { $0.0 == user.username }
-                )?.1 else {
-                    return nil
-                }
-
-                return UserStatisticItem(
-                    position: 0,
-                    user: user,
-                    countNft: countNft
-                )
-            }
-            .sorted {
-                $0.countNft > $1.countNft
-            }
-            .enumerated()
-            .map { index, statistic in
-                UserStatisticItem(
-                    position: index + 1,
-                    user: statistic.user,
-                    countNft: statistic.countNft
-                )
-            }
-
-        return StatisticsViewModel(
-            statistics: statistics
+        let viewModel = StatisticsViewModel(
+            userService: PreviewUserService()
         )
+
+        return viewModel
     }
 }

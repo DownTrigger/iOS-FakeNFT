@@ -4,8 +4,19 @@ struct StatisticsView: View {
     @State private var viewModel: StatisticsViewModel
     @State private var isSortSheetPresented = false
 
-    init(viewModel: StatisticsViewModel = StatisticsViewModel()) {
-        _viewModel = State(initialValue: viewModel)
+    @Environment(ServicesAssembly.self)
+
+    private var servicesAssembly
+
+    init(viewModel: StatisticsViewModel? = nil) {
+        _viewModel = State(
+            initialValue:
+                viewModel ?? StatisticsViewModel(
+                    userService: UserServiceImpl(
+                        networkClient: DefaultNetworkClient()
+                    )
+                )
+        )
     }
 
     var body: some View {
@@ -56,6 +67,9 @@ struct StatisticsView: View {
                     }
                 }
             }
+        }
+        .task {
+            await viewModel.loadStatistics()
         }
     }
 }
