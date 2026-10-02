@@ -13,6 +13,8 @@ final class StatisticsViewModel {
 
     private let userService: UserServiceProtocol
 
+    private var isLoaded = false
+
     init(userService: UserServiceProtocol) {
         self.userService = userService
     }
@@ -21,9 +23,14 @@ final class StatisticsViewModel {
     fileprivate init(statistics: [UserStatisticItem]) {
         self.statistics = statistics
         self.userService = PreviewUserService()
+        self.isLoaded = true
     }
 
     func loadStatistics() async {
+        guard !isLoaded else {
+            return
+        }
+
         do {
             let users = try await userService.loadUsers()
 
@@ -53,6 +60,7 @@ final class StatisticsViewModel {
                 }
 
             self.statistics = statistics
+            self.isLoaded = true
         } catch {
             print("Failed to load statistics: \(error)")
         }
@@ -72,6 +80,11 @@ final class StatisticsViewModel {
             keyPath: \.countNft,
             ascending: ascending
         )
+    }
+
+    func resetCache() {
+        statistics = []
+        isLoaded = false
     }
 }
 

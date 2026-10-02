@@ -1,8 +1,23 @@
 import SwiftUI
 
+private enum TabBarItem {
+    case profile
+    case catalog
+    case cart
+    case statistics
+}
+
 struct TabBarView: View {
+    @State private var selectedTab: TabBarItem = .catalog
+
+    @State private var statisticsViewModel = StatisticsViewModel(
+        userService: UserServiceImpl(
+            networkClient: DefaultNetworkClient()
+        )
+    )
+
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             ProfileView()
                 .tabItem {
                     Label {
@@ -11,6 +26,7 @@ struct TabBarView: View {
                         Image(.icTabProfile)
                     }
                 }
+                .tag(TabBarItem.profile)
 
             CatalogSmokeView()
                 .tabItem {
@@ -20,6 +36,7 @@ struct TabBarView: View {
                         Image(.icTabCatalog)
                     }
                 }
+                .tag(TabBarItem.catalog)
 
             CartView()
                 .tabItem {
@@ -29,9 +46,10 @@ struct TabBarView: View {
                         Image(.icTabBasket)
                     }
                 }
+                .tag(TabBarItem.cart)
 
             NavigationStack {
-                StatisticsView()
+                StatisticsView(viewModel: statisticsViewModel)
             }
                 .tabItem {
                     Label {
@@ -40,8 +58,15 @@ struct TabBarView: View {
                         Image(.icTabStatistics)
                     }
                 }
+                .tag(TabBarItem.statistics)
         }
         .tint(Color(.fnBlue))
+            .onChange(of: selectedTab) { oldValue, newValue in
+                if oldValue == .statistics && newValue != .statistics {
+                    print("RESET CACHE")
+                    statisticsViewModel.resetCache()
+                }
+            }
     }
 }
 
