@@ -13,7 +13,8 @@ final class StatisticsViewModel {
 
     private let userService: UserServiceProtocol
 
-    private var isLoaded = false
+    private var isLoaded = false // для кэша
+    var isLoading = false // для индикатора загрузки
 
     init(userService: UserServiceProtocol) {
         self.userService = userService
@@ -27,8 +28,14 @@ final class StatisticsViewModel {
     }
 
     func loadStatistics() async {
-        guard !isLoaded else {
+        guard !isLoaded, !isLoading else {
             return
+        }
+
+        isLoading = true
+
+        defer {
+            isLoading = false
         }
 
         do {

@@ -8,7 +8,7 @@ private enum TabBarItem {
 }
 
 struct TabBarView: View {
-    @State private var selectedTab: TabBarItem = .catalog
+    @State private var selectedTab: TabBarItem = .profile
 
     @State private var statisticsViewModel = StatisticsViewModel(
         userService: UserServiceImpl(
@@ -63,7 +63,6 @@ struct TabBarView: View {
         .tint(Color(.fnBlue))
             .onChange(of: selectedTab) { oldValue, newValue in
                 if oldValue == .statistics && newValue != .statistics {
-                    print("RESET CACHE")
                     statisticsViewModel.resetCache()
                 }
             }

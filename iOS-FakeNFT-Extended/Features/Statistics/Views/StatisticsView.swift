@@ -53,7 +53,6 @@ struct StatisticsView: View {
                 switch option {
                 case .byName:
                     viewModel.sortStatisticsByName()
-
                 case .byRating:
                     viewModel.sortStatisticsByRating()
                 }
@@ -66,6 +65,13 @@ struct StatisticsView: View {
                         isSortSheetPresented = true
                     }
                 }
+            }
+        }
+        .overlay {
+            if viewModel.isLoading {
+                ProgressView()
+                    .tint(.fnText)
+                    .frame(width: 30, height: 30)
             }
         }
         .task {
