@@ -25,7 +25,7 @@ struct NFTCollectionNavigationLink: View {
                         String(nfts.count)
                     )
                 )
-                .font(.bold22)
+                .font(.bold17)
 
                 Spacer()
 
