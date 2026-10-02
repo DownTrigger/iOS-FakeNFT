@@ -10,6 +10,7 @@ import Observation
 @Observable
 final class StatisticsViewModel {
     var statistics: [UserStatisticItem] = []
+    var alert: AlertModel?
 
     private let userService: UserServiceProtocol
 
@@ -69,6 +70,14 @@ final class StatisticsViewModel {
             self.statistics = statistics
             self.isLoaded = true
         } catch {
+            alert = .retryError(
+                title: "Не удалось получить данные",
+                onRetry: {
+                    Task {
+                        await self.loadStatistics()
+                    }
+                }
+            )
             print("Failed to load statistics: \(error)")
         }
     }

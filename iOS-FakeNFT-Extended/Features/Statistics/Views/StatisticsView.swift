@@ -20,6 +20,8 @@ struct StatisticsView: View {
     }
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+
         ScrollView {
             LazyVStack(spacing: 8) {
                 ForEach(viewModel.statistics) { statistic in
@@ -77,6 +79,7 @@ struct StatisticsView: View {
         .task {
             await viewModel.loadStatistics()
         }
+        .appAlert(item: $viewModel.alert)
     }
 }
 
