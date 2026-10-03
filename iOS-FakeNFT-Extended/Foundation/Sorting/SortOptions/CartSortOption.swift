@@ -19,13 +19,13 @@ enum CartSortOption: String, SortOptionProtocol, CaseIterable {
     var title: SortingLocalizedText {
         switch self {
         case .byTitle:
-            return .sortByTitle
+            .sortByTitle
         case .byRating:
-            return .sortByRating
+            .sortByRating
         case .byPrice:
-            return .sortByPrice
+            .sortByPrice
         case .byName:
-            return .sortByName
+            .sortByName
         }
     }
 }

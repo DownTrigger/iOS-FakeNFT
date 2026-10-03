@@ -10,12 +10,13 @@ struct MyNFTsView: View {
     @State private var showSortSheet = false
     @Environment(\.dismiss) private var dismiss
 
-    init(nftIds: [String], likedIds: [String], username: String, nftService: NftService) {
+    init(nftIds: [String], likedIds: [String], username: String, nftService: NftService, userDefaultsService: UserDefaultsService) {
         _viewModel = State(initialValue: MyNFTsViewModel(
             nftIds: nftIds,
             likedIds: likedIds,
             username: username,
-            nftService: nftService
+            nftService: nftService,
+            userDefaultsService: userDefaultsService
         ))
     }
 
@@ -100,7 +101,8 @@ private struct PreviewNftService: NftService {
             nftIds: ["1", "2", "3"],
             likedIds: ["1"],
             username: "John Doe",
-            nftService: PreviewNftService()
+            nftService: PreviewNftService(),
+            userDefaultsService: UserDefaultsServiceImpl()
         )
     }
     .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))

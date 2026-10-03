@@ -33,7 +33,8 @@ struct ProfileView: View {
                     nftIds: nftIds,
                     likedIds: likedIds,
                     username: username,
-                    nftService: services.nftService
+                    nftService: services.nftService,
+                    userDefaultsService: services.userDefaultsService
                 )
             case .editProfile(let user):
                 ProfileEditView(user: user, onSave: viewModel.updateUser)
@@ -57,7 +58,7 @@ struct ProfileView: View {
                     Button {
                         router.push(.editProfile(user: user))
                     } label: {
-                        Image(systemName: "square.and.pencil")
+                        ProfileIcon.editProfile.image
                             .frame(width: 42, height: 42)
                             .foregroundStyle(Color(.fnBlack))
                     }

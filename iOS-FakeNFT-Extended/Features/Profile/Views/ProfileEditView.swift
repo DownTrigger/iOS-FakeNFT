@@ -51,7 +51,7 @@ struct ProfileEditView: View {
                         dismiss()
                     }
                 } label: {
-                    Image(systemName: "chevron.backward")
+                    ProfileIcon.back.image
                         .foregroundStyle(Color(.fnText))
                 }
                 .contentShape(Rectangle())
@@ -94,7 +94,7 @@ struct ProfileEditView: View {
             } label: {
                 avatarImage
                     .overlay(alignment: .bottomTrailing) {
-                        Image(systemName: "camera.fill")
+                        ProfileIcon.camera.image
                             .font(.system(size: 12, weight: .medium))
                             .foregroundStyle(Color(.label))
                             .padding(6)
