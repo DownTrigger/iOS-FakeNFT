@@ -56,6 +56,7 @@ struct MyNFTsView: View {
         ) { option in
             viewModel.setSortOption(option)
         }
+        .toolbar(.hidden, for: .tabBar)
         .background(Color(.fnBackground))
         .task { await viewModel.loadNfts() }
     }
