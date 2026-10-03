@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SortBottomSheet<Option: SortOptionProtocol>: View {
     @Environment(\.colorScheme) private var colorScheme
-    
+
     let screenTitle: ScreenLocalizedText
     let options: [Option]
 

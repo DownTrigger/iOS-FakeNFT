@@ -56,7 +56,8 @@ actor DefaultNetworkClient: NetworkClient {
         urlRequest.httpMethod = request.httpMethod.rawValue
 
         if let rawBody = request.rawBody {
-            urlRequest.setValue(request.contentType ?? "application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            let contentType = request.contentType ?? "application/x-www-form-urlencoded"
+            urlRequest.setValue(contentType, forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = rawBody
         } else if let dto = request.dto,
                   let dtoEncoded = try? encoder.encode(dto) {

@@ -10,10 +10,10 @@ struct UserModel: Decodable, Sendable, Hashable {
     let userWebSite: String?
     let nfts: [String]
     let likes: [String]
-    
+
     var nftCount: Int { nfts.count }
     var favouritesCount: Int { likes.count }
-    
+
     enum CodingKeys: String, CodingKey {
         case avatar
         case username = "name"

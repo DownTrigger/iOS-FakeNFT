@@ -38,9 +38,8 @@ struct ReusableUserInformationView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
     }
-    
+
     private var imagePlaceholder: some View {
         Image(.imgAvatarPlaceholder).resizable().scaledToFill()
     }
 }
-

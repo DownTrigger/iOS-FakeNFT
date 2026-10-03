@@ -10,7 +10,13 @@ struct MyNFTsView: View {
     @State private var showSortSheet = false
     @Environment(\.dismiss) private var dismiss
 
-    init(nftIds: [String], likedIds: [String], username: String, nftService: NftService, userDefaultsService: UserDefaultsService) {
+    init(
+        nftIds: [String],
+        likedIds: [String],
+        username: String,
+        nftService: NftService,
+        userDefaultsService: UserDefaultsService
+    ) {
         _viewModel = State(initialValue: MyNFTsViewModel(
             nftIds: nftIds,
             likedIds: likedIds,
@@ -85,7 +91,7 @@ private struct PreviewNftService: NftService {
     func loadNft(id: String) async throws -> Nft {
         Nft(
             id: id,
-            name: ["April", "Spring", "Lilo"].randomElement()!,
+            name: ["April", "Spring", "Lilo"].randomElement() ?? "April",
             images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")!],
             description: "Test NFT",
             rating: Int.random(in: 1...5),

@@ -10,7 +10,7 @@ struct MyNFTListCell: View {
     let isLiked: Bool
     let username: String
     let onLike: () -> Void
-    
+
     var body: some View {
         HStack(spacing: 12) {
             image
@@ -19,7 +19,7 @@ struct MyNFTListCell: View {
             price
         }
     }
-    
+
     private var image: some View {
         ZStack(alignment: .topTrailing) {
             AsyncImage(url: nft.images.first) { img in
@@ -29,11 +29,11 @@ struct MyNFTListCell: View {
             }
             .frame(width: 108, height: 108)
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            
+
             LikeButton(isLiked: isLiked, action: onLike)
         }
     }
-    
+
     private var info: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(nft.name)
@@ -45,7 +45,7 @@ struct MyNFTListCell: View {
                 .foregroundStyle(Color(.fnText))
         }
     }
-    
+
     private var price: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("Цена")

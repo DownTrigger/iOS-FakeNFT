@@ -20,7 +20,13 @@ final class MyNFTsViewModel {
 
     private static let sortOptionKey = "myNFTs.sortOption"
 
-    init(nftIds: [String], likedIds: [String], username: String, nftService: NftService, userDefaultsService: UserDefaultsService) {
+    init(
+        nftIds: [String],
+        likedIds: [String],
+        username: String,
+        nftService: NftService,
+        userDefaultsService: UserDefaultsService
+    ) {
         let saved = userDefaultsService.string(forKey: Self.sortOptionKey)
         self.sortOption = CartSortOption(rawValue: saved ?? "") ?? .byRating
         self.nftIds = nftIds
@@ -29,7 +35,7 @@ final class MyNFTsViewModel {
         self.nftService = nftService
         self.userDefaultsService = userDefaultsService
     }
-    
+
     var sortedNfts: [Nft] {
         guard case .loaded(let nfts) = state else { return [] }
         switch sortOption {
@@ -38,7 +44,7 @@ final class MyNFTsViewModel {
         case .byName, .byTitle: return sortBy(nfts, keyPath: \.name)
         }
     }
-    
+
     func setSortOption(_ option: CartSortOption) {
         sortOption = option
         userDefaultsService.set(option.rawValue, forKey: Self.sortOptionKey)
@@ -55,7 +61,7 @@ final class MyNFTsViewModel {
             likedIds.insert(nft.id)
         }
     }
-    
+
     func loadNfts() async {
         guard case .idle = state else { return }
         state = .loading
