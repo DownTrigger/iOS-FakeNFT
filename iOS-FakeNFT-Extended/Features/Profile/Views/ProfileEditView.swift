@@ -51,7 +51,7 @@ struct ProfileEditView: View {
                         dismiss()
                     }
                 } label: {
-                    Image(systemName: "chevron.backward")
+                    ProfileIcon.back.image
                         .foregroundStyle(Color(.fnText))
                 }
                 .contentShape(Rectangle())
@@ -94,7 +94,7 @@ struct ProfileEditView: View {
             } label: {
                 avatarImage
                     .overlay(alignment: .bottomTrailing) {
-                        Image(systemName: "camera.fill")
+                        ProfileIcon.camera.image
                             .font(.system(size: 12, weight: .medium))
                             .foregroundStyle(Color(.label))
                             .padding(6)
@@ -142,8 +142,8 @@ struct ProfileEditView: View {
                 username: "Joaquin Phoenix",
                 bio: "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT.",
                 userWebSite: "https://example.com",
-                nftCount: 123,
-                favouritesCount: 11
+                nfts: [],
+                likes: []
             ),
             onSave: { _ in }
         )
