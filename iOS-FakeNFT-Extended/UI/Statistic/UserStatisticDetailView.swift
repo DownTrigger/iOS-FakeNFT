@@ -14,7 +14,7 @@ struct UserStatisticDetailView: View {
         GeometryReader { geometry in
             ZStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 0) {
-                    UserInformationView(user: statistic.user)
+                    ReusableUserInformationView(user: statistic.user)
                         .padding(.top, 20)
 
                     if let website = statistic.user.userWebSite,
