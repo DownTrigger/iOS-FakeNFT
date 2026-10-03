@@ -11,8 +11,6 @@ struct NFTCollectionView: View {
     let user: UserModel
     let nfts: [String]
 
-    @Environment(ServicesAssembly.self) private var services
-
     @State private var viewModel: NFTCollectionViewModel
 
     private let columns = [

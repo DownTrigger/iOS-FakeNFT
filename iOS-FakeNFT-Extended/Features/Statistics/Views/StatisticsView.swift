@@ -1,25 +1,44 @@
 import SwiftUI
 
 struct StatisticsView: View {
-    @State private var viewModel: StatisticsViewModel
+    @State private var viewModel: StatisticsViewModel?
     @State private var isSortSheetPresented = false
 
-    @Environment(ServicesAssembly.self)
+    @Environment(ServicesAssembly.self) private var servicesAssembly
 
-    private var servicesAssembly
+    let isActive: Bool
 
-    init(viewModel: StatisticsViewModel? = nil) {
-        _viewModel = State(
-            initialValue:
-                viewModel ?? StatisticsViewModel(
-                    userService: UserServiceImpl(
-                        networkClient: DefaultNetworkClient()
-                    )
-                )
-        )
+    // для preview
+    init(
+        isActive: Bool = true,
+        viewModel: StatisticsViewModel? = nil
+    ) {
+        self.isActive = isActive
+        _viewModel = State(initialValue: viewModel)
     }
 
     var body: some View {
+        Group {
+            if let viewModel {
+                content(viewModel: viewModel)
+            } else {
+                ProgressView()
+                    .task {
+                        viewModel = StatisticsViewModel(
+                            userService: servicesAssembly.userService
+                        )
+                    }
+            }
+        }
+        .onChange(of: isActive) { oldValue, newValue in
+            if oldValue && !newValue {
+                viewModel?.resetCache()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func content(viewModel: StatisticsViewModel) -> some View {
         @Bindable var viewModel = viewModel
 
         ScrollView {
@@ -84,5 +103,11 @@ struct StatisticsView: View {
 #Preview("Statistics") {
     NavigationStack {
         StatisticsView(viewModel: .preview)
+            .environment(
+                ServicesAssembly(
+                    networkClient: DefaultNetworkClient(),
+                    nftStorage: NftStorageImpl()
+                )
+            )
     }
 }

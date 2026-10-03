@@ -26,13 +26,13 @@ final class NFTCollectionViewModel {
 
         do {
             let responses = try await withThrowingTaskGroup(
-                of: NFTCollectionResponse.self
+                of: Nft.self
             ) { group in
                 for id in nftIDs {
                     group.addTask {
-                        let request = NFTCollectionItemRequest(id: id)
+                        let request = NFTRequest(id: id)
 
-                        let nft: NFTCollectionResponse = try await self.networkClient.send(
+                        let nft: Nft = try await self.networkClient.send(
                             request: request
                         )
 
@@ -40,7 +40,7 @@ final class NFTCollectionViewModel {
                     }
                 }
 
-                var result: [NFTCollectionResponse] = []
+                var result: [Nft] = []
 
                 for try await response in group {
                     result.append(response)

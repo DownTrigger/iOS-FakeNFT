@@ -10,12 +10,6 @@ private enum TabBarItem {
 struct TabBarView: View {
     @State private var selectedTab: TabBarItem = .profile
 
-    @State private var statisticsViewModel = StatisticsViewModel(
-        userService: UserServiceImpl(
-            networkClient: DefaultNetworkClient()
-        )
-    )
-
     var body: some View {
         TabView(selection: $selectedTab) {
             ProfileView()
@@ -53,7 +47,7 @@ struct TabBarView: View {
                 .tag(TabBarItem.cart)
 
             NavigationStack {
-                StatisticsView(viewModel: statisticsViewModel)
+                StatisticsView(isActive: selectedTab == .statistics)
             }
                 .tabItem {
                     Label {
@@ -65,11 +59,6 @@ struct TabBarView: View {
                 .tag(TabBarItem.statistics)
         }
         .tint(Color(.fnBlue))
-            .onChange(of: selectedTab) { oldValue, newValue in
-                if oldValue == .statistics && newValue != .statistics {
-                    statisticsViewModel.resetCache()
-                }
-            }
     }
 }
 
