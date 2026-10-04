@@ -21,6 +21,7 @@ struct FavouriteNFTCell: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16))
 
                 LikeButton(isLiked: model.isLiked, action: onLike)
+                    .offset(x: 6, y: -6)
             }
 
             VStack(alignment: .leading, spacing: 0) {
