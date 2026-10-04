@@ -48,7 +48,7 @@ final class ServicesAssembly {
 
             await likesStorage.saveLikes(profile.likes)
         } catch {
-            print("🔴 FAILED TO LOAD CURRENT USER LIKES:", error)
+            print("Failed to load current user likes:", error)
         }
     }
 }
