@@ -10,6 +10,13 @@ enum CartLocalizedText {
     case delete
     case back
     case deleteError
+    case paymentTitle
+    case agreementText
+    case agreementLink
+    case currenciesLoadError
+    case paymentError
+    case paymentSuccess
+    case backToCart
 
     var key: LocalizedStringKey {
         switch self {
@@ -31,6 +38,20 @@ enum CartLocalizedText {
             "cart.back"
         case .deleteError:
             "cart.deleteError"
+        case .paymentTitle:
+            "cart.paymentTitle"
+        case .agreementText:
+            "cart.agreementText"
+        case .agreementLink:
+            "cart.agreementLink"
+        case .currenciesLoadError:
+            "cart.currenciesLoadError"
+        case .paymentError:
+            "cart.paymentError"
+        case .paymentSuccess:
+            "cart.paymentSuccess"
+        case .backToCart:
+            "cart.backToCart"
         }
     }
 
@@ -54,6 +75,20 @@ enum CartLocalizedText {
             String(localized: "cart.back")
         case .deleteError:
             String(localized: "cart.deleteError")
+        case .paymentTitle:
+            String(localized: "cart.paymentTitle")
+        case .agreementText:
+            String(localized: "cart.agreementText")
+        case .agreementLink:
+            String(localized: "cart.agreementLink")
+        case .currenciesLoadError:
+            String(localized: "cart.currenciesLoadError")
+        case .paymentError:
+            String(localized: "cart.paymentError")
+        case .paymentSuccess:
+            String(localized: "cart.paymentSuccess")
+        case .backToCart:
+            String(localized: "cart.backToCart")
         }
     }
 }
