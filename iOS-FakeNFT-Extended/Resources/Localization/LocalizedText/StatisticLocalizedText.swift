@@ -11,6 +11,7 @@ enum StatisticLocalizedText {
     case title
     case collectionCount
     case openUserWebsite
+    case emptyNftCollection
 
     var key: LocalizedStringKey {
         switch self {
@@ -20,6 +21,8 @@ enum StatisticLocalizedText {
             "nft_collection.count"
         case .openUserWebsite:
             "website.open_user"
+        case .emptyNftCollection:
+            "stat_nft_emptyCollection"
         }
     }
 }

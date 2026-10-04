@@ -31,21 +31,30 @@ struct NFTCollectionView: View {
 
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(viewModel.nftItems) { model in
-                    NftGridCell(
-                        model: model,
-                        onLike: {
-                            // обработка Like
-                        },
-                        onCart: {
-                            // обработка Cart
-                        }
+            if nfts.isEmpty {
+                EmptyStateView(
+                    message: NSLocalizedString(
+                        "stat_nft_emptyCollection", //не могу использовать enum, тк EmptyStateView принимает String
+                        comment: ""
                     )
+                )
+            } else {
+                LazyVGrid(columns: columns, spacing: 16) {
+                    ForEach(viewModel.nftItems) { model in
+                        NftGridCell(
+                            model: model,
+                            onLike: {
+                                // обработка Like
+                            },
+                            onCart: {
+                                // обработка Cart
+                            }
+                        )
+                    }
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 20)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 20)
         }
         .navigationTitle(StatisticLocalizedText.title.key)
         .navigationBarTitleDisplayMode(.inline)
