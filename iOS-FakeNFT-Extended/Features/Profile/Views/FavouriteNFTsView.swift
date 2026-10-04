@@ -60,39 +60,3 @@ struct FavouriteNFTsView: View {
         }
     }
 }
-
-private struct FavouriteNFTCell: View {
-    let model: NftGridCellModel
-    let onLike: () -> Void
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 8) {
-            ZStack(alignment: .topLeading) {
-                AsyncImage(url: model.imageURL) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    Image(.imgNFTPlaceholder).resizable().scaledToFill()
-                }
-                .frame(width: 80, height: 80)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                LikeButton(isLiked: model.isLiked, action: onLike)
-            }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(model.name)
-                    .font(.bold17)
-                    .foregroundStyle(Color(.fnText))
-                    .lineLimit(1)
-
-                RatingView(rating: model.rating)
-
-                Text(model.priceText)
-                    .font(.medium10)
-                    .foregroundStyle(Color(.fnText))
-            }
-
-            Spacer(minLength: 0)
-        }
-    }
-}

@@ -28,13 +28,18 @@ struct ProfileView: View {
         }
         .navigationDestination(for: ProfileRoute.self) { route in
             switch route {
-            case .myNFTs(let nftIds, let likedIds, let username):
+            case .myNFTs(let user):
                 MyNFTsView(
-                    nftIds: nftIds,
-                    likedIds: likedIds,
-                    username: username,
+                    user: user,
                     nftService: services.nftService,
+                    userService: services.userService,
                     userDefaultsService: services.userDefaultsService
+                )
+            case .favouriteNFTs(let user):
+                FavouriteNFTsView(
+                    user: user,
+                    nftService: services.nftService,
+                    userService: services.userService
                 )
             case .editProfile(let user):
                 ProfileEditView(user: user, onSave: viewModel.updateUser)
@@ -90,13 +95,11 @@ struct ProfileView: View {
                 nftCount: user.nftCount,
                 favouritesCount: user.favouritesCount,
                 onMyNFTs: {
-                    router.push(.myNFTs(
-                        nftIds: user.nfts,
-                        likedIds: user.likes,
-                        username: user.username
-                    ))
+                    router.push(.myNFTs(user: user))
                 },
-                onFavouriteNFTs: {}
+                onFavouriteNFTs: {
+                    router.push(.favouriteNFTs(user: user))
+                }
             )
             Spacer()
         }

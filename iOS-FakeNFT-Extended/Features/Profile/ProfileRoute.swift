@@ -1,7 +1,8 @@
 import Foundation
 
 enum ProfileRoute: Hashable {
-    case myNFTs(nftIds: [String], likedIds: [String], username: String)
+    case myNFTs(user: UserModel)
+    case favouriteNFTs(user: UserModel)
     case editProfile(user: UserModel)
     case website(url: URL)
 }

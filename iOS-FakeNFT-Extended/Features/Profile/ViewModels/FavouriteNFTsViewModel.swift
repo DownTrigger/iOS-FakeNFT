@@ -6,7 +6,7 @@ import Observation
 final class FavouriteNFTsViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
     private var likedIds: Set<String>
-    private let user: UserModel
+    private var user: UserModel
     private let nftService: NftService
     private let userService: UserService
 
@@ -59,9 +59,12 @@ final class FavouriteNFTsViewModel {
         guard case .idle = state else { return }
         state = .loading
         do {
+            let currentUser = try await userService.loadUser()
+            user = currentUser
+            likedIds = Set(currentUser.likes)
             var loaded: [Nft] = []
             try await withThrowingTaskGroup(of: Nft.self) { group in
-                for id in user.likes {
+                for id in currentUser.likes {
                     group.addTask { try await self.nftService.loadNft(id: id) }
                 }
                 for try await nft in group {
