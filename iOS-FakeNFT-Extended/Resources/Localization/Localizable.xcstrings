@@ -113,6 +113,38 @@
         }
       }
     },
+    "Catalog.collectionAuthor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collection author:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Автор коллекции:"
+          }
+        }
+      }
+    },
+    "Catalog.collectionEmpty" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No NFTs in this collection yet"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В коллекции пока нет NFT"
+          }
+        }
+      }
+    },
     "Catalog.empty" : {
       "localizations" : {
         "en" : {

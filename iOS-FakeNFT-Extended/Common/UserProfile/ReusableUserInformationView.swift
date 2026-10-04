@@ -16,7 +16,10 @@ struct ReusableUserInformationView: View {
 
                 if let avatar = user.avatar, !avatar.isEmpty, let url = URL(string: avatar) {
                     AsyncImage(url: url)
-                        .frame(width: ReusableUserInformationView.imageSize, height: ReusableUserInformationView.imageSize)
+                        .frame(
+                            width: ReusableUserInformationView.imageSize,
+                            height: ReusableUserInformationView.imageSize
+                        )
                         .clipShape(Circle())
                 }
 
@@ -31,4 +34,3 @@ struct ReusableUserInformationView: View {
         .padding(.horizontal, 16)
     }
 }
-
