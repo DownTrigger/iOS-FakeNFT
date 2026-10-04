@@ -64,7 +64,8 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
             .background(
                 colorScheme == .light
                 ? AnyShapeStyle(.background)
-                : AnyShapeStyle(.fnSheetBackground))
+                : AnyShapeStyle(.fnSheetBackground)
+            )
             .clipShape(RoundedRectangle(cornerRadius: 13))
         }
         .padding(.horizontal, 8)

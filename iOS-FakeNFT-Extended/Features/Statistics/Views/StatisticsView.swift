@@ -1,29 +1,57 @@
 import SwiftUI
 
 struct StatisticsView: View {
-    @State private var viewModel: StatisticsViewModel
+    @State private var viewModel: StatisticsViewModel?
     @State private var isSortSheetPresented = false
 
-    init(viewModel: StatisticsViewModel = StatisticsViewModel()) {
+    @Environment(ServicesAssembly.self) private var servicesAssembly
+
+    let isActive: Bool
+
+    // для preview
+    init(
+        isActive: Bool = true,
+        viewModel: StatisticsViewModel? = nil
+    ) {
+        self.isActive = isActive
         _viewModel = State(initialValue: viewModel)
     }
 
     var body: some View {
+        Group {
+            if let viewModel {
+                content(viewModel: viewModel)
+            } else {
+                ProgressView()
+                    .task {
+                        viewModel = StatisticsViewModel(
+                            userService: servicesAssembly.userService
+                        )
+                    }
+            }
+        }
+        .onChange(of: isActive) { oldValue, newValue in
+            if oldValue && !newValue {
+                viewModel?.resetCache()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func content(viewModel: StatisticsViewModel) -> some View {
+        @Bindable var viewModel = viewModel
+
         ScrollView {
             LazyVStack(spacing: 8) {
                 ForEach(viewModel.statistics) { statistic in
                     NavigationLink {
-                        UserStatisticDetailView(
-                            user: statistic.user
-                        )
+                        UserStatisticDetailView(statistic: statistic)
                     } label: {
                         UserStatisticView(
                             position: statistic.position,
                             name: statistic.user.username,
-                            avatar: Image(
-                                statistic.user.avatar ?? "imgAvatarPlaceholder"
-                            ),
-                            countNft: statistic.countNft
+                            avatar: statistic.user.avatar,
+                            countNft: statistic.nfts.count
                         )
                     }
                     .buttonStyle(.plain)
@@ -44,7 +72,6 @@ struct StatisticsView: View {
                 switch option {
                 case .byName:
                     viewModel.sortStatisticsByName()
-
                 case .byRating:
                     viewModel.sortStatisticsByRating()
                 }
@@ -59,11 +86,28 @@ struct StatisticsView: View {
                 }
             }
         }
+        .overlay {
+            if viewModel.isLoading {
+                ProgressView()
+                    .tint(.fnText)
+                    .frame(width: 30, height: 30)
+            }
+        }
+        .task {
+            await viewModel.loadStatistics()
+        }
+        .appAlert(item: $viewModel.alert)
     }
 }
 
 #Preview("Statistics") {
     NavigationStack {
         StatisticsView(viewModel: .preview)
+            .environment(
+                ServicesAssembly(
+                    networkClient: DefaultNetworkClient(),
+                    nftStorage: NftStorageImpl()
+                )
+            )
     }
 }

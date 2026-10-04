@@ -9,13 +9,11 @@ import SwiftUI
 
 struct NFTCollectionNavigationLink: View {
     let user: UserModel
-
-    // Временно для разработки экрана
-    private let nftCount = 3
+    let nfts: [String]
 
     var body: some View {
         NavigationLink {
-            NFTCollectionView(user: user)
+            NFTCollectionView(user: user, nfts: nfts)
         } label: {
             HStack {
                 Text(
@@ -24,10 +22,10 @@ struct NFTCollectionNavigationLink: View {
                             "nft_collection.count",
                             comment: ""
                         ),
-                        "\(nftCount)" // позже заменить на user.nftCollection.count
+                        String(nfts.count)
                     )
                 )
-                .font(.bold22)
+                .font(.bold17)
 
                 Spacer()
 
@@ -47,7 +45,10 @@ struct NFTCollectionNavigationLink: View {
         if let statistic = StatisticsViewModel.preview.statistics.first(
             where: { $0.user.username == "Alex" }
         ) {
-            NFTCollectionNavigationLink(user: statistic.user)
+            NFTCollectionNavigationLink(
+                user: statistic.user,
+                nfts: statistic.nfts
+            )
         }
     }
 }

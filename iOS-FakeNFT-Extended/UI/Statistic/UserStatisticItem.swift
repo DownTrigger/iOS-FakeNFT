@@ -11,5 +11,5 @@ struct UserStatisticItem: Identifiable {
     let id = UUID()
     let position: Int
     let user: UserModel
-    let countNft: Int
+    let nfts: [String]
 }

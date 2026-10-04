@@ -1,8 +1,17 @@
 import SwiftUI
 
+private enum TabBarItem {
+    case profile
+    case catalog
+    case cart
+    case statistics
+}
+
 struct TabBarView: View {
+    @State private var selectedTab: TabBarItem = .profile
+
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             ProfileView()
                 .tabItem {
                     Label {
@@ -11,8 +20,11 @@ struct TabBarView: View {
                         Image(.icTabProfile)
                     }
                 }
+                .tag(TabBarItem.profile)
 
-            CatalogSmokeView()
+            NavigationStack {
+                CatalogSmokeView()
+            }
                 .tabItem {
                     Label {
                         Text(TabLocalizedText.catalog.key)
@@ -20,8 +32,11 @@ struct TabBarView: View {
                         Image(.icTabCatalog)
                     }
                 }
+                .tag(TabBarItem.catalog)
 
-            CartView()
+            NavigationStack {
+                CartView()
+            }
                 .tabItem {
                     Label {
                         Text(TabLocalizedText.cart.key)
@@ -29,9 +44,10 @@ struct TabBarView: View {
                         Image(.icTabBasket)
                     }
                 }
+                .tag(TabBarItem.cart)
 
             NavigationStack {
-                StatisticsView()
+                StatisticsView(isActive: selectedTab == .statistics)
             }
                 .tabItem {
                     Label {
@@ -40,6 +56,7 @@ struct TabBarView: View {
                         Image(.icTabStatistics)
                     }
                 }
+                .tag(TabBarItem.statistics)
         }
         .tint(Color(.fnBlue))
     }
