@@ -12,7 +12,7 @@ struct WebsiteNavigationButton: View {
 
     var body: some View {
         NavigationLink {
-            // WebView(url: url) Саша загрузит в девелоп общий WebView
+            WebViewScreen(url: url)
         } label: {
             Text(StatisticLocalizedText.openUserWebsite.key)
                 .font(.system(size: 15, weight: .regular))
