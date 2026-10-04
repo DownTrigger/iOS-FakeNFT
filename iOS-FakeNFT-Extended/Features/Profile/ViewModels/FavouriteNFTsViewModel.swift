@@ -1,57 +1,41 @@
-//
-//  MyNFTsViewModel.swift
-//  iOS-FakeNFT-Extended
-//
-
 import Foundation
 import Observation
 
 @MainActor
 @Observable
-final class MyNFTsViewModel {
+final class FavouriteNFTsViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
-    private(set) var sortOption: CartSortOption
-
-    private let user: UserModel
     private var likedIds: Set<String>
-    var username: String { user.username }
+    private let user: UserModel
     private let nftService: NftService
     private let userService: UserService
-    private let userDefaultsService: UserDefaultsService
 
-    private static let sortOptionKey = "myNFTs.sortOption"
-
-    init(
-        user: UserModel,
-        nftService: NftService,
-        userService: UserService,
-        userDefaultsService: UserDefaultsService
-    ) {
-        let saved = userDefaultsService.string(forKey: Self.sortOptionKey)
-        self.sortOption = CartSortOption(rawValue: saved ?? "") ?? .byRating
+    init(user: UserModel, nftService: NftService, userService: UserService) {
         self.user = user
         self.likedIds = Set(user.likes)
         self.nftService = nftService
         self.userService = userService
-        self.userDefaultsService = userDefaultsService
     }
 
-    var sortedNfts: [Nft] {
+    var displayedNfts: [Nft] {
         guard case .loaded(let nfts) = state else { return [] }
-        switch sortOption {
-        case .byPrice:          return sortBy(nfts, keyPath: \.price)
-        case .byRating:         return sortBy(nfts, keyPath: \.rating)
-        case .byName, .byTitle: return sortBy(nfts, keyPath: \.name)
-        }
-    }
-
-    func setSortOption(_ option: CartSortOption) {
-        sortOption = option
-        userDefaultsService.set(option.rawValue, forKey: Self.sortOptionKey)
+        return nfts.filter { likedIds.contains($0.id) }
     }
 
     func isLiked(_ nft: Nft) -> Bool {
         likedIds.contains(nft.id)
+    }
+
+    func cellModel(for nft: Nft) -> NftGridCellModel {
+        NftGridCellModel(
+            id: nft.id,
+            imageURL: nft.images.first,
+            name: nft.name,
+            rating: nft.rating,
+            priceText: PriceFormatter.string(from: nft.price),
+            isLiked: isLiked(nft),
+            isInCart: false
+        )
     }
 
     func toggleLike(_ nft: Nft) {
@@ -77,10 +61,8 @@ final class MyNFTsViewModel {
         do {
             var loaded: [Nft] = []
             try await withThrowingTaskGroup(of: Nft.self) { group in
-                for id in user.nfts {
-                    group.addTask {
-                        try await self.nftService.loadNft(id: id)
-                    }
+                for id in user.likes {
+                    group.addTask { try await self.nftService.loadNft(id: id) }
                 }
                 for try await nft in group {
                     loaded.append(nft)
