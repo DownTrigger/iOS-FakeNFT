@@ -20,7 +20,10 @@ final class NFTCollectionViewModel {
         self.networkClient = networkClient
     }
 
-    func load(nftIDs: [String]) async {
+    func load(
+        nftIDs: [String],
+        isLiked: @escaping (String) async -> Bool
+    ) async {
         isLoading = true
         error = nil
 
@@ -48,20 +51,29 @@ final class NFTCollectionViewModel {
 
                 return result
             }
+            
+            var items: [NftGridCellModel] = []
 
-            nftItems = responses.map { nft in
-                NftGridCellModel(
+            for nft in responses {
+                let liked = await isLiked(nft.id)
+
+                let item = NftGridCellModel(
                     id: nft.id,
                     imageURL: nft.images.first,
                     name: nft.name,
                     rating: nft.rating,
                     priceText: "\(nft.price)",
-                    isLiked: false,
+                    isLiked: liked,
                     isInCart: false
                 )
+
+                items.append(item)
             }
+
+            nftItems = items
         } catch {
             self.error = error
+            print("NFT load error:", error)
         }
 
         isLoading = false

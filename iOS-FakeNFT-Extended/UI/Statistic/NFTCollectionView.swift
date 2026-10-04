@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NFTCollectionView: View {
+    @Environment(ServicesAssembly.self) private var services
+
     let user: UserModel
     let nfts: [String]
 
@@ -61,7 +63,12 @@ struct NFTCollectionView: View {
         .navigationBarBackButtonHidden(false)
         .toolbar(.hidden, for: .tabBar)
         .task {
-            await viewModel.load(nftIDs: nfts)
+            await viewModel.load(
+                nftIDs: nfts,
+                isLiked: { nftID in
+                    await services.isLiked(nftID: nftID)
+                }
+            )
         }
         .overlay {
             if viewModel.isLoading {

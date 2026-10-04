@@ -106,7 +106,8 @@ struct StatisticsView: View {
             .environment(
                 ServicesAssembly(
                     networkClient: DefaultNetworkClient(),
-                    nftStorage: NftStorageImpl()
+                    nftStorage: NftStorageImpl(),
+                    likesStorage: LikesStorageImpl()
                 )
             )
     }

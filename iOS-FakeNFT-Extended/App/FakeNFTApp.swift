@@ -9,7 +9,13 @@ struct FakeNFTApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
+                .environment(
+                    ServicesAssembly(
+                        networkClient: DefaultNetworkClient(),
+                        nftStorage: NftStorageImpl(),
+                        likesStorage: LikesStorageImpl()
+                    )
+                )
         }
     }
 }
