@@ -67,6 +67,9 @@ struct NFTCollectionView: View {
                 nftIDs: nfts,
                 isLiked: { nftID in
                     await services.isLiked(nftID: nftID)
+                },
+                isInCart: { nftID in
+                    await services.isInCart(nftID: nftID)
                 }
             )
         }

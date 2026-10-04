@@ -22,7 +22,8 @@ final class NFTCollectionViewModel {
 
     func load(
         nftIDs: [String],
-        isLiked: @escaping (String) async -> Bool
+        isLiked: @escaping (String) async -> Bool,
+        isInCart: @escaping (String) async -> Bool
     ) async {
         isLoading = true
         error = nil
@@ -51,11 +52,12 @@ final class NFTCollectionViewModel {
 
                 return result
             }
-            
+
             var items: [NftGridCellModel] = []
 
             for nft in responses {
                 let liked = await isLiked(nft.id)
+                let inCart = await isInCart(nft.id)
 
                 let item = NftGridCellModel(
                     id: nft.id,
@@ -64,7 +66,7 @@ final class NFTCollectionViewModel {
                     rating: nft.rating,
                     priceText: "\(nft.price)",
                     isLiked: liked,
-                    isInCart: false
+                    isInCart: inCart
                 )
 
                 items.append(item)

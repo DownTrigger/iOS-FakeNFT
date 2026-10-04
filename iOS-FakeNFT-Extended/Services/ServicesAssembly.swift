@@ -41,6 +41,11 @@ final class ServicesAssembly {
         await likesStorage.isLiked(nftID: nftID)
     }
 
+    func isInCart(nftID: String) async -> Bool {
+        // TODO: Добавить обработку из эпика Корзина, временно для всех false
+        false
+    }
+
     // TODO: временный код, заменить на данные модуля авторизации
     func loadCurrentUserLikes() async {
         do {
