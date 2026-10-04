@@ -6,6 +6,10 @@ enum CartLocalizedText {
     case toPayment
     case loadError
     case nftCount(Int)
+    case deleteConfirmation
+    case delete
+    case back
+    case deleteError
 
     var key: LocalizedStringKey {
         switch self {
@@ -19,6 +23,14 @@ enum CartLocalizedText {
             "cart.loadError"
         case .nftCount(let count):
             "cart.nftCount \(count)"
+        case .deleteConfirmation:
+            "cart.deleteConfirmation"
+        case .delete:
+            "cart.delete"
+        case .back:
+            "cart.back"
+        case .deleteError:
+            "cart.deleteError"
         }
     }
 
@@ -34,6 +46,14 @@ enum CartLocalizedText {
             String(localized: "cart.loadError")
         case .nftCount(let count):
             String(localized: "cart.nftCount \(count)")
+        case .deleteConfirmation:
+            String(localized: "cart.deleteConfirmation")
+        case .delete:
+            String(localized: "cart.delete")
+        case .back:
+            String(localized: "cart.back")
+        case .deleteError:
+            String(localized: "cart.deleteError")
         }
     }
 }
