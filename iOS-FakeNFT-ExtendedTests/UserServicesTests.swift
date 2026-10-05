@@ -222,4 +222,16 @@ final class UserOrderServiceTests: XCTestCase {
             XCTAssertEqual(client.requests.count, 2)
         }
     }
+
+    func testClearOrderSendsEmptyPut() async throws {
+        let client = NetworkClientMock()
+        client.responses = [.success(orderJSON(nfts: []))]
+        let service = UserOrderServiceImpl(networkClient: client)
+
+        let result = try await service.clearOrder()
+
+        XCTAssertTrue(result.nfts.isEmpty)
+        XCTAssertEqual(client.requests.map(\.httpMethod), [.put])
+        XCTAssertEqual(client.requests.last?.rawBody, Data())
+    }
 }
