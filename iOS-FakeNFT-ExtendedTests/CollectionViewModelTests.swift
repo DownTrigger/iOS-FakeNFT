@@ -250,6 +250,10 @@ private struct UserProfileServiceStub: UserProfileService {
             likes: change.apply(to: likes)
         )
     }
+
+    func updateProfile(name: String, description: String, avatar: String?, website: String?) async throws -> UserProfile {
+        try await loadProfile()
+    }
 }
 
 private struct UserOrderServiceStub: UserOrderService {
@@ -265,6 +269,10 @@ private struct UserOrderServiceStub: UserOrderService {
             throw updateError
         }
         return UserOrder(id: "1", nfts: change.apply(to: nfts))
+    }
+
+    func clearOrder() async throws -> UserOrder {
+        UserOrder(id: "1", nfts: [])
     }
 }
 

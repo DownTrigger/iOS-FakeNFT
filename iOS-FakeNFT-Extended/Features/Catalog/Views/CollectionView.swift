@@ -102,6 +102,15 @@ private struct PreviewUserProfileService: UserProfileService {
     func updateLikes(_ change: IdChange) async throws -> UserProfile {
         try await loadProfile()
     }
+
+    func updateProfile(
+        name: String,
+        description: String,
+        avatar: String?,
+        website: String?
+    ) async throws -> UserProfile {
+        try await loadProfile()
+    }
 }
 
 private struct PreviewUserOrderService: UserOrderService {
@@ -111,6 +120,10 @@ private struct PreviewUserOrderService: UserOrderService {
 
     func updateNfts(_ change: IdChange) async throws -> UserOrder {
         try await loadOrder()
+    }
+
+    func clearOrder() async throws -> UserOrder {
+        UserOrder(id: "1", nfts: [])
     }
 }
 

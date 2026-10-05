@@ -159,6 +159,17 @@ final class UserProfileServiceTests: XCTestCase {
             XCTAssertEqual(client.requests.count, 2)
         }
     }
+
+    func testUpdateProfileKeepsCurrentLikes() async throws {
+        let client = NetworkClientMock()
+        client.responses = [.success(profileJSON(likes: ["a"])), .success(profileJSON(likes: ["a"]))]
+        let service = UserProfileServiceImpl(networkClient: client)
+
+        _ = try await service.updateProfile(name: "New", description: "Bio", avatar: nil, website: "site")
+
+        XCTAssertEqual(client.requests.map(\.httpMethod), [.get, .put])
+        XCTAssertEqual(string(client.requests.last?.rawBody), "name=New&description=Bio&avatar=&website=site&likes=a")
+    }
 }
 
 final class UserOrderServiceTests: XCTestCase {
@@ -210,5 +221,17 @@ final class UserOrderServiceTests: XCTestCase {
         } catch {
             XCTAssertEqual(client.requests.count, 2)
         }
+    }
+
+    func testClearOrderSendsEmptyPut() async throws {
+        let client = NetworkClientMock()
+        client.responses = [.success(orderJSON(nfts: []))]
+        let service = UserOrderServiceImpl(networkClient: client)
+
+        let result = try await service.clearOrder()
+
+        XCTAssertTrue(result.nfts.isEmpty)
+        XCTAssertEqual(client.requests.map(\.httpMethod), [.put])
+        XCTAssertEqual(client.requests.last?.rawBody, Data())
     }
 }

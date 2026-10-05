@@ -57,11 +57,7 @@ final class UserState {
                 async let profile = profileService.loadProfile()
                 async let order = orderService.loadOrder()
                 let (likes, cart) = try await (Set(profile.likes), Set(order.nfts))
-                likesResource.confirmed = likes
-                likesResource.visible = Self.applying(likesResource.pending, to: likes)
-                cartResource.confirmed = cart
-                cartResource.visible = Self.applying(cartResource.pending, to: cart)
-                isLoaded = true
+                apply(likes: likes, cart: cart)
                 loadTask = nil
             } catch {
                 loadTask = nil
@@ -70,6 +66,13 @@ final class UserState {
         }
         loadTask = task
         try await task.value
+    }
+
+    func refresh() async throws {
+        async let profile = profileService.loadProfile()
+        async let order = orderService.loadOrder()
+        let (likes, cart) = try await (Set(profile.likes), Set(order.nfts))
+        apply(likes: likes, cart: cart)
     }
 
     func toggleLike(_ id: String) async throws {
@@ -118,6 +121,14 @@ final class UserState {
         }
         self[keyPath: keyPath].tail = task
         try await task.value
+    }
+
+    private func apply(likes: Set<String>, cart: Set<String>) {
+        likesResource.confirmed = likes
+        likesResource.visible = Self.applying(likesResource.pending, to: likes)
+        cartResource.confirmed = cart
+        cartResource.visible = Self.applying(cartResource.pending, to: cart)
+        isLoaded = true
     }
 
     private static func applying(_ pending: [String: Bool], to ids: Set<String>) -> Set<String> {
