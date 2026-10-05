@@ -164,6 +164,18 @@ final class UserStateTests: XCTestCase {
         XCTAssertEqual(state.likes, ["x", "a"])
     }
 
+    func testRefreshReloadsLikesAndCart() async throws {
+        let profile = ProfileServiceStub(load: [.success(["a"]), .success(["b"])])
+        let order = OrderServiceStub(load: [.success(["x"]), .success([])])
+        let state = UserState(profileService: profile, orderService: order)
+        try await state.loadIfNeeded()
+
+        try await state.refresh()
+
+        XCTAssertEqual(state.likes, ["b"])
+        XCTAssertTrue(state.cart.isEmpty)
+    }
+
     func testToggleLikeIsOptimisticUntilResponse() async throws {
         let (state, profile, _) = try await loaded()
 
