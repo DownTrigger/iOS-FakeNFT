@@ -129,6 +129,19 @@ final class CollectionViewModelTests: XCTestCase {
         XCTAssertNotNil(viewModel.alert)
         XCTAssertTrue(viewModel.cells.isEmpty)
     }
+
+    func testToggleLikeSuccessUpdatesCell() async {
+        // Given
+        let viewModel = makeViewModel(collection: .stub(nfts: ["1"]), service: NftServiceStub())
+        await viewModel.loadNfts()
+
+        // When
+        await viewModel.toggleLike("1")
+
+        // Then
+        XCTAssertEqual(viewModel.cells.map(\.isLiked), [true])
+        XCTAssertNil(viewModel.alert)
+    }
 }
 
 private struct UserProfileServiceStub: UserProfileService {
@@ -143,7 +156,10 @@ private struct UserProfileServiceStub: UserProfileService {
     }
 
     func updateLikes(_ change: IdChange) async throws -> UserProfile {
-        try await loadProfile()
+        UserProfile(
+            id: "1", name: "Name", description: "", website: nil, avatar: nil, nfts: [],
+            likes: change.apply(to: likes)
+        )
     }
 }
 

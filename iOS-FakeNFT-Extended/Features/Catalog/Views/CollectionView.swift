@@ -58,7 +58,11 @@ struct CollectionView: View {
         } else {
             LazyVGrid(columns: Self.columns, spacing: 8) {
                 ForEach(viewModel.cells) { cell in
-                    NftGridCell(model: cell, onLike: {}, onCart: {})
+                    NftGridCell(
+                        model: cell,
+                        onLike: { Task { await viewModel.toggleLike(cell.id) } },
+                        onCart: {}
+                    )
                 }
             }
             .padding(.horizontal, 16)
