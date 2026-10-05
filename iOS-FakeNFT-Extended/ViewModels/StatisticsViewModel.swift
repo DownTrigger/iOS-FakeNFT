@@ -29,9 +29,7 @@ final class StatisticsViewModel {
     }
 
     func loadStatistics() async {
-        guard !isLoaded, !isLoading else {
-            return
-        }
+        guard !isLoaded, !isLoading else { return }
 
         isLoading = true
 
@@ -41,37 +39,13 @@ final class StatisticsViewModel {
 
         do {
             let users = try await userService.loadUsers()
-
-            let statistics = users
-                .map { user in
-                    UserStatisticItem(
-                        position: 0,
-                        user: UserModel(
-                            avatar: user.avatar,
-                            username: user.name,
-                            bio: user.description ?? "",
-                            userWebSite: user.website
-                        ),
-                        nfts: user.nfts
-                    )
-                }
-                .sorted {
-                    $0.nfts.count > $1.nfts.count
-                }
-                .enumerated()
-                .map { index, statistic in
-                    UserStatisticItem(
-                        position: index + 1,
-                        user: statistic.user,
-                        nfts: statistic.nfts
-                    )
-                }
-
-            self.statistics = statistics
-            self.isLoaded = true
+            statistics = makeStatistics(from: users)
+            isLoaded = true
+        } catch is CancellationError {
+            return
         } catch {
             alert = .retryError(
-                title: "Не удалось получить данные",
+                title: String(localized: "stat_load_error"),
                 onRetry: {
                     Task {
                         await self.loadStatistics()
@@ -79,6 +53,34 @@ final class StatisticsViewModel {
                 }
             )
             print("Failed to load statistics: \(error)")
+        }
+    }
+
+    func refreshStatistics() async {
+        guard !isLoading else { return }
+
+        isLoading = true
+
+        defer {
+            isLoading = false
+        }
+
+        do {
+            let users = try await userService.loadUsers()
+            statistics = makeStatistics(from: users)
+            isLoaded = true
+        } catch is CancellationError {
+            return
+        } catch {
+            alert = .retryError(
+                title: String(localized: "stat_refresh_error"),
+                onRetry: {
+                    Task {
+                        await self.refreshStatistics()
+                    }
+                }
+            )
+            print("Failed to refresh statistics: \(error)")
         }
     }
 
@@ -101,6 +103,33 @@ final class StatisticsViewModel {
     func resetCache() {
         statistics = []
         isLoaded = false
+    }
+
+    private func makeStatistics(from users: [UserResponse]) -> [UserStatisticItem] {
+        users
+            .map { user in
+                UserStatisticItem(
+                    position: 0,
+                    user: UserModel(
+                        avatar: user.avatar,
+                        username: user.name,
+                        bio: user.description ?? "",
+                        userWebSite: user.website
+                    ),
+                    nfts: user.nfts
+                )
+            }
+            .sorted {
+                $0.nfts.count > $1.nfts.count
+            }
+            .enumerated()
+            .map { index, statistic in
+                UserStatisticItem(
+                    position: index + 1,
+                    user: statistic.user,
+                    nfts: statistic.nfts
+                )
+            }
     }
 }
 

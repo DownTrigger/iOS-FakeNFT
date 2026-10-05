@@ -62,6 +62,9 @@ struct StatisticsView: View {
             .padding(.bottom, 8)
         }
         .background(.background)
+        .refreshable {
+            await viewModel.refreshStatistics()
+        }
         .sortSheet(
             isPresented: $isSortSheetPresented,
             options: [
