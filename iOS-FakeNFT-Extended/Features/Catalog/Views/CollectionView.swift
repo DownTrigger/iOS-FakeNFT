@@ -5,6 +5,7 @@ struct CollectionView: View {
 
     @Environment(Router<CatalogRoute>.self) private var router
     @State private var viewModel: CollectionViewModel
+    @State private var selectedCell: NftGridCellModel?
 
     init(collection: NftCollection, nftService: NftService, userState: UserState) {
         _viewModel = State(initialValue: CollectionViewModel(
@@ -40,6 +41,9 @@ struct CollectionView: View {
         }
         .task { await viewModel.loadNfts() }
         .appAlert(item: $viewModel.alert)
+        .sheet(item: $selectedCell) { cell in
+            NftDetailSmokeView(nftId: cell.id)
+        }
     }
 
     private func openAuthorWebsite() {
@@ -63,6 +67,8 @@ struct CollectionView: View {
                         onLike: { Task { await viewModel.toggleLike(cell.id) } },
                         onCart: { Task { await viewModel.toggleCart(cell.id) } }
                     )
+                    .contentShape(Rectangle())
+                    .onTapGesture { selectedCell = cell }
                 }
             }
             .padding(.horizontal, 16)
