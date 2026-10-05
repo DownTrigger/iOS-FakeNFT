@@ -6,8 +6,12 @@ struct CollectionView: View {
     @Environment(Router<CatalogRoute>.self) private var router
     @State private var viewModel: CollectionViewModel
 
-    init(collection: NftCollection, nftService: NftService) {
-        _viewModel = State(initialValue: CollectionViewModel(collection: collection, nftService: nftService))
+    init(collection: NftCollection, nftService: NftService, userState: UserState) {
+        _viewModel = State(initialValue: CollectionViewModel(
+            collection: collection,
+            nftService: nftService,
+            userState: userState
+        ))
     }
 
     var body: some View {
@@ -80,6 +84,26 @@ private struct PreviewNftService: NftService {
     }
 }
 
+private struct PreviewUserProfileService: UserProfileService {
+    func loadProfile() async throws -> UserProfile {
+        UserProfile(id: "1", name: "Name", description: "", website: nil, avatar: nil, nfts: [], likes: ["1", "3"])
+    }
+
+    func updateLikes(_ change: IdChange) async throws -> UserProfile {
+        try await loadProfile()
+    }
+}
+
+private struct PreviewUserOrderService: UserOrderService {
+    func loadOrder() async throws -> UserOrder {
+        UserOrder(id: "1", nfts: ["2"])
+    }
+
+    func updateNfts(_ change: IdChange) async throws -> UserOrder {
+        try await loadOrder()
+    }
+}
+
 #Preview {
     let collection = NftCollection(
         id: "1",
@@ -91,7 +115,11 @@ private struct PreviewNftService: NftService {
         website: "https://fakenfts.org/"
     )
     NavigationStack {
-        CollectionView(collection: collection, nftService: PreviewNftService())
+        CollectionView(
+            collection: collection,
+            nftService: PreviewNftService(),
+            userState: UserState(profileService: PreviewUserProfileService(), orderService: PreviewUserOrderService())
+        )
     }
     .environment(Router<CatalogRoute>())
 }

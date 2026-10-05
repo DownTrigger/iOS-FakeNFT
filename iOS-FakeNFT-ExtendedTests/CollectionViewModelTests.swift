@@ -4,10 +4,24 @@ import XCTest
 @MainActor
 final class CollectionViewModelTests: XCTestCase {
 
+    private func makeViewModel(
+        collection: NftCollection,
+        service: NftService,
+        likes: [String] = [],
+        cart: [String] = [],
+        profileError: Error? = nil
+    ) -> CollectionViewModel {
+        let userState = UserState(
+            profileService: UserProfileServiceStub(likes: likes, error: profileError),
+            orderService: UserOrderServiceStub(nfts: cart)
+        )
+        return CollectionViewModel(collection: collection, nftService: service, userState: userState)
+    }
+
     func testLoadNftsKeepsCollectionOrder() async {
         // Given
         let service = NftServiceStub(delays: ["1": 30, "2": 20, "3": 10])
-        let viewModel = CollectionViewModel(collection: .stub(nfts: ["1", "2", "3"]), nftService: service)
+        let viewModel = makeViewModel(collection: .stub(nfts: ["1", "2", "3"]), service: service)
 
         // When
         await viewModel.loadNfts()
@@ -20,7 +34,7 @@ final class CollectionViewModelTests: XCTestCase {
     func testLoadNftsFailureSetsFailedStateAndShowsAlert() async {
         // Given
         let service = NftServiceStub(error: NetworkClientError.urlSessionError)
-        let viewModel = CollectionViewModel(collection: .stub(nfts: ["1"]), nftService: service)
+        let viewModel = makeViewModel(collection: .stub(nfts: ["1"]), service: service)
 
         // When
         await viewModel.loadNfts()
@@ -36,7 +50,7 @@ final class CollectionViewModelTests: XCTestCase {
     func testLoadNftsCancellationDoesNotShowAlert() async {
         // Given
         let service = NftServiceStub(error: CancellationError())
-        let viewModel = CollectionViewModel(collection: .stub(nfts: ["1"]), nftService: service)
+        let viewModel = makeViewModel(collection: .stub(nfts: ["1"]), service: service)
 
         // When
         await viewModel.loadNfts()
@@ -51,7 +65,7 @@ final class CollectionViewModelTests: XCTestCase {
     func testLoadNftsDoesNotReloadLoadedNfts() async {
         // Given
         let service = NftServiceStub()
-        let viewModel = CollectionViewModel(collection: .stub(nfts: ["1", "2"]), nftService: service)
+        let viewModel = makeViewModel(collection: .stub(nfts: ["1", "2"]), service: service)
 
         // When
         await viewModel.loadNfts()
@@ -65,7 +79,7 @@ final class CollectionViewModelTests: XCTestCase {
     func testCellsMapNftFields() async {
         // Given
         let service = NftServiceStub()
-        let viewModel = CollectionViewModel(collection: .stub(nfts: ["1"]), nftService: service)
+        let viewModel = makeViewModel(collection: .stub(nfts: ["1"]), service: service)
 
         // When
         await viewModel.loadNfts()
@@ -78,6 +92,70 @@ final class CollectionViewModelTests: XCTestCase {
         XCTAssertEqual(cell?.imageURL, URL(string: "https://example.com/1.png"))
         XCTAssertEqual(cell?.isLiked, false)
         XCTAssertEqual(cell?.isInCart, false)
+    }
+
+    func testCellsReflectLikesAndCartFromUserState() async {
+        // Given
+        let viewModel = makeViewModel(
+            collection: .stub(nfts: ["1", "2", "3"]),
+            service: NftServiceStub(),
+            likes: ["1", "2"],
+            cart: ["2", "3"]
+        )
+
+        // When
+        await viewModel.loadNfts()
+
+        // Then
+        XCTAssertEqual(viewModel.cells.map(\.isLiked), [true, true, false])
+        XCTAssertEqual(viewModel.cells.map(\.isInCart), [false, true, true])
+    }
+
+    func testUserStateFailureSetsFailedStateAndShowsAlert() async {
+        // Given
+        let viewModel = makeViewModel(
+            collection: .stub(nfts: ["1"]),
+            service: NftServiceStub(),
+            profileError: NetworkClientError.urlSessionError
+        )
+
+        // When
+        await viewModel.loadNfts()
+
+        // Then
+        guard case .failed = viewModel.state else {
+            return XCTFail("Expected failed state")
+        }
+        XCTAssertNotNil(viewModel.alert)
+        XCTAssertTrue(viewModel.cells.isEmpty)
+    }
+}
+
+private struct UserProfileServiceStub: UserProfileService {
+    let likes: [String]
+    let error: Error?
+
+    func loadProfile() async throws -> UserProfile {
+        if let error {
+            throw error
+        }
+        return UserProfile(id: "1", name: "Name", description: "", website: nil, avatar: nil, nfts: [], likes: likes)
+    }
+
+    func updateLikes(_ change: IdChange) async throws -> UserProfile {
+        try await loadProfile()
+    }
+}
+
+private struct UserOrderServiceStub: UserOrderService {
+    let nfts: [String]
+
+    func loadOrder() async throws -> UserOrder {
+        UserOrder(id: "1", nfts: nfts)
+    }
+
+    func updateNfts(_ change: IdChange) async throws -> UserOrder {
+        try await loadOrder()
     }
 }
 
