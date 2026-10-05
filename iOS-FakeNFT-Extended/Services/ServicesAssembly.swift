@@ -25,4 +25,12 @@ final class ServicesAssembly {
     var collectionsService: CollectionsService {
         CollectionsServiceImpl(networkClient: networkClient)
     }
+
+    var userProfileService: UserProfileService {
+        UserProfileServiceImpl(networkClient: networkClient)
+    }
+
+    var userOrderService: UserOrderService {
+        UserOrderServiceImpl(networkClient: networkClient)
+    }
 }
