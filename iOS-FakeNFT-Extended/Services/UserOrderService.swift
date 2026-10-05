@@ -3,6 +3,7 @@ import Foundation
 protocol UserOrderService: Sendable {
     func loadOrder() async throws -> UserOrder
     func updateNfts(_ change: IdChange) async throws -> UserOrder
+    func clearOrder() async throws -> UserOrder
 }
 
 actor UserOrderServiceImpl: UserOrderService {
@@ -24,5 +25,9 @@ actor UserOrderServiceImpl: UserOrderService {
             return order
         }
         return try await networkClient.send(request: UserOrderUpdateRequest(nfts: nfts))
+    }
+
+    func clearOrder() async throws -> UserOrder {
+        try await networkClient.send(request: UserOrderUpdateRequest(nfts: []))
     }
 }

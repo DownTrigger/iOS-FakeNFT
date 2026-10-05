@@ -46,6 +46,10 @@ private final class ProfileServiceStub: UserProfileService {
         try await profile(likes: gate.call(change))
     }
 
+    func updateProfile(name: String, description: String, avatar: String?, website: String?) async throws -> UserProfile {
+        try await loadProfile()
+    }
+
     private func profile(likes: [String]) -> UserProfile {
         UserProfile(id: "1", name: "Name", description: "Bio", website: nil, avatar: nil, nfts: [], likes: likes)
     }
@@ -65,6 +69,10 @@ private final class OrderServiceStub: UserOrderService {
 
     func updateNfts(_ change: IdChange) async throws -> UserOrder {
         try await UserOrder(id: "1", nfts: gate.call(change))
+    }
+
+    func clearOrder() async throws -> UserOrder {
+        UserOrder(id: "1", nfts: [])
     }
 }
 
