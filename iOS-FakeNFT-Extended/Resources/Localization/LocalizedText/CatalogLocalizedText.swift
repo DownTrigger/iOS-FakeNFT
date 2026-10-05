@@ -5,6 +5,8 @@ enum CatalogLocalizedText {
     case collectionEmpty
     case collectionAuthor
     case loadError
+    case likeError
+    case cartError
 
     var key: LocalizedStringKey {
         switch self {
@@ -16,6 +18,10 @@ enum CatalogLocalizedText {
             "Catalog.collectionAuthor"
         case .loadError:
             "Error.loadData"
+        case .likeError:
+            "Catalog.likeError"
+        case .cartError:
+            "Catalog.cartError"
         }
     }
 
@@ -29,6 +35,10 @@ enum CatalogLocalizedText {
             String(localized: "Catalog.collectionAuthor")
         case .loadError:
             String(localized: "Error.loadData")
+        case .likeError:
+            String(localized: "Catalog.likeError")
+        case .cartError:
+            String(localized: "Catalog.cartError")
         }
     }
 }

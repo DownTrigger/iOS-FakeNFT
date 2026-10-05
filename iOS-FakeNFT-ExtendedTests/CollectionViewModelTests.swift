@@ -9,11 +9,12 @@ final class CollectionViewModelTests: XCTestCase {
         service: NftService,
         likes: [String] = [],
         cart: [String] = [],
-        profileError: Error? = nil
+        profileError: Error? = nil,
+        updateError: Error? = nil
     ) -> CollectionViewModel {
         let userState = UserState(
-            profileService: UserProfileServiceStub(likes: likes, error: profileError),
-            orderService: UserOrderServiceStub(nfts: cart)
+            profileService: UserProfileServiceStub(likes: likes, error: profileError, updateError: updateError),
+            orderService: UserOrderServiceStub(nfts: cart, updateError: updateError)
         )
         return CollectionViewModel(collection: collection, nftService: service, userState: userState)
     }
@@ -143,6 +144,23 @@ final class CollectionViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.alert)
     }
 
+    func testToggleLikeFailureRollsBackAndShowsAlert() async {
+        // Given
+        let viewModel = makeViewModel(
+            collection: .stub(nfts: ["1"]),
+            service: NftServiceStub(),
+            updateError: NetworkClientError.urlSessionError
+        )
+        await viewModel.loadNfts()
+
+        // When
+        await viewModel.toggleLike("1")
+
+        // Then
+        XCTAssertEqual(viewModel.cells.map(\.isLiked), [false])
+        XCTAssertNotNil(viewModel.alert)
+    }
+
     func testToggleCartSuccessUpdatesCell() async {
         // Given
         let viewModel = makeViewModel(collection: .stub(nfts: ["1"]), service: NftServiceStub())
@@ -155,11 +173,29 @@ final class CollectionViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.cells.map(\.isInCart), [true])
         XCTAssertNil(viewModel.alert)
     }
+
+    func testToggleCartFailureRollsBackAndShowsAlert() async {
+        // Given
+        let viewModel = makeViewModel(
+            collection: .stub(nfts: ["1"]),
+            service: NftServiceStub(),
+            updateError: NetworkClientError.urlSessionError
+        )
+        await viewModel.loadNfts()
+
+        // When
+        await viewModel.toggleCart("1")
+
+        // Then
+        XCTAssertEqual(viewModel.cells.map(\.isInCart), [false])
+        XCTAssertNotNil(viewModel.alert)
+    }
 }
 
 private struct UserProfileServiceStub: UserProfileService {
     let likes: [String]
     let error: Error?
+    var updateError: Error?
 
     func loadProfile() async throws -> UserProfile {
         if let error {
@@ -169,7 +205,10 @@ private struct UserProfileServiceStub: UserProfileService {
     }
 
     func updateLikes(_ change: IdChange) async throws -> UserProfile {
-        UserProfile(
+        if let updateError {
+            throw updateError
+        }
+        return UserProfile(
             id: "1", name: "Name", description: "", website: nil, avatar: nil, nfts: [],
             likes: change.apply(to: likes)
         )
@@ -178,13 +217,17 @@ private struct UserProfileServiceStub: UserProfileService {
 
 private struct UserOrderServiceStub: UserOrderService {
     let nfts: [String]
+    var updateError: Error?
 
     func loadOrder() async throws -> UserOrder {
         UserOrder(id: "1", nfts: nfts)
     }
 
     func updateNfts(_ change: IdChange) async throws -> UserOrder {
-        UserOrder(id: "1", nfts: change.apply(to: nfts))
+        if let updateError {
+            throw updateError
+        }
+        return UserOrder(id: "1", nfts: change.apply(to: nfts))
     }
 }
 

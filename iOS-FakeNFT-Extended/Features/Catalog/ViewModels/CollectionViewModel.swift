@@ -49,11 +49,25 @@ final class CollectionViewModel {
     }
 
     func toggleLike(_ id: String) async {
-        try? await userState.toggleLike(id)
+        do {
+            try await userState.toggleLike(id)
+        } catch {
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.likeError.text) { [weak self] in
+                Task { await self?.toggleLike(id) }
+            }
+        }
     }
 
     func toggleCart(_ id: String) async {
-        try? await userState.toggleCart(id)
+        do {
+            try await userState.toggleCart(id)
+        } catch {
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.cartError.text) { [weak self] in
+                Task { await self?.toggleCart(id) }
+            }
+        }
     }
 
     private static func loadNfts(ids: [String], service: NftService) async throws -> [String: Nft] {
