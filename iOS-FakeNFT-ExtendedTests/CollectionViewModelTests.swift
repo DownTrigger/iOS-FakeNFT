@@ -142,6 +142,19 @@ final class CollectionViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.cells.map(\.isLiked), [true])
         XCTAssertNil(viewModel.alert)
     }
+
+    func testToggleCartSuccessUpdatesCell() async {
+        // Given
+        let viewModel = makeViewModel(collection: .stub(nfts: ["1"]), service: NftServiceStub())
+        await viewModel.loadNfts()
+
+        // When
+        await viewModel.toggleCart("1")
+
+        // Then
+        XCTAssertEqual(viewModel.cells.map(\.isInCart), [true])
+        XCTAssertNil(viewModel.alert)
+    }
 }
 
 private struct UserProfileServiceStub: UserProfileService {
@@ -171,7 +184,7 @@ private struct UserOrderServiceStub: UserOrderService {
     }
 
     func updateNfts(_ change: IdChange) async throws -> UserOrder {
-        try await loadOrder()
+        UserOrder(id: "1", nfts: change.apply(to: nfts))
     }
 }
 

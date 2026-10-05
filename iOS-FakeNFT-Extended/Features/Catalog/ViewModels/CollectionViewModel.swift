@@ -52,6 +52,10 @@ final class CollectionViewModel {
         try? await userState.toggleLike(id)
     }
 
+    func toggleCart(_ id: String) async {
+        try? await userState.toggleCart(id)
+    }
+
     private static func loadNfts(ids: [String], service: NftService) async throws -> [String: Nft] {
         try await withThrowingTaskGroup(of: Nft.self) { group in
             for id in ids {

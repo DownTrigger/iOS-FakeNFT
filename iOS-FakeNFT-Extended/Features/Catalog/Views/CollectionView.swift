@@ -61,7 +61,7 @@ struct CollectionView: View {
                     NftGridCell(
                         model: cell,
                         onLike: { Task { await viewModel.toggleLike(cell.id) } },
-                        onCart: {}
+                        onCart: { Task { await viewModel.toggleCart(cell.id) } }
                     )
                 }
             }
