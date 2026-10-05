@@ -10,13 +10,27 @@ final class CollectionViewModelTests: XCTestCase {
         likes: [String] = [],
         cart: [String] = [],
         profileError: Error? = nil,
-        updateError: Error? = nil
+        updateError: Error? = nil,
+        updateDelay: Duration = .zero
     ) -> CollectionViewModel {
         let userState = UserState(
-            profileService: UserProfileServiceStub(likes: likes, error: profileError, updateError: updateError),
+            profileService: UserProfileServiceStub(
+                likes: likes,
+                error: profileError,
+                updateError: updateError,
+                updateDelay: updateDelay
+            ),
             orderService: UserOrderServiceStub(nfts: cart, updateError: updateError)
         )
         return CollectionViewModel(collection: collection, nftService: service, userState: userState)
+    }
+
+    private func waitUntil(_ condition: () -> Bool, file: StaticString = #filePath, line: UInt = #line) async {
+        for _ in 0..<200 {
+            if condition() { return }
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        XCTFail("Timed out waiting for condition", file: file, line: line)
     }
 
     func testLoadNftsKeepsCollectionOrder() async {
@@ -190,12 +204,34 @@ final class CollectionViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.cells.map(\.isInCart), [false])
         XCTAssertNotNil(viewModel.alert)
     }
+
+    func testRepeatedLikeTapWhileRequestIsPendingIsIgnored() async {
+        // Given
+        let viewModel = makeViewModel(
+            collection: .stub(nfts: ["1"]),
+            service: NftServiceStub(),
+            updateDelay: .milliseconds(100)
+        )
+        await viewModel.loadNfts()
+
+        // When
+        let firstTap = Task { await viewModel.toggleLike("1") }
+        await waitUntil { viewModel.cells.first?.isLikePending == true }
+        await viewModel.toggleLike("1")
+
+        // Then
+        XCTAssertEqual(viewModel.cells.map(\.isLiked), [true])
+        await firstTap.value
+        XCTAssertEqual(viewModel.cells.map(\.isLiked), [true])
+        XCTAssertEqual(viewModel.cells.map(\.isLikePending), [false])
+    }
 }
 
 private struct UserProfileServiceStub: UserProfileService {
     let likes: [String]
     let error: Error?
     var updateError: Error?
+    var updateDelay: Duration = .zero
 
     func loadProfile() async throws -> UserProfile {
         if let error {
@@ -205,6 +241,7 @@ private struct UserProfileServiceStub: UserProfileService {
     }
 
     func updateLikes(_ change: IdChange) async throws -> UserProfile {
+        try await Task.sleep(for: updateDelay)
         if let updateError {
             throw updateError
         }

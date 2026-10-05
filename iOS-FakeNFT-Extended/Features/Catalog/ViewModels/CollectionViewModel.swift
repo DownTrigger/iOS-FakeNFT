@@ -93,7 +93,9 @@ final class CollectionViewModel {
             rating: nft.rating,
             priceText: PriceFormatter.string(from: nft.price),
             isLiked: userState.isLiked(nft.id),
-            isInCart: userState.isInCart(nft.id)
+            isInCart: userState.isInCart(nft.id),
+            isLikePending: userState.isLikePending(nft.id),
+            isCartPending: userState.isCartPending(nft.id)
         )
     }
 }
