@@ -298,6 +298,7 @@ private actor NftServiceStub: NftService {
             id: id,
             name: "NFT \(id)",
             images: [URL(string: "https://example.com/\(id).png")].compactMap { $0 },
+            description: "",
             rating: 3,
             price: 1.5,
             author: "John Doe"

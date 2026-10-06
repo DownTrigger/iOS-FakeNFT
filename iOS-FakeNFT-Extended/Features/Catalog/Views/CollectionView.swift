@@ -58,7 +58,7 @@ struct CollectionView: View {
                 .tint(Color(.fnText))
                 .frame(maxWidth: .infinity)
         } else if viewModel.isEmpty {
-            EmptyStateView(message: CatalogLocalizedText.collectionEmpty.text)
+            EmptyStateView(message: CatalogLocalizedText.collectionEmpty.key)
         } else {
             LazyVGrid(columns: Self.columns, spacing: 8) {
                 ForEach(viewModel.cells) { cell in
@@ -90,7 +90,15 @@ private extension View {
 private struct PreviewNftService: NftService {
     func loadNft(id: String) async throws -> Nft {
         let image: URL? = URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")
-        return Nft(id: id, name: "April", images: [image].compactMap { $0 }, rating: 3, price: 1.78, author: "John Doe")
+        return Nft(
+            id: id,
+            name: "April",
+            images: [image].compactMap { $0 },
+            description: "",
+            rating: 3,
+            price: 1.78,
+            author: "John Doe"
+        )
     }
 }
 

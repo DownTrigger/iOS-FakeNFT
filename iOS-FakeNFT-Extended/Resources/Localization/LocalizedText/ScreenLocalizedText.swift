@@ -10,6 +10,8 @@ import SwiftUI
 enum ScreenLocalizedText {
     case sorting
     case profilePhoto
+    case myNFTs
+    case favouriteNFTs
 
     var key: LocalizedStringKey {
         switch self {
@@ -17,6 +19,10 @@ enum ScreenLocalizedText {
             "sorting.sorting"
         case .profilePhoto:
             "sorting.profilePhoto"
+        case .myNFTs:
+            "profile.myNFTs"
+        case .favouriteNFTs:
+            "profile.favouriteNFTs"
         }
     }
 }

@@ -1,10 +1,11 @@
 import Foundation
 
-protocol NftService: Sendable {
+protocol NftService {
     func loadNft(id: String) async throws -> Nft
 }
 
-actor NftServiceImpl: NftService {
+@MainActor
+final class NftServiceImpl: NftService {
 
     private let networkClient: NetworkClient
     private let storage: NftStorage
