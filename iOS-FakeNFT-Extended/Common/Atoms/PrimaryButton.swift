@@ -16,7 +16,8 @@ struct PrimaryButton: View {
             Text(title.key)
                 .font(.bold17)
                 .foregroundStyle(Color(.fnBackground))
-                .frame(width: 343, height: 60)
+                .frame(maxWidth: .infinity)
+                .frame(height: 60)
                 .background(Color(.fnText))
                 .clipShape(RoundedRectangle(cornerRadius: 16))
         }
@@ -43,6 +44,7 @@ struct PrimaryButton: View {
         }
         PrimaryButton(title: .login, action: {}, isDisabled: true)
     }
+    .padding(.horizontal, 16)
 }
 
 #Preview("Dark Mode") {
@@ -50,5 +52,6 @@ struct PrimaryButton: View {
         title: .login,
         action: {}
     )
+    .padding(.horizontal, 16)
     .preferredColorScheme(.dark)
 }

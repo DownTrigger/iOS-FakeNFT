@@ -15,9 +15,11 @@ struct NftGridCell: View {
 
     private var image: some View {
         ZStack(alignment: .topTrailing) {
-            RemoteImageView(url: model.imageURL)
+            Color.clear
                 .aspectRatio(1, contentMode: .fit)
-                .frame(width: 108, height: 108)
+                .overlay {
+                    RemoteImageView(url: model.imageURL)
+                }
                 .clipShape(RoundedRectangle(cornerRadius: 12))
 
             LikeButton(isLiked: model.isLiked, action: onLike)

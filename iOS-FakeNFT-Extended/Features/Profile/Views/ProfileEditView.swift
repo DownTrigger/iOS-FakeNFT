@@ -37,6 +37,7 @@ struct ProfileEditView: View {
                 onSave(viewModel.buildUpdatedUser())
                 dismiss()
             }
+            .padding(.horizontal, 16)
             .padding(.vertical, 16)
         }
         .background(Color(.fnBackground))

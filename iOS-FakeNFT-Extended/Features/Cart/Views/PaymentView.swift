@@ -73,7 +73,6 @@ struct PaymentView: View {
             .font(.regular13)
 
             PrimaryButton(title: .pay, action: pay, isDisabled: !viewModel.canPay)
-                .frame(maxWidth: .infinity)
         }
         .padding(16)
         .background(
