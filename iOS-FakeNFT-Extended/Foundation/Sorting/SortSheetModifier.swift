@@ -1,3 +1,10 @@
+//
+//  SortSheetModifier.swift
+//  iOS-FakeNFT-Extended
+//
+//  Created by Irina Muravyeva on 25.09.2026.
+//
+
 import SwiftUI
 
 extension View {
@@ -17,9 +24,9 @@ extension View {
         )
     }
 }
-
 private struct SortSheetModifier<Option: SortOptionProtocol>: ViewModifier {
     @Binding var isPresented: Bool
+
     let screenTitle: ScreenLocalizedText
     let options: [Option]
     let onSelect: (Option) -> Void
@@ -56,20 +63,19 @@ private struct SortSheetModifier<Option: SortOptionProtocol>: ViewModifier {
                         .transition(.move(edge: .bottom))
                     }
                     .transition(.opacity)
+
                 }
             }
     }
+
 }
 
 #Preview {
     @Previewable @State var isPresented = false
-
     ZStack {
-        Color(.fnBackground)
+        Color(.systemBackground)
         Button {
-            withAnimation {
-                isPresented = true
-            }
+            isPresented = true
         } label: {
             Text(verbatim: "Sort")
         }

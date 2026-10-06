@@ -1,8 +1,17 @@
 import SwiftUI
 
+private enum TabBarItem {
+    case profile
+    case catalog
+    case cart
+    case statistics
+}
+
 struct TabBarView: View {
+    @State private var selectedTab: TabBarItem = .profile
+
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             ProfileView()
                 .tabItem {
                     Label {
@@ -11,6 +20,7 @@ struct TabBarView: View {
                         Image(.icTabProfile)
                     }
                 }
+                .tag(TabBarItem.profile)
 
             NavigationStack {
                 CatalogSmokeView()
@@ -22,6 +32,7 @@ struct TabBarView: View {
                         Image(.icTabCatalog)
                     }
                 }
+                .tag(TabBarItem.catalog)
 
             NavigationStack {
                 CartView()
@@ -33,9 +44,10 @@ struct TabBarView: View {
                         Image(.icTabBasket)
                     }
                 }
+                .tag(TabBarItem.cart)
 
             NavigationStack {
-                StatisticsView()
+                StatisticsView(isActive: selectedTab == .statistics)
             }
                 .tabItem {
                     Label {
@@ -44,6 +56,7 @@ struct TabBarView: View {
                         Image(.icTabStatistics)
                     }
                 }
+                .tag(TabBarItem.statistics)
         }
         .tint(Color(.fnBlue))
     }
@@ -51,5 +64,9 @@ struct TabBarView: View {
 
 #Preview {
     TabBarView()
-        .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
+        .environment(ServicesAssembly(
+            networkClient: DefaultNetworkClient(),
+            nftStorage: NftStorageImpl(),
+            likesStorage: LikesStorageImpl()
+        ))
 }

@@ -31,6 +31,7 @@ actor DefaultNetworkClient: NetworkClient {
     func send(request: NetworkRequest) async throws -> Data {
         let urlRequest = try create(request: request)
         let (data, response) = try await session.data(for: urlRequest)
+
         guard let response = response as? HTTPURLResponse else {
             throw NetworkClientError.urlSessionError
         }
@@ -54,6 +55,7 @@ actor DefaultNetworkClient: NetworkClient {
 
         var urlRequest = URLRequest(url: endpoint)
         urlRequest.httpMethod = request.httpMethod.rawValue
+        urlRequest.timeoutInterval = 30
 
         if let rawBody = request.rawBody {
             let contentType = request.contentType ?? "application/x-www-form-urlencoded"
