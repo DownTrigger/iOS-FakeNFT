@@ -4,6 +4,7 @@ struct CartView: View {
     private static let sortOptionKey = "cart.sortOption"
 
     @Environment(ServicesAssembly.self) private var services
+    @Environment(Router<CartRoute>.self) private var router
     @State private var viewModel = CartViewModel()
     @State private var isSortSheetPresented = false
     @AppStorage(Self.sortOptionKey) private var sortOption: CartSortOption = .byTitle
@@ -84,7 +85,9 @@ struct CartView: View {
             .listStyle(.plain)
             .refreshable { await viewModel.refresh(using: services.cartService) }
 
-            CartSummaryPanel(count: items.count, totalPrice: viewModel.totalPrice) {}
+            CartSummaryPanel(count: items.count, totalPrice: viewModel.totalPrice) {
+                router.push(.payment)
+            }
         }
     }
 }
@@ -94,4 +97,5 @@ struct CartView: View {
         CartView()
     }
     .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
+    .environment(Router<CartRoute>())
 }

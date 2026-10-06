@@ -23,9 +23,7 @@ struct TabBarView: View {
                     }
                 }
 
-            NavigationStack {
-                CartView()
-            }
+            CartRootView()
                 .tabItem {
                     Label {
                         Text(TabLocalizedText.cart.key)

@@ -29,4 +29,8 @@ final class ServicesAssembly {
             orderUpdater: CartOrderUpdaterImpl()
         )
     }
+
+    var paymentService: PaymentService {
+        PaymentServiceImpl(networkClient: networkClient)
+    }
 }
