@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EmptyStateView: View {
-    let message: String
+    let message: LocalizedStringKey
 
     var body: some View {
         Text(message)

@@ -25,10 +25,16 @@ final class ServicesAssembly {
         )
     }
 
-    var userService: UserServiceProtocol {
-        UserServiceImpl(
-            networkClient: networkClient
-        )
+    var userService: UserService {
+        UserServiceImpl(networkClient: networkClient)
+    }
+
+    var usersService: UserServiceProtocol {
+        UsersServiceImpl(networkClient: networkClient)
+    }
+
+    var userDefaultsService: UserDefaultsService {
+        UserDefaultsServiceImpl()
     }
 
     var userProfileService: UserProfileService {

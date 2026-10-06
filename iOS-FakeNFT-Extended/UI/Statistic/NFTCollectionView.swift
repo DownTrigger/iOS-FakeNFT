@@ -34,12 +34,7 @@ struct NFTCollectionView: View {
     var body: some View {
         ScrollView {
             if nfts.isEmpty {
-                EmptyStateView(
-                    message: NSLocalizedString(
-                        "stat_nft_emptyCollection", //не могу использовать enum, тк EmptyStateView принимает String
-                        comment: ""
-                    )
-                )
+                EmptyStateView(message: "stat_nft_emptyCollection")
             } else {
                 LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(viewModel.nftItems) { model in
