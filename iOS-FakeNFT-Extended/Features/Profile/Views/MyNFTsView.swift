@@ -11,17 +11,15 @@ struct MyNFTsView: View {
     @Environment(\.dismiss) private var dismiss
 
     init(
-        nftIds: [String],
-        likedIds: [String],
-        username: String,
+        user: UserModel,
         nftService: NftService,
+        userService: UserService,
         userDefaultsService: UserDefaultsService
     ) {
         _viewModel = State(initialValue: MyNFTsViewModel(
-            nftIds: nftIds,
-            likedIds: likedIds,
-            username: username,
+            user: user,
             nftService: nftService,
+            userService: userService,
             userDefaultsService: userDefaultsService
         ))
     }
@@ -101,13 +99,24 @@ private struct PreviewNftService: NftService {
     }
 }
 
+private struct PreviewUserService: UserService {
+    func loadUser() async throws -> UserModel { fatalError("preview only") }
+    func updateUser(_ user: UserModel) async throws -> UserModel { user }
+}
+
 #Preview {
     NavigationStack {
         MyNFTsView(
-            nftIds: ["1", "2", "3"],
-            likedIds: ["1"],
-            username: "John Doe",
+            user: UserModel(
+                avatar: nil,
+                username: "John Doe",
+                bio: "",
+                userWebSite: nil,
+                nfts: ["1", "2", "3"],
+                likes: ["1"]
+            ),
             nftService: PreviewNftService(),
+            userService: PreviewUserService(),
             userDefaultsService: UserDefaultsServiceImpl()
         )
     }
