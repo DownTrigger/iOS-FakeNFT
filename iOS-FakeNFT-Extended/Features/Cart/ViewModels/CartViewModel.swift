@@ -85,7 +85,7 @@ final class CartViewModel {
         } catch let error as URLError where error.code == .cancelled {
             resetLoadingState()
         } catch {
-            if case .loading = state {
+            if state.isLoading {
                 state = .failed(error)
             }
             alert = .retryError(title: CartLocalizedText.loadError.text) { [weak self] in
@@ -95,7 +95,7 @@ final class CartViewModel {
     }
 
     private func resetLoadingState() {
-        if case .loading = state {
+        if state.isLoading {
             state = .idle
         }
     }

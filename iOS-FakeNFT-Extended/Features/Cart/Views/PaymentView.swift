@@ -35,7 +35,7 @@ struct PaymentView: View {
 
     @ViewBuilder
     private var content: some View {
-        if case .loading = viewModel.state {
+        if viewModel.state.isLoading {
             AppLoadingView()
         } else {
             ScrollView {
