@@ -39,9 +39,7 @@ struct TabBarView: View {
             }
             .tag(TabBarItem.catalog)
 
-            NavigationStack {
-                CartView()
-            }
+            CartRootView()
             .tabItem {
                 Label {
                     Text(TabLocalizedText.cart.key)

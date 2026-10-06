@@ -47,6 +47,17 @@ final class ServicesAssembly {
         UserOrderServiceImpl(networkClient: networkClient)
 	}
 
+    var cartService: CartService {
+        CartServiceImpl(
+            orderService: userOrderService,
+            nftService: nftService
+        )
+    }
+
+    var paymentService: PaymentService {
+        PaymentServiceImpl(networkClient: networkClient)
+    }
+
     func isLiked(nftID: String) async -> Bool {
         await likesStorage.isLiked(nftID: nftID)
     }
