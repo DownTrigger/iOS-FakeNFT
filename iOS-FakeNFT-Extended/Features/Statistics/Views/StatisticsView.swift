@@ -25,7 +25,7 @@ struct StatisticsView: View {
                 ProgressView()
                     .task {
                         viewModel = StatisticsViewModel(
-                            userService: servicesAssembly.userService
+                            userService: servicesAssembly.usersService
                         )
                     }
             }

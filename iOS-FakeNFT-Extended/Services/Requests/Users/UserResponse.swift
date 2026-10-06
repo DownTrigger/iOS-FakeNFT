@@ -28,7 +28,7 @@ protocol UserServiceProtocol {
 }
 
 @MainActor
-final class UserServiceImpl: UserServiceProtocol {
+final class UsersServiceImpl: UserServiceProtocol {
     private let networkClient: NetworkClient
 
     init(networkClient: NetworkClient) {

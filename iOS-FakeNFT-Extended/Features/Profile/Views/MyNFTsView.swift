@@ -99,7 +99,7 @@ private struct PreviewNftService: NftService {
     }
 }
 
-private struct PreviewUserService: UserService {
+private struct MyNFTsPreviewUserService: UserService {
     func loadUser() async throws -> UserModel { fatalError("preview only") }
     func updateUser(_ user: UserModel) async throws -> UserModel { user }
 }
@@ -116,9 +116,9 @@ private struct PreviewUserService: UserService {
                 likes: ["1"]
             ),
             nftService: PreviewNftService(),
-            userService: PreviewUserService(),
+            userService: MyNFTsPreviewUserService(),
             userDefaultsService: UserDefaultsServiceImpl()
         )
     }
-    .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
+    .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl(), likesStorage: LikesStorageImpl()))
 }

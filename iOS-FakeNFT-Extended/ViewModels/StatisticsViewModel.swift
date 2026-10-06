@@ -114,7 +114,9 @@ final class StatisticsViewModel {
                         avatar: user.avatar,
                         username: user.name,
                         bio: user.description ?? "",
-                        userWebSite: user.website
+                        userWebSite: user.website,
+                        nfts: user.nfts,
+                        likes: []
                     ),
                     nfts: user.nfts
                 )
