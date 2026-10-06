@@ -62,15 +62,7 @@ final class FavouriteNFTsViewModel {
             let currentUser = try await userService.loadUser()
             user = currentUser
             likedIds = Set(currentUser.likes)
-            var loaded: [Nft] = []
-            try await withThrowingTaskGroup(of: Nft.self) { group in
-                for id in currentUser.likes {
-                    group.addTask { try await self.nftService.loadNft(id: id) }
-                }
-                for try await nft in group {
-                    loaded.append(nft)
-                }
-            }
+            let loaded = try await nftService.loadNfts(ids: currentUser.likes)
             state = .loaded(loaded)
         } catch {
             state = .failed(error)

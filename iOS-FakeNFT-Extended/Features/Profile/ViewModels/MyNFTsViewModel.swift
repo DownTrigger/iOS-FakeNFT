@@ -75,17 +75,7 @@ final class MyNFTsViewModel {
         guard case .idle = state else { return }
         state = .loading
         do {
-            var loaded: [Nft] = []
-            try await withThrowingTaskGroup(of: Nft.self) { group in
-                for id in user.nfts {
-                    group.addTask {
-                        try await self.nftService.loadNft(id: id)
-                    }
-                }
-                for try await nft in group {
-                    loaded.append(nft)
-                }
-            }
+            let loaded = try await nftService.loadNfts(ids: user.nfts)
             state = .loaded(loaded)
         } catch {
             state = .failed(error)

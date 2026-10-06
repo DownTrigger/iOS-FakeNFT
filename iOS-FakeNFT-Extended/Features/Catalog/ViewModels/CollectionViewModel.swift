@@ -32,10 +32,10 @@ final class CollectionViewModel {
         guard state.canStartLoading else { return }
         state = .loading
         do {
-            async let nfts = Self.loadNfts(ids: collection.nfts, service: nftService)
+            async let nfts = nftService.loadNfts(ids: collection.nfts)
             async let user: Void = userState.loadIfNeeded()
             let (loaded, _) = try await (nfts, user)
-            state = .loaded(collection.nfts.compactMap { loaded[$0] })
+            state = .loaded(loaded)
         } catch {
             guard !error.isCancellation else {
                 state = .idle
@@ -67,21 +67,6 @@ final class CollectionViewModel {
             alert = .retryError(title: CatalogLocalizedText.cartError.text) { [weak self] in
                 Task { await self?.toggleCart(id) }
             }
-        }
-    }
-
-    private static func loadNfts(ids: [String], service: NftService) async throws -> [String: Nft] {
-        try await withThrowingTaskGroup(of: Nft.self) { group in
-            for id in ids {
-                group.addTask {
-                    try await service.loadNft(id: id)
-                }
-            }
-            var loaded: [String: Nft] = [:]
-            for try await nft in group {
-                loaded[nft.id] = nft
-            }
-            return loaded
         }
     }
 
