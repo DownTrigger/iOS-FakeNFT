@@ -100,19 +100,9 @@ struct ProfileEditView: View {
 
     @ViewBuilder
     private var avatarImage: some View {
-        Group {
-            if let url = viewModel.avatarImageURL {
-                AsyncImage(url: url) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    Image(.imgAvatarPlaceholder).resizable().scaledToFill()
-                }
-            } else {
-                Image(.imgAvatarPlaceholder).resizable().scaledToFill()
-            }
-        }
-        .frame(width: 70, height: 70)
-        .clipShape(Circle())
+        RemoteImageView(url: viewModel.avatarImageURL, placeholder: .avatar)
+            .frame(width: 70, height: 70)
+            .clipShape(Circle())
     }
 
     private func fieldSection(title: String, text: Binding<String>, isMultiline: Bool) -> some View {

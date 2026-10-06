@@ -22,34 +22,9 @@ struct UserStatisticView: View {
                 .frame(width: 22)
 
             HStack(spacing: 10) {
-                if let avatar, !avatar.isEmpty, let url = URL(string: avatar) {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-
-                        case .empty, .failure:
-                            Image(.imgAvatarPlaceholder)
-                                .resizable()
-                                .scaledToFill()
-
-                        @unknown default:
-                            Image(.imgAvatarPlaceholder)
-                                .resizable()
-                                .scaledToFill()
-                        }
-                    }
+                RemoteImageView(url: avatarURL, placeholder: .avatar)
                     .frame(width: 28, height: 28)
                     .clipShape(Circle())
-                } else {
-                    Image(.imgAvatarPlaceholder)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 28, height: 28)
-                        .clipShape(Circle())
-                }
 
                 Text(name)
                     .font(.bold22)
@@ -68,6 +43,11 @@ struct UserStatisticView: View {
             .background(Color(.fnLightGray))
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
+    }
+
+    private var avatarURL: URL? {
+        guard let avatar, !avatar.isEmpty else { return nil }
+        return URL(string: avatar)
     }
 }
 

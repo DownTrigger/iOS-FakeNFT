@@ -22,13 +22,9 @@ struct MyNFTListCell: View {
 
     private var image: some View {
         ZStack(alignment: .topTrailing) {
-            AsyncImage(url: nft.images.first) { img in
-                img.resizable().scaledToFill()
-            } placeholder: {
-                Image(.imgNFTPlaceholder).resizable().scaledToFill()
-            }
-            .frame(width: 108, height: 108)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            RemoteImageView(url: nft.images.first)
+                .frame(width: 108, height: 108)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
 
             LikeButton(isLiked: isLiked, action: onLike)
         }

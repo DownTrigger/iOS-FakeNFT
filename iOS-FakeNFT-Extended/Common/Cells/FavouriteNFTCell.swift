@@ -12,13 +12,9 @@ struct FavouriteNFTCell: View {
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             ZStack(alignment: .topTrailing) {
-                AsyncImage(url: model.imageURL) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    Image(.imgNFTPlaceholder).resizable().scaledToFill()
-                }
-                .frame(width: 80, height: 80)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                RemoteImageView(url: model.imageURL)
+                    .frame(width: 80, height: 80)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
 
                 LikeButton(isLiked: model.isLiked, action: onLike)
                     .offset(x: 6, y: -6)

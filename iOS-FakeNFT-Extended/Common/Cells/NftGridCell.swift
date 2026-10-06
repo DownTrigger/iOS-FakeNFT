@@ -14,20 +14,11 @@ struct NftGridCell: View {
     }
 
     private var image: some View {
-        // Временный загрузчик через AsyncImage: нужно будет заменить общим загрузчиком 
         ZStack(alignment: .topTrailing) {
-            AsyncImage(url: model.imageURL) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                Image(.imgNFTPlaceholder)
-                    .resizable()
-                    .scaledToFill()
-            }
-            .aspectRatio(1, contentMode: .fit)
-            .frame(width: 108, height: 108)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            RemoteImageView(url: model.imageURL)
+                .aspectRatio(1, contentMode: .fit)
+                .frame(width: 108, height: 108)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
 
             LikeButton(isLiked: model.isLiked, action: onLike)
                 .disabled(model.isLikePending)
