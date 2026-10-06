@@ -7,6 +7,7 @@ enum CatalogRoute: Hashable {
 
 struct CatalogRootView: View {
     @Environment(ServicesAssembly.self) private var services
+    @Environment(UserState.self) private var userState
     @State private var router = Router<CatalogRoute>()
 
     var body: some View {
@@ -24,7 +25,7 @@ struct CatalogRootView: View {
     private func destination(for route: CatalogRoute) -> some View {
         switch route {
         case .collection(let collection):
-            CollectionView(collection: collection, nftService: services.nftService)
+            CollectionView(collection: collection, nftService: services.nftService, userState: userState)
         case .website(let url):
             WebViewScreen(url: url)
         }
@@ -32,6 +33,8 @@ struct CatalogRootView: View {
 }
 
 #Preview {
+    let services = ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl())
     CatalogRootView()
-        .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
+        .environment(services)
+        .environment(UserState(profileService: services.userProfileService, orderService: services.userOrderService))
 }

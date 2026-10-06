@@ -8,6 +8,7 @@ final class CollectionViewModel {
     var alert: AlertModel?
 
     private let nftService: NftService
+    private let userState: UserState
 
     var isLoading: Bool { state.isLoading }
 
@@ -18,19 +19,22 @@ final class CollectionViewModel {
 
     var cells: [NftGridCellModel] {
         guard case let .loaded(nfts) = state else { return [] }
-        return nfts.map(Self.makeCellModel)
+        return nfts.map(makeCellModel)
     }
 
-    init(collection: NftCollection, nftService: NftService) {
+    init(collection: NftCollection, nftService: NftService, userState: UserState) {
         self.collection = collection
         self.nftService = nftService
+        self.userState = userState
     }
 
     func loadNfts() async {
         guard state.canStartLoading else { return }
         state = .loading
         do {
-            let loaded = try await Self.loadNfts(ids: collection.nfts, service: nftService)
+            async let nfts = Self.loadNfts(ids: collection.nfts, service: nftService)
+            async let user: Void = userState.loadIfNeeded()
+            let (loaded, _) = try await (nfts, user)
             state = .loaded(collection.nfts.compactMap { loaded[$0] })
         } catch {
             guard !error.isCancellation else {
@@ -40,6 +44,28 @@ final class CollectionViewModel {
             state = .failed(error)
             alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
                 Task { await self?.loadNfts() }
+            }
+        }
+    }
+
+    func toggleLike(_ id: String) async {
+        do {
+            try await userState.toggleLike(id)
+        } catch {
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.likeError.text) { [weak self] in
+                Task { await self?.toggleLike(id) }
+            }
+        }
+    }
+
+    func toggleCart(_ id: String) async {
+        do {
+            try await userState.toggleCart(id)
+        } catch {
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.cartError.text) { [weak self] in
+                Task { await self?.toggleCart(id) }
             }
         }
     }
@@ -59,15 +85,17 @@ final class CollectionViewModel {
         }
     }
 
-    private static func makeCellModel(from nft: Nft) -> NftGridCellModel {
+    private func makeCellModel(from nft: Nft) -> NftGridCellModel {
         NftGridCellModel(
             id: nft.id,
             imageURL: nft.images.first,
             name: nft.name,
             rating: nft.rating,
             priceText: PriceFormatter.string(from: nft.price),
-            isLiked: false,
-            isInCart: false
+            isLiked: userState.isLiked(nft.id),
+            isInCart: userState.isInCart(nft.id),
+            isLikePending: userState.isLikePending(nft.id),
+            isCartPending: userState.isCartPending(nft.id)
         )
     }
 }

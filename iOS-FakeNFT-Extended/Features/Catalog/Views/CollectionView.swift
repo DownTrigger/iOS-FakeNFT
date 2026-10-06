@@ -5,9 +5,14 @@ struct CollectionView: View {
 
     @Environment(Router<CatalogRoute>.self) private var router
     @State private var viewModel: CollectionViewModel
+    @State private var selectedCell: NftGridCellModel?
 
-    init(collection: NftCollection, nftService: NftService) {
-        _viewModel = State(initialValue: CollectionViewModel(collection: collection, nftService: nftService))
+    init(collection: NftCollection, nftService: NftService, userState: UserState) {
+        _viewModel = State(initialValue: CollectionViewModel(
+            collection: collection,
+            nftService: nftService,
+            userState: userState
+        ))
     }
 
     var body: some View {
@@ -36,6 +41,9 @@ struct CollectionView: View {
         }
         .task { await viewModel.loadNfts() }
         .appAlert(item: $viewModel.alert)
+        .sheet(item: $selectedCell) { cell in
+            NftDetailSmokeView(nftId: cell.id)
+        }
     }
 
     private func openAuthorWebsite() {
@@ -54,7 +62,13 @@ struct CollectionView: View {
         } else {
             LazyVGrid(columns: Self.columns, spacing: 8) {
                 ForEach(viewModel.cells) { cell in
-                    NftGridCell(model: cell, onLike: {}, onCart: {})
+                    NftGridCell(
+                        model: cell,
+                        onLike: { Task { await viewModel.toggleLike(cell.id) } },
+                        onCart: { Task { await viewModel.toggleCart(cell.id) } }
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture { selectedCell = cell }
                 }
             }
             .padding(.horizontal, 16)
@@ -80,6 +94,39 @@ private struct PreviewNftService: NftService {
     }
 }
 
+private struct PreviewUserProfileService: UserProfileService {
+    func loadProfile() async throws -> UserProfile {
+        UserProfile(id: "1", name: "Name", description: "", website: nil, avatar: nil, nfts: [], likes: ["1", "3"])
+    }
+
+    func updateLikes(_ change: IdChange) async throws -> UserProfile {
+        try await loadProfile()
+    }
+
+    func updateProfile(
+        name: String,
+        description: String,
+        avatar: String?,
+        website: String?
+    ) async throws -> UserProfile {
+        try await loadProfile()
+    }
+}
+
+private struct PreviewUserOrderService: UserOrderService {
+    func loadOrder() async throws -> UserOrder {
+        UserOrder(id: "1", nfts: ["2"])
+    }
+
+    func updateNfts(_ change: IdChange) async throws -> UserOrder {
+        try await loadOrder()
+    }
+
+    func clearOrder() async throws -> UserOrder {
+        UserOrder(id: "1", nfts: [])
+    }
+}
+
 #Preview {
     let collection = NftCollection(
         id: "1",
@@ -91,7 +138,11 @@ private struct PreviewNftService: NftService {
         website: "https://fakenfts.org/"
     )
     NavigationStack {
-        CollectionView(collection: collection, nftService: PreviewNftService())
+        CollectionView(
+            collection: collection,
+            nftService: PreviewNftService(),
+            userState: UserState(profileService: PreviewUserProfileService(), orderService: PreviewUserOrderService())
+        )
     }
     .environment(Router<CatalogRoute>())
 }

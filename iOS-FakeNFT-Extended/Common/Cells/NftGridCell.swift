@@ -29,6 +29,8 @@ struct NftGridCell: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
 
             LikeButton(isLiked: model.isLiked, action: onLike)
+                .disabled(model.isLikePending)
+                .opacity(model.isLikePending ? 0.5 : 1)
         }
     }
 
@@ -48,6 +50,8 @@ struct NftGridCell: View {
             Spacer()
 
             CartButton(isInCart: model.isInCart, action: onCart)
+                .disabled(model.isCartPending)
+                .opacity(model.isCartPending ? 0.5 : 1)
         }
     }
 }
