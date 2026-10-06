@@ -5,6 +5,7 @@ struct CartView: View {
 
     @Environment(ServicesAssembly.self) private var services
     @Environment(Router<CartRoute>.self) private var router
+    @Environment(UserState.self) private var userState
     @State private var viewModel = CartViewModel()
     @State private var isSortSheetPresented = false
     @AppStorage(Self.sortOptionKey) private var sortOption: CartSortOption = .byTitle
@@ -38,7 +39,10 @@ struct CartView: View {
                     nft: nft,
                     isDeleting: viewModel.isDeleting,
                     onDelete: {
-                        Task { await viewModel.confirmDelete(using: services.cartService) }
+                        Task {
+                            await viewModel.confirmDelete(using: services.cartService)
+                            try? await userState.refresh()
+                        }
                     },
                     onCancel: { viewModel.cancelDelete() }
                 )
@@ -93,9 +97,16 @@ struct CartView: View {
 }
 
 #Preview {
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl(),
+        likesStorage: LikesStorageImpl()
+    )
+
     NavigationStack {
         CartView()
     }
-    .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl(), likesStorage: LikesStorageImpl()))
+    .environment(services)
+    .environment(UserState(profileService: services.userProfileService, orderService: services.userOrderService))
     .environment(Router<CartRoute>())
 }

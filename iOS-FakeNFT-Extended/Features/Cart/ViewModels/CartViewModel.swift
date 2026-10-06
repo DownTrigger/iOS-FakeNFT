@@ -51,7 +51,7 @@ final class CartViewModel {
 
         let remaining = items.filter { $0.id != nft.id }
         do {
-            try await service.updateOrder(nftIds: remaining.map(\.id))
+            try await service.remove(nftId: nft.id)
             state = .loaded(remaining)
             nftToDelete = nil
         } catch {

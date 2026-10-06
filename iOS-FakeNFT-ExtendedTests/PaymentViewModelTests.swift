@@ -53,9 +53,9 @@ final class PaymentViewModelTests: XCTestCase {
 
         // Then
         let paidWith = await paymentService.paidCurrencyIds
-        let sentOrders = await cartService.sentOrders
+        let clearCount = await cartService.clearCount
         XCTAssertEqual(paidWith, ["2"])
-        XCTAssertEqual(sentOrders, [[]])
+        XCTAssertEqual(clearCount, 1)
         XCTAssertTrue(viewModel.isPaid)
         XCTAssertNil(viewModel.alert)
     }
@@ -71,8 +71,8 @@ final class PaymentViewModelTests: XCTestCase {
         await viewModel.pay(using: paymentService, cartService: cartService)
 
         // Then
-        let sentOrders = await cartService.sentOrders
-        XCTAssertTrue(sentOrders.isEmpty)
+        let clearCount = await cartService.clearCount
+        XCTAssertEqual(clearCount, 0)
         XCTAssertFalse(viewModel.isPaid)
         XCTAssertFalse(viewModel.isPaying)
         XCTAssertNotNil(viewModel.alert)
@@ -123,14 +123,16 @@ private actor PaymentServiceStub: PaymentService {
 }
 
 private actor OrderCartServiceStub: CartService {
-    private(set) var sentOrders: [[String]] = []
+    private(set) var clearCount = 0
 
     func loadCart() async throws -> [Nft] {
         []
     }
 
-    func updateOrder(nftIds: [String]) async throws {
-        sentOrders.append(nftIds)
+    func remove(nftId: String) async throws {}
+
+    func clear() async throws {
+        clearCount += 1
     }
 }
 

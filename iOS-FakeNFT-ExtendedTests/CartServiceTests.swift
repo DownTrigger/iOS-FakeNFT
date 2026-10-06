@@ -38,44 +38,61 @@ final class CartServiceTests: XCTestCase {
         }
     }
 
-    func testOrderUpdateRequestBodyContainsAllIds() throws {
+    func testRemoveSendsRemoveChange() async throws {
         // Given
-        let request = OrderUpdateRequest(nftIds: ["a", "b"])
+        let orderService = UserOrderServiceStub(orderIds: ["1", "2"])
+        let service = CartServiceImpl(orderService: orderService, nftService: NftServiceStub(failingNftId: nil))
+
+        // When
+        try await service.remove(nftId: "1")
 
         // Then
-        XCTAssertEqual(request.httpMethod, .put)
-        XCTAssertEqual(String(bytes: try XCTUnwrap(request.rawBody), encoding: .utf8), "nfts=a&nfts=b")
+        let changes = await orderService.changes
+        XCTAssertEqual(changes, [.remove("1")])
     }
 
-    func testOrderUpdateRequestBodyIsEmptyForEmptyCart() throws {
+    func testClearClearsOrder() async throws {
         // Given
-        let request = OrderUpdateRequest(nftIds: [])
+        let orderService = UserOrderServiceStub(orderIds: ["1"])
+        let service = CartServiceImpl(orderService: orderService, nftService: NftServiceStub(failingNftId: nil))
+
+        // When
+        try await service.clear()
 
         // Then
-        XCTAssertEqual(try XCTUnwrap(request.rawBody), Data())
+        let clearCount = await orderService.clearCount
+        XCTAssertEqual(clearCount, 1)
     }
 
     private func makeService(orderIds: [String], failingNftId: String? = nil) -> CartServiceImpl {
         CartServiceImpl(
-            networkClient: OrderNetworkClientStub(orderIds: orderIds),
-            nftService: NftServiceStub(failingNftId: failingNftId),
-            orderUpdater: OrderUpdaterStub()
+            orderService: UserOrderServiceStub(orderIds: orderIds),
+            nftService: NftServiceStub(failingNftId: failingNftId)
         )
     }
 }
 
-private struct OrderNetworkClientStub: NetworkClient {
+private actor UserOrderServiceStub: UserOrderService {
     let orderIds: [String]
+    private(set) var changes: [IdChange] = []
+    private(set) var clearCount = 0
 
-    func send(request: NetworkRequest) async throws -> Data {
-        guard request is OrderRequest else {
-            throw NetworkClientError.incorrectRequest("Unexpected request")
-        }
-        return try JSONSerialization.data(withJSONObject: ["id": "1", "nfts": orderIds])
+    init(orderIds: [String]) {
+        self.orderIds = orderIds
     }
 
-    func send<T: Decodable>(request: NetworkRequest) async throws -> T {
-        try JSONDecoder().decode(T.self, from: try await send(request: request))
+    func loadOrder() async throws -> UserOrder {
+        UserOrder(id: "1", nfts: orderIds)
+    }
+
+    func updateNfts(_ change: IdChange) async throws -> UserOrder {
+        changes.append(change)
+        return UserOrder(id: "1", nfts: change.apply(to: orderIds))
+    }
+
+    func clearOrder() async throws -> UserOrder {
+        clearCount += 1
+        return UserOrder(id: "1", nfts: [])
     }
 }
 
@@ -88,8 +105,4 @@ private struct NftServiceStub: NftService {
         }
         return .stub(id: id)
     }
-}
-
-private struct OrderUpdaterStub: CartOrderUpdater {
-    func updateOrder(nftIds: [String]) async throws {}
 }

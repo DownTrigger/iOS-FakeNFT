@@ -6,6 +6,7 @@ struct PaymentView: View {
 
     @Environment(ServicesAssembly.self) private var services
     @Environment(Router<CartRoute>.self) private var router
+    @Environment(UserState.self) private var userState
     @State private var viewModel = PaymentViewModel()
 
     var body: some View {
@@ -39,6 +40,7 @@ struct PaymentView: View {
         .onChange(of: viewModel.isPaid) { _, isPaid in
             if isPaid {
                 router.push(.success)
+                Task { try? await userState.refresh() }
             }
         }
     }
@@ -101,9 +103,16 @@ struct PaymentView: View {
 }
 
 #Preview {
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl(),
+        likesStorage: LikesStorageImpl()
+    )
+
     NavigationStack {
         PaymentView()
     }
-    .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl(), likesStorage: LikesStorageImpl()))
+    .environment(services)
+    .environment(UserState(profileService: services.userProfileService, orderService: services.userOrderService))
     .environment(Router<CartRoute>())
 }

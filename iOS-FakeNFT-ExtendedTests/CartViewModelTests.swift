@@ -113,7 +113,7 @@ extension CartViewModelTests {
 
 extension CartViewModelTests {
 
-    func testConfirmDeleteRemovesNftAndSendsRemainingIds() async {
+    func testConfirmDeleteRemovesNft() async {
         // Given
         let service = CartServiceStub(result: .success([.stub(id: "1", price: 1), .stub(id: "2", price: 2)]))
         let viewModel = CartViewModel()
@@ -124,8 +124,8 @@ extension CartViewModelTests {
         await viewModel.confirmDelete(using: service)
 
         // Then
-        let sentOrders = await service.sentOrders
-        XCTAssertEqual(sentOrders, [["2"]])
+        let removedIds = await service.removedIds
+        XCTAssertEqual(removedIds, ["1"])
         XCTAssertEqual(viewModel.items.map(\.id), ["2"])
         XCTAssertEqual(viewModel.totalPrice, 2, accuracy: 0.001)
         XCTAssertNil(viewModel.nftToDelete)
@@ -142,8 +142,8 @@ extension CartViewModelTests {
         await viewModel.confirmDelete(using: service)
 
         // Then
-        let sentOrders = await service.sentOrders
-        XCTAssertEqual(sentOrders, [[]])
+        let removedIds = await service.removedIds
+        XCTAssertEqual(removedIds, ["1"])
         XCTAssertTrue(viewModel.items.isEmpty)
     }
 
@@ -223,7 +223,7 @@ extension CartViewModelTests {
 private actor CartServiceStub: CartService {
     let result: Result<[Nft], Error>
     let updateError: Error?
-    private(set) var sentOrders: [[String]] = []
+    private(set) var removedIds: [String] = []
 
     init(result: Result<[Nft], Error>, updateError: Error? = nil) {
         self.result = result
@@ -234,12 +234,14 @@ private actor CartServiceStub: CartService {
         try result.get()
     }
 
-    func updateOrder(nftIds: [String]) async throws {
-        sentOrders.append(nftIds)
+    func remove(nftId: String) async throws {
+        removedIds.append(nftId)
         if let updateError {
             throw updateError
         }
     }
+
+    func clear() async throws {}
 }
 
 extension Nft {

@@ -57,7 +57,7 @@ final class PaymentViewModel {
                 try await paymentService.pay(currencyId: currency.id)
                 isPaymentConfirmed = true
             }
-            try await cartService.updateOrder(nftIds: [])
+            try await cartService.clear()
             isPaid = true
         } catch {
             alert = .retryError(title: CartLocalizedText.paymentError.text) { [weak self] in
