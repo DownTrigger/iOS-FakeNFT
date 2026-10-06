@@ -428,23 +428,6 @@
         }
       }
     },
-    "sorting.cancel" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Отменить"
-          }
-        }
-      }
-    },
     "sorting.close" : {
       "localizations" : {
         "en" : {
