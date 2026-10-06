@@ -27,8 +27,12 @@ struct ProfileUpdate: NetworkRequest {
             "website=\((user.userWebSite ?? "").urlEncoded)",
             "avatar=\((user.avatar ?? "").urlEncoded)"
         ]
-        for like in user.likes {
-            params.append("likes=\(like.urlEncoded)")
+        if user.likes.isEmpty {
+            params.append("likes=null")
+        } else {
+            for like in user.likes {
+                params.append("likes=\(like.urlEncoded)")
+            }
         }
         rawBody = params.joined(separator: "&").data(using: .utf8)
     }
