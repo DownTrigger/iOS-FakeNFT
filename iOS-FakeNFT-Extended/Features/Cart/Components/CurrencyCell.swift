@@ -30,7 +30,7 @@ struct CurrencyCell: View {
     }
 
     private var icon: some View {
-        AsyncImage(url: currency.image) { image in
+        AsyncImage(url: currency.imageURL) { image in
             image
                 .resizable()
                 .scaledToFit()
@@ -57,6 +57,6 @@ extension Currency {
         id: "5",
         title: "Bitcoin",
         name: "BTC",
-        image: URL(string: "https://code.s3.yandex.net/Mobile/iOS/Currencies/Bitcoin_(BTC).png")
+        imageURL: URL(string: "https://code.s3.yandex.net/Mobile/iOS/Currencies/Bitcoin_(BTC).png")
     )
 }

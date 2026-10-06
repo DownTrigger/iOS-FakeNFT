@@ -19,7 +19,7 @@ final class PaymentViewModel {
     }
 
     var canPay: Bool {
-        selectedCurrency != nil && !isPaying
+        selectedCurrency != nil && !isPaying && !isPaid
     }
 
     func load(using service: PaymentService) async {
@@ -39,7 +39,7 @@ final class PaymentViewModel {
     }
 
     func select(_ currency: Currency) {
-        guard !isPaying else {
+        guard !isPaying, !isPaymentConfirmed else {
             return
         }
         selectedCurrency = currency
@@ -59,6 +59,10 @@ final class PaymentViewModel {
             }
             try await cartService.clear()
             isPaid = true
+        } catch is CancellationError {
+            return
+        } catch let error as URLError where error.code == .cancelled {
+            return
         } catch {
             alert = .retryError(title: CartLocalizedText.paymentError.text) { [weak self] in
                 Task { await self?.pay(using: paymentService, cartService: cartService) }

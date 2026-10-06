@@ -2,7 +2,6 @@ import SwiftUI
 
 struct PaymentView: View {
     private static let columns = Array(repeating: GridItem(.flexible(), spacing: 7), count: 2)
-    private static let agreementURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse")
 
     @Environment(ServicesAssembly.self) private var services
     @Environment(Router<CartRoute>.self) private var router
@@ -74,7 +73,7 @@ struct PaymentView: View {
                 Text(CartLocalizedText.agreementText.key)
                     .foregroundStyle(Color(.fnText))
                 Button {
-                    if let url = Self.agreementURL {
+                    if let url = CartConstants.agreementURL {
                         router.push(.agreement(url))
                     }
                 } label: {

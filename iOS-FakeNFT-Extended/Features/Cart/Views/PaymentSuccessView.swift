@@ -39,8 +39,7 @@ struct PaymentSuccessView: View {
                 .background(Color(.fnText))
                 .clipShape(RoundedRectangle(cornerRadius: 16))
         }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 16)
+        .padding([.horizontal, .bottom], 16)
     }
 }
 

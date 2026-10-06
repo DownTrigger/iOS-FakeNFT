@@ -92,19 +92,95 @@ final class PaymentViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isPaid)
     }
 
+    func testPayCallsPaymentBeforeClearingCart() async {
+        // Given
+        let log = CallLog()
+        let viewModel = PaymentViewModel()
+        viewModel.select(.stub(id: "1"))
+
+        // When
+        await viewModel.pay(using: PaymentServiceStub(log: log), cartService: OrderCartServiceStub(log: log))
+
+        // Then
+        let calls = await log.calls
+        XCTAssertEqual(calls, ["pay", "clear"])
+        XCTAssertTrue(viewModel.isPaid)
+    }
+
+    func testRepeatedPayTapPaysOnce() async {
+        // Given
+        let paymentService = PaymentServiceStub()
+        let cartService = OrderCartServiceStub()
+        let viewModel = PaymentViewModel()
+        viewModel.select(.stub(id: "1"))
+
+        // When
+        async let first: Void = viewModel.pay(using: paymentService, cartService: cartService)
+        async let second: Void = viewModel.pay(using: paymentService, cartService: cartService)
+        _ = await (first, second)
+
+        // Then
+        let paidWith = await paymentService.paidCurrencyIds
+        XCTAssertEqual(paidWith, ["1"])
+    }
+
+    func testClearFailureRetryDoesNotPayTwiceAndLocksCurrency() async {
+        // Given
+        let paymentService = PaymentServiceStub()
+        let cartService = OrderCartServiceStub(clearErrors: [NetworkClientError.urlSessionError])
+        let viewModel = PaymentViewModel()
+        viewModel.select(.stub(id: "1"))
+        await viewModel.pay(using: paymentService, cartService: cartService)
+        XCTAssertNotNil(viewModel.alert)
+        XCTAssertFalse(viewModel.isPaid)
+
+        // When
+        viewModel.select(.stub(id: "2"))
+        await viewModel.pay(using: paymentService, cartService: cartService)
+
+        // Then
+        let paidWith = await paymentService.paidCurrencyIds
+        let clearCount = await cartService.clearCount
+        XCTAssertEqual(paidWith, ["1"])
+        XCTAssertEqual(clearCount, 2)
+        XCTAssertEqual(viewModel.selectedCurrency?.id, "1")
+        XCTAssertTrue(viewModel.isPaid)
+    }
+
+    func testCurrencyDecodesImageURLFromImageKey() throws {
+        // Given
+        let json = Data(#"{"id":"1","title":"Bitcoin","name":"BTC","image":"https://example.com/btc.png"}"#.utf8)
+
+        // When
+        let currency = try JSONDecoder().decode(Currency.self, from: json)
+
+        // Then
+        XCTAssertEqual(currency.imageURL?.absoluteString, "https://example.com/btc.png")
+    }
+
     func testCurrencyDisplayTitleReplacesUnderscores() {
-        XCTAssertEqual(Currency(id: "0", title: "Shiba_Inu", name: "SHIB", image: nil).displayTitle, "Shiba Inu")
+        XCTAssertEqual(Currency(id: "0", title: "Shiba_Inu", name: "SHIB", imageURL: nil).displayTitle, "Shiba Inu")
+    }
+}
+
+private actor CallLog {
+    private(set) var calls: [String] = []
+
+    func append(_ call: String) {
+        calls.append(call)
     }
 }
 
 private actor PaymentServiceStub: PaymentService {
     let loadError: Error?
     let payError: Error?
+    let log: CallLog?
     private(set) var paidCurrencyIds: [String] = []
 
-    init(loadError: Error? = nil, payError: Error? = nil) {
+    init(loadError: Error? = nil, payError: Error? = nil, log: CallLog? = nil) {
         self.loadError = loadError
         self.payError = payError
+        self.log = log
     }
 
     func loadCurrencies() async throws -> [Currency] {
@@ -116,6 +192,7 @@ private actor PaymentServiceStub: PaymentService {
 
     func pay(currencyId: String) async throws {
         paidCurrencyIds.append(currencyId)
+        await log?.append("pay")
         if let payError {
             throw payError
         }
@@ -123,7 +200,14 @@ private actor PaymentServiceStub: PaymentService {
 }
 
 private actor OrderCartServiceStub: CartService {
+    private let log: CallLog?
+    private var clearErrors: [Error]
     private(set) var clearCount = 0
+
+    init(log: CallLog? = nil, clearErrors: [Error] = []) {
+        self.log = log
+        self.clearErrors = clearErrors
+    }
 
     func loadCart() async throws -> [Nft] {
         []
@@ -133,11 +217,15 @@ private actor OrderCartServiceStub: CartService {
 
     func clear() async throws {
         clearCount += 1
+        await log?.append("clear")
+        if !clearErrors.isEmpty {
+            throw clearErrors.removeFirst()
+        }
     }
 }
 
 private extension Currency {
     static func stub(id: String) -> Currency {
-        Currency(id: id, title: "Coin \(id)", name: "C\(id)", image: nil)
+        Currency(id: id, title: "Coin \(id)", name: "C\(id)", imageURL: nil)
     }
 }
