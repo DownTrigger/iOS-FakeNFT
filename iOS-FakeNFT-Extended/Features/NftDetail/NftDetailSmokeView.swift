@@ -3,14 +3,18 @@ import SwiftUI
 @MainActor
 @Observable
 final class NftDetailSmokeViewModel {
-    private static let testNftId = "7773e33c-ec15-4230-a102-92426a3a6d5a"
+    private let nftId: String
 
     private(set) var state: LoadingState<Nft> = .idle
+
+    init(nftId: String) {
+        self.nftId = nftId
+    }
 
     func load(using service: NftService) async {
         state = .loading
         do {
-            let nft = try await service.loadNft(id: Self.testNftId)
+            let nft = try await service.loadNft(id: nftId)
             state = .loaded(nft)
         } catch {
             state = .failed(error)
@@ -21,8 +25,12 @@ final class NftDetailSmokeViewModel {
 struct NftDetailSmokeView: View {
     @Environment(ServicesAssembly.self) private var services
     @Environment(\.dismiss) private var dismiss
-    @State private var viewModel = NftDetailSmokeViewModel()
+    @State private var viewModel: NftDetailSmokeViewModel
     @State private var currentIndex = 0
+
+    init(nftId: String) {
+        _viewModel = State(initialValue: NftDetailSmokeViewModel(nftId: nftId))
+    }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -128,7 +136,7 @@ private struct LinePageIndicator: View {
 #Preview {
     Color.clear
         .sheet(isPresented: .constant(true)) {
-            NftDetailSmokeView()
+            NftDetailSmokeView(nftId: "7773e33c-ec15-4230-a102-92426a3a6d5a")
                 .environment(
                     ServicesAssembly(
                         networkClient: DefaultNetworkClient(),

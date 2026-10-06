@@ -27,16 +27,14 @@ struct TabBarView: View {
             }
             .tag(TabBarItem.profile)
 
-            NavigationStack {
-                CatalogSmokeView()
-            }
-            .tabItem {
-                Label {
-                    Text(TabLocalizedText.catalog.key)
-                } icon: {
-                    Image(.icTabCatalog)
+            CatalogRootView()
+                .tabItem {
+                    Label {
+                        Text(TabLocalizedText.catalog.key)
+                    } icon: {
+                        Image(.icTabCatalog)
+                    }
                 }
-            }
             .tag(TabBarItem.catalog)
 
             CartRootView()

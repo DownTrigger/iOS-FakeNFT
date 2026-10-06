@@ -123,18 +123,98 @@
         }
       }
     },
-    "Catalog.openNft" : {
+    "Catalog.cartError" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open NFT"
+            "value" : "Failed to update cart"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Открыть NFT"
+            "value" : "Не удалось изменить корзину"
+          }
+        }
+      }
+    },
+    "Catalog.collectionAuthor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collection author:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Автор коллекции:"
+          }
+        }
+      }
+    },
+    "Catalog.collectionEmpty" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No NFTs in this collection yet"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В коллекции пока нет NFT"
+          }
+        }
+      }
+    },
+    "Catalog.empty" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No collections yet"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Коллекций пока нет"
+          }
+        }
+      }
+    },
+    "Catalog.likeError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to update like"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось изменить лайк"
+          }
+        }
+      }
+    },
+    "Error.loadData" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to load data"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось получить данные"
           }
         }
       }
@@ -354,6 +434,12 @@
     "sorting.cancel" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -399,7 +485,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sorting by name"
+            "value" : "By name"
           }
         },
         "ru" : {
@@ -415,7 +501,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sorting by NFT count"
+            "value" : "By NFT count"
           }
         },
         "ru" : {
@@ -431,7 +517,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sorting by price"
+            "value" : "By price"
           }
         },
         "ru" : {
@@ -447,7 +533,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sorting by rating"
+            "value" : "By rating"
           }
         },
         "ru" : {
@@ -464,7 +550,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sorting by title"
+            "value" : "By title"
           }
         },
         "ru" : {
@@ -480,7 +566,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sorting"
+            "value" : "Sort"
           }
         },
         "ru" : {

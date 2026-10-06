@@ -8,4 +8,6 @@ struct NftGridCellModel: Identifiable, Sendable {
     let priceText: String
     let isLiked: Bool
     let isInCart: Bool
+    var isLikePending = false
+    var isCartPending = false
 }
