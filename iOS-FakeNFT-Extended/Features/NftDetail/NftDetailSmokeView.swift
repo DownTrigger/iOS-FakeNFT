@@ -132,7 +132,8 @@ private struct LinePageIndicator: View {
                 .environment(
                     ServicesAssembly(
                         networkClient: DefaultNetworkClient(),
-                        nftStorage: NftStorageImpl()
+                        nftStorage: NftStorageImpl(),
+                        likesStorage: LikesStorageImpl()
                     )
                 )
         }

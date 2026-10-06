@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CartView: View {
     @State private var isSortSheetPresented = false
-    
+
     var body: some View {
         ZStack {
             Text(TabLocalizedText.cart.key)

@@ -31,4 +31,3 @@ struct ReusableUserInformationView: View {
         .padding(.horizontal, 16)
     }
 }
-
