@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserResponse: Decodable {
+struct UserResponse: Decodable, Sendable {
     let name: String
     let avatar: String?
     let description: String?
@@ -23,12 +23,11 @@ struct UserResponse: Decodable {
     }
 }
 
-protocol UserServiceProtocol {
+protocol UserServiceProtocol: Sendable {
     func loadUsers() async throws -> [UserResponse]
 }
 
-@MainActor
-final class UsersServiceImpl: UserServiceProtocol {
+actor UsersServiceImpl: UserServiceProtocol {
     private let networkClient: NetworkClient
 
     init(networkClient: NetworkClient) {

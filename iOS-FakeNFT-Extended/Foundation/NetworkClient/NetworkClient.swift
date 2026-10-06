@@ -8,7 +8,7 @@ enum NetworkClientError: Error {
     case incorrectRequest(String)
 }
 
-protocol NetworkClient {
+protocol NetworkClient: Sendable {
     func send(request: NetworkRequest) async throws -> Data
     func send<T: Decodable>(request: NetworkRequest) async throws -> T
 }
@@ -16,16 +16,13 @@ protocol NetworkClient {
 actor DefaultNetworkClient: NetworkClient {
     private let session: URLSession
     private let decoder: JSONDecoder
-    private let encoder: JSONEncoder
 
     init(
         session: URLSession = URLSession.shared,
-        decoder: JSONDecoder = JSONDecoder(),
-        encoder: JSONEncoder = JSONEncoder()
+        decoder: JSONDecoder = JSONDecoder()
     ) {
         self.session = session
         self.decoder = decoder
-        self.encoder = encoder
     }
 
     func send(request: NetworkRequest) async throws -> Data {
@@ -58,13 +55,8 @@ actor DefaultNetworkClient: NetworkClient {
         urlRequest.timeoutInterval = 30
 
         if let rawBody = request.rawBody {
-            let contentType = request.contentType ?? "application/x-www-form-urlencoded"
-            urlRequest.setValue(contentType, forHTTPHeaderField: "Content-Type")
+            urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = rawBody
-        } else if let dto = request.dto,
-                  let dtoEncoded = try? encoder.encode(dto) {
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            urlRequest.httpBody = dtoEncoded
         }
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         urlRequest.addValue(RequestConstants.token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
