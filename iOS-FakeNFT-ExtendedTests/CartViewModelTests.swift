@@ -101,9 +101,9 @@ extension CartViewModelTests {
 
     private func loadedViewModel() async -> CartViewModel {
         let service = CartServiceStub(result: .success([
-            Nft(id: "1", name: "Spring", images: [], rating: 5, price: 2, author: "1"),
-            Nft(id: "2", name: "April", images: [], rating: 3, price: 1, author: "1"),
-            Nft(id: "3", name: "Greena", images: [], rating: 1, price: 3, author: "1")
+            Nft(id: "1", name: "Spring", images: [], description: "", rating: 5, price: 2, author: "1"),
+            Nft(id: "2", name: "April", images: [], description: "", rating: 3, price: 1, author: "1"),
+            Nft(id: "3", name: "Greena", images: [], description: "", rating: 1, price: 3, author: "1")
         ]))
         let viewModel = CartViewModel()
         await viewModel.load(using: service)
@@ -244,6 +244,6 @@ private actor CartServiceStub: CartService {
 
 extension Nft {
     static func stub(id: String, price: Double = 1) -> Nft {
-        Nft(id: id, name: "NFT \(id)", images: [], rating: 3, price: price, author: "1")
+        Nft(id: id, name: "NFT \(id)", images: [], description: "", rating: 3, price: price, author: "1")
     }
 }

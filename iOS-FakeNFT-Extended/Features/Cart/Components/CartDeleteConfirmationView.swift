@@ -61,6 +61,7 @@ struct CartDeleteConfirmationView: View {
             id: "1",
             name: "April",
             images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")].compactMap { $0 },
+            description: "",
             rating: 3,
             price: 1.78,
             author: "1"

@@ -14,7 +14,7 @@ final class CartViewModel {
             return []
         }
         switch sortOption {
-        case .byTitle:
+        case .byTitle, .byName:
             return sortBy(items, keyPath: \.name)
         case .byRating:
             return sortBy(items, keyPath: \.rating, ascending: false)

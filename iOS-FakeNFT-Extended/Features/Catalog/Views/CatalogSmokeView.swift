@@ -3,7 +3,7 @@ import SwiftUI
 struct CatalogSmokeView: View {
     @State private var isDetailPresented = false
     @State private var isSortSheetPresented = false
-    
+
     var body: some View {
         ZStack {
             Button {
@@ -28,6 +28,6 @@ struct CatalogSmokeView: View {
                 }
             }
         }
-        
+
     }
 }

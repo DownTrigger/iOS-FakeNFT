@@ -35,5 +35,5 @@ struct CartRootView: View {
 
 #Preview {
     CartRootView()
-        .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
+        .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl(), likesStorage: LikesStorageImpl()))
 }

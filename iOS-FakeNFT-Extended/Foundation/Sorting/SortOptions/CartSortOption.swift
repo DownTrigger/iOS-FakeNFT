@@ -6,10 +6,11 @@
 //
 
 /// Sorting options for cart and profile screens
-enum CartSortOption: String, SortOptionProtocol {
+enum CartSortOption: String, SortOptionProtocol, CaseIterable {
     case byTitle
     case byRating
     case byPrice
+    case byName
 
     var id: String {
         rawValue
@@ -18,11 +19,13 @@ enum CartSortOption: String, SortOptionProtocol {
     var title: SortingLocalizedText {
         switch self {
         case .byTitle:
-            return .sortByTitle
+            .sortByTitle
         case .byRating:
-            return .sortByRating
+            .sortByRating
         case .byPrice:
-            return .sortByPrice
+            .sortByPrice
+        case .byName:
+            .sortByName
         }
     }
 }

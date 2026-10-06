@@ -104,6 +104,6 @@ struct PaymentView: View {
     NavigationStack {
         PaymentView()
     }
-    .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
+    .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl(), likesStorage: LikesStorageImpl()))
     .environment(Router<CartRoute>())
 }

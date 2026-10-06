@@ -64,7 +64,7 @@ struct CartView: View {
         case .idle, .loading:
             AppLoadingView()
         case .loaded(let items) where items.isEmpty:
-            EmptyStateView(message: CartLocalizedText.empty.text)
+            EmptyStateView(message: CartLocalizedText.empty.key)
         case .loaded:
             cartList(viewModel.items)
         case .failed:
@@ -96,6 +96,6 @@ struct CartView: View {
     NavigationStack {
         CartView()
     }
-    .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
+    .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl(), likesStorage: LikesStorageImpl()))
     .environment(Router<CartRoute>())
 }
