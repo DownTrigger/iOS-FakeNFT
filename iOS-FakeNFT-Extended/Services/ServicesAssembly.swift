@@ -31,8 +31,8 @@ final class ServicesAssembly {
         )
     }
 
-    var profileService: ProfileService {
-        ProfileServiceImpl(
+    var userProfileService: UserProfileService {
+        UserProfileServiceImpl(
             networkClient: networkClient
         )
     }
@@ -53,7 +53,7 @@ final class ServicesAssembly {
     // TODO: временный код, заменить на данные модуля авторизации
     func loadCurrentUserLikes() async {
         do {
-            let profile = try await profileService.loadProfile()
+            let profile = try await userProfileService.loadProfile()
 
             await likesStorage.saveLikes(profile.likes)
         } catch {
