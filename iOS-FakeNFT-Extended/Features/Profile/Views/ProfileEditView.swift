@@ -40,21 +40,12 @@ struct ProfileEditView: View {
             .padding(.vertical, 16)
         }
         .background(Color(.fnBackground))
-        .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    if viewModel.hasChanges {
-                        showExitAlert = true
-                    } else {
-                        dismiss()
-                    }
-                } label: {
-                    ProfileIcon.back.image
-                        .foregroundStyle(Color(.fnText))
-                }
-                .contentShape(Rectangle())
+        .backButton {
+            if viewModel.hasChanges {
+                showExitAlert = true
+            } else {
+                dismiss()
             }
         }
         .confirmationDialog(

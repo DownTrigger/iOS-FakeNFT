@@ -41,15 +41,9 @@ struct MyNFTsView: View {
         }
         .navigationTitle(ScreenLocalizedText.myNFTs.key)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
+        .backButton { dismiss() }
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { dismiss() } label: {
-                    Image(.icBack)
-                        .foregroundStyle(Color(.fnText))
-                }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 NavigationSortButton {
                     withAnimation { showSortSheet = true }
                 }

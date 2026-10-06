@@ -21,18 +21,7 @@ struct PaymentView: View {
         }
         .navigationTitle(CartLocalizedText.paymentTitle.text)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    router.pop()
-                } label: {
-                    Image(.icBack)
-                        .renderingMode(.template)
-                        .foregroundStyle(Color(.fnText))
-                }
-            }
-        }
+        .backButton { router.pop() }
         .toolbar(.hidden, for: .tabBar)
         .task { await viewModel.load(using: services.paymentService) }
         .appAlert(item: $viewModel.alert)

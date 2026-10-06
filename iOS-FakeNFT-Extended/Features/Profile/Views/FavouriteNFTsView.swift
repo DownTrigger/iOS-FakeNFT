@@ -31,15 +31,7 @@ struct FavouriteNFTsView: View {
         }
         .navigationTitle(ScreenLocalizedText.favouriteNFTs.key)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { dismiss() } label: {
-                    Image(.icBack)
-                        .foregroundStyle(Color(.fnText))
-                }
-            }
-        }
+        .backButton { dismiss() }
         .toolbar(.hidden, for: .tabBar)
         .background(Color(.fnBackground))
         .task { await viewModel.loadNfts() }

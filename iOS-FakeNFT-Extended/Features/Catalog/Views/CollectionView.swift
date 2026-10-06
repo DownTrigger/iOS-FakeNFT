@@ -27,18 +27,7 @@ struct CollectionView: View {
         .hiddenTopScrollEdgeEffect()
         .background(Color(.fnBackground))
         .toolbar(.hidden, for: .tabBar)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    router.pop()
-                } label: {
-                    Image(.icBack)
-                        .renderingMode(.template)
-                        .foregroundStyle(Color(.fnText))
-                }
-            }
-        }
+        .backButton { router.pop() }
         .task { await viewModel.loadNfts() }
         .appAlert(item: $viewModel.alert)
         .sheet(item: $selectedCell) { cell in
