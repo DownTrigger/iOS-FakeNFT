@@ -19,7 +19,7 @@ struct PaymentView: View {
                 AppLoadingView()
             }
         }
-        .navigationTitle(CartLocalizedText.paymentTitle.text)
+        .navigationTitle(CartLocalizedText.paymentTitle.key)
         .navigationBarTitleDisplayMode(.inline)
         .backButton { router.pop() }
         .toolbar(.hidden, for: .tabBar)

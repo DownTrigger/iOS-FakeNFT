@@ -45,7 +45,7 @@ final class StatisticsViewModel {
             return
         } catch {
             alert = .retryError(
-                title: String(localized: "stat_load_error"),
+                title: "stat_load_error",
                 onRetry: {
                     Task {
                         await self.loadStatistics()
@@ -73,7 +73,7 @@ final class StatisticsViewModel {
             return
         } catch {
             alert = .retryError(
-                title: String(localized: "stat_refresh_error"),
+                title: "stat_refresh_error",
                 onRetry: {
                     Task {
                         await self.refreshStatistics()

@@ -42,7 +42,7 @@ final class CollectionViewModel {
                 return
             }
             state = .failed(error)
-            alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
+            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
                 Task { await self?.loadNfts() }
             }
         }
@@ -53,7 +53,7 @@ final class CollectionViewModel {
             try await userState.toggleLike(id)
         } catch {
             guard !error.isCancellation else { return }
-            alert = .retryError(title: CatalogLocalizedText.likeError.text) { [weak self] in
+            alert = .retryError(title: CatalogLocalizedText.likeError.resource) { [weak self] in
                 Task { await self?.toggleLike(id) }
             }
         }
@@ -64,7 +64,7 @@ final class CollectionViewModel {
             try await userState.toggleCart(id)
         } catch {
             guard !error.isCancellation else { return }
-            alert = .retryError(title: CatalogLocalizedText.cartError.text) { [weak self] in
+            alert = .retryError(title: CatalogLocalizedText.cartError.resource) { [weak self] in
                 Task { await self?.toggleCart(id) }
             }
         }

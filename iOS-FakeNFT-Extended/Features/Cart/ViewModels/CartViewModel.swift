@@ -56,7 +56,7 @@ final class CartViewModel {
             nftToDelete = nil
         } catch {
             nftToDelete = nil
-            alert = .retryError(title: CartLocalizedText.deleteError.text) { [weak self] in
+            alert = .retryError(title: CartLocalizedText.deleteError.resource) { [weak self] in
                 Task {
                     self?.requestDelete(nft)
                     await self?.confirmDelete(using: service)
@@ -88,7 +88,7 @@ final class CartViewModel {
             if state.isLoading {
                 state = .failed(error)
             }
-            alert = .retryError(title: CartLocalizedText.loadError.text) { [weak self] in
+            alert = .retryError(title: CartLocalizedText.loadError.resource) { [weak self] in
                 Task { await self?.load(using: service) }
             }
         }

@@ -55,40 +55,40 @@ enum CartLocalizedText {
         }
     }
 
-    var text: String {
+    var resource: LocalizedStringResource {
         switch self {
         case .price:
-            String(localized: "cart.price")
+            "cart.price"
         case .empty:
-            String(localized: "cart.empty")
+            "cart.empty"
         case .toPayment:
-            String(localized: "cart.toPayment")
+            "cart.toPayment"
         case .loadError:
-            String(localized: "cart.loadError")
+            "cart.loadError"
         case .nftCount(let count):
-            String(localized: "cart.nftCount \(count)")
+            "cart.nftCount \(count)"
         case .deleteConfirmation:
-            String(localized: "cart.deleteConfirmation")
+            "cart.deleteConfirmation"
         case .delete:
-            String(localized: "cart.delete")
+            "cart.delete"
         case .back:
-            String(localized: "cart.back")
+            "cart.back"
         case .deleteError:
-            String(localized: "cart.deleteError")
+            "cart.deleteError"
         case .paymentTitle:
-            String(localized: "cart.paymentTitle")
+            "cart.paymentTitle"
         case .agreementText:
-            String(localized: "cart.agreementText")
+            "cart.agreementText"
         case .agreementLink:
-            String(localized: "cart.agreementLink")
+            "cart.agreementLink"
         case .currenciesLoadError:
-            String(localized: "cart.currenciesLoadError")
+            "cart.currenciesLoadError"
         case .paymentError:
-            String(localized: "cart.paymentError")
+            "cart.paymentError"
         case .paymentSuccess:
-            String(localized: "cart.paymentSuccess")
+            "cart.paymentSuccess"
         case .backToCart:
-            String(localized: "cart.backToCart")
+            "cart.backToCart"
         }
     }
 }

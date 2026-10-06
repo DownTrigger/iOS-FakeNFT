@@ -32,7 +32,7 @@ final class PaymentViewModel {
             state = .idle
         } catch {
             state = .failed(error)
-            alert = .retryError(title: CartLocalizedText.currenciesLoadError.text) { [weak self] in
+            alert = .retryError(title: CartLocalizedText.currenciesLoadError.resource) { [weak self] in
                 Task { await self?.load(using: service) }
             }
         }
@@ -64,7 +64,7 @@ final class PaymentViewModel {
         } catch let error as URLError where error.code == .cancelled {
             return
         } catch {
-            alert = .retryError(title: CartLocalizedText.paymentError.text) { [weak self] in
+            alert = .retryError(title: CartLocalizedText.paymentError.resource) { [weak self] in
                 Task { await self?.pay(using: paymentService, cartService: cartService) }
             }
         }

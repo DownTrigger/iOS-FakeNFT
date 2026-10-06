@@ -77,9 +77,7 @@ struct WebViewScreen: View {
                         .frame(width: 30, height: 30)
                 }
             }
-            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(false)
             .toolbar(.hidden, for: .tabBar)
             .toolbarBackground(Color(.fnBackground), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)

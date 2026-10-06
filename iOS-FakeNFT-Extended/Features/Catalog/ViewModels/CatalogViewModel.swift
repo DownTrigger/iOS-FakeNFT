@@ -49,7 +49,7 @@ final class CatalogViewModel {
             try await paginator.loadNextPage()
         } catch {
             guard !error.isCancellation else { return }
-            alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
+            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
                 Task { await self?.loadNextPage() }
             }
         }
@@ -66,7 +66,7 @@ final class CatalogViewModel {
             }
         } catch {
             guard !error.isCancellation else { return }
-            alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
+            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
                 Task { await self?.refresh() }
             }
         }
