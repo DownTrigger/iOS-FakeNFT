@@ -1,16 +1,15 @@
 //
-//  CartSortOption.swift
+//  NftSortOption.swift
 //  iOS-FakeNFT-Extended
 //
 //  Created by Irina Muravyeva on 23.09.2026.
 //
 
 /// Sorting options for cart and profile screens
-enum CartSortOption: String, SortOptionProtocol, CaseIterable {
+enum NftSortOption: String, SortOptionProtocol, CaseIterable {
     case byTitle
     case byRating
     case byPrice
-    case byName
 
     var id: String {
         rawValue
@@ -24,8 +23,19 @@ enum CartSortOption: String, SortOptionProtocol, CaseIterable {
             .sortByRating
         case .byPrice:
             .sortByPrice
-        case .byName:
-            .sortByName
+        }
+    }
+}
+
+extension NftSortOption {
+    func sorted(_ nfts: [Nft]) -> [Nft] {
+        switch self {
+        case .byTitle:
+            sortBy(nfts, keyPath: \.name)
+        case .byRating:
+            sortBy(nfts, keyPath: \.rating, ascending: false)
+        case .byPrice:
+            sortBy(nfts, keyPath: \.price, ascending: false)
         }
     }
 }

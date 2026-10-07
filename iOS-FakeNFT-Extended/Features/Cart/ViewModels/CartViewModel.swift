@@ -4,7 +4,7 @@ import Foundation
 @Observable
 final class CartViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
-    private(set) var sortOption: CartSortOption = .byTitle
+    private(set) var sortOption: NftSortOption = .byTitle
     private(set) var nftToDelete: Nft?
     private(set) var isDeleting = false
     var alert: AlertModel?
@@ -13,21 +13,14 @@ final class CartViewModel {
         guard case let .loaded(items) = state else {
             return []
         }
-        switch sortOption {
-        case .byTitle, .byName:
-            return sortBy(items, keyPath: \.name)
-        case .byRating:
-            return sortBy(items, keyPath: \.rating, ascending: false)
-        case .byPrice:
-            return sortBy(items, keyPath: \.price, ascending: false)
-        }
+        return sortOption.sorted(items)
     }
 
     var totalPrice: Double {
         items.reduce(0) { $0 + $1.price }
     }
 
-    func applySort(_ option: CartSortOption) {
+    func applySort(_ option: NftSortOption) {
         sortOption = option
     }
 

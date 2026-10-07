@@ -33,10 +33,6 @@ final class ServicesAssembly {
         UsersServiceImpl(networkClient: networkClient)
     }
 
-    var userDefaultsService: UserDefaultsService {
-        UserDefaultsServiceImpl()
-    }
-
     var userProfileService: UserProfileService {
         UserProfileServiceImpl(
             networkClient: networkClient

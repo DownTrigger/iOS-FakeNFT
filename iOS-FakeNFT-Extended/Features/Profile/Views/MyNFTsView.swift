@@ -6,21 +6,22 @@
 import SwiftUI
 
 struct MyNFTsView: View {
+    private static let sortOptionKey = "myNFTs.sortOption"
+
     @State private var viewModel: MyNFTsViewModel
     @State private var showSortSheet = false
+    @AppStorage(Self.sortOptionKey) private var sortOption: NftSortOption = .byRating
     @Environment(\.dismiss) private var dismiss
 
     init(
         user: UserModel,
         nftService: NftService,
-        userState: UserState,
-        userDefaultsService: UserDefaultsService
+        userState: UserState
     ) {
         _viewModel = State(initialValue: MyNFTsViewModel(
             user: user,
             nftService: nftService,
-            userState: userState,
-            userDefaultsService: userDefaultsService
+            userState: userState
         ))
     }
 
@@ -50,16 +51,17 @@ struct MyNFTsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationSortButton {
-                    withAnimation { showSortSheet = true }
+                    showSortSheet = true
                 }
             }
         }
         .sortSheet(
             isPresented: $showSortSheet,
-            options: [CartSortOption.byPrice, .byRating, .byName]
+            options: [NftSortOption.byPrice, .byRating, .byTitle]
         ) { option in
-            viewModel.setSortOption(option)
+            sortOption = option
         }
+        .task(id: sortOption) { viewModel.applySort(sortOption) }
         .toolbar(.hidden, for: .tabBar)
         .background(Color(.fnBackground))
         .task { await viewModel.loadNfts() }
@@ -113,8 +115,7 @@ private struct PreviewNftService: NftService {
             userState: UserState(
                 profileService: ProfilePreviewUserProfileService(),
                 orderService: ProfilePreviewUserOrderService()
-            ),
-            userDefaultsService: UserDefaultsServiceImpl()
+            )
         )
     }
     .environment(ServicesAssembly(

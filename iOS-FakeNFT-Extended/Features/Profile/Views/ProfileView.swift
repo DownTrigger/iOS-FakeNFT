@@ -41,8 +41,7 @@ struct ProfileView: View {
                 MyNFTsView(
                     user: user,
                     nftService: services.nftService,
-                    userState: userState,
-                    userDefaultsService: services.userDefaultsService
+                    userState: userState
                 )
             case .favouriteNFTs:
                 FavouriteNFTsView(

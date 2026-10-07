@@ -8,7 +8,7 @@ struct CartView: View {
     @Environment(UserState.self) private var userState
     @State private var viewModel = CartViewModel()
     @State private var isSortSheetPresented = false
-    @AppStorage(Self.sortOptionKey) private var sortOption: CartSortOption = .byTitle
+    @AppStorage(Self.sortOptionKey) private var sortOption: NftSortOption = .byTitle
 
     var body: some View {
         ZStack {
@@ -18,15 +18,13 @@ struct CartView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationSortButton {
-                    withAnimation {
-                        isSortSheetPresented = true
-                    }
+                    isSortSheetPresented = true
                 }
             }
         }
         .sortSheet(
             isPresented: $isSortSheetPresented,
-            options: [CartSortOption.byPrice, .byRating, .byTitle]
+            options: [NftSortOption.byPrice, .byRating, .byTitle]
         ) { option in
             sortOption = option
         }

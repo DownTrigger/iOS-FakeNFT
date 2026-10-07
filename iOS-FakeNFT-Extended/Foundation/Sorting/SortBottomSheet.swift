@@ -98,9 +98,9 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
         SortBottomSheet(
             screenTitle: .sorting,
             options: [
-                CartSortOption.byPrice,
-                CartSortOption.byRating,
-                CartSortOption.byTitle
+                NftSortOption.byPrice,
+                NftSortOption.byRating,
+                NftSortOption.byTitle
             ],
             onSelect: { _ in },
             onClose: { }
@@ -116,9 +116,9 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
         SortBottomSheet(
             screenTitle: .profilePhoto,
             options: [
-                CartSortOption.byPrice,
-                CartSortOption.byRating,
-                CartSortOption.byTitle
+                NftSortOption.byPrice,
+                NftSortOption.byRating,
+                NftSortOption.byTitle
             ],
             onSelect: { _ in },
             onClose: { }

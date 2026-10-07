@@ -10,43 +10,31 @@ import Observation
 @Observable
 final class MyNFTsViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
-    private(set) var sortOption: CartSortOption
+    private(set) var sortOption: NftSortOption = .byRating
 
     var alert: AlertModel?
 
     private let user: UserModel
     private let nftService: NftService
     private let userState: UserState
-    private let userDefaultsService: UserDefaultsService
-
-    private static let sortOptionKey = "myNFTs.sortOption"
 
     init(
         user: UserModel,
         nftService: NftService,
-        userState: UserState,
-        userDefaultsService: UserDefaultsService
+        userState: UserState
     ) {
-        let saved = userDefaultsService.string(forKey: Self.sortOptionKey)
-        self.sortOption = CartSortOption(rawValue: saved ?? "") ?? .byRating
         self.user = user
         self.nftService = nftService
         self.userState = userState
-        self.userDefaultsService = userDefaultsService
     }
 
     var sortedNfts: [Nft] {
         guard case .loaded(let nfts) = state else { return [] }
-        switch sortOption {
-        case .byPrice:          return sortBy(nfts, keyPath: \.price)
-        case .byRating:         return sortBy(nfts, keyPath: \.rating)
-        case .byName, .byTitle: return sortBy(nfts, keyPath: \.name)
-        }
+        return sortOption.sorted(nfts)
     }
 
-    func setSortOption(_ option: CartSortOption) {
+    func applySort(_ option: NftSortOption) {
         sortOption = option
-        userDefaultsService.set(option.rawValue, forKey: Self.sortOptionKey)
     }
 
     func isLiked(_ nft: Nft) -> Bool {
