@@ -2,6 +2,7 @@ import SwiftUI
 
 struct FavouriteNFTsView: View {
     @State private var viewModel: FavouriteNFTsViewModel
+    @State private var selectedNft: Nft?
     @Environment(\.dismiss) private var dismiss
 
     private let columns = [GridItem(.flexible(), spacing: 7), GridItem(.flexible())]
@@ -40,6 +41,9 @@ struct FavouriteNFTsView: View {
         .toolbar(.hidden, for: .tabBar)
         .background(Color(.fnBackground))
         .task { await viewModel.loadNfts() }
+        .sheet(item: $selectedNft) { nft in
+            NftDetailView(nftId: nft.id)
+        }
     }
 
     private var nftGrid: some View {
@@ -50,6 +54,8 @@ struct FavouriteNFTsView: View {
                         model: viewModel.cellModel(for: nft),
                         onLike: { Task { await viewModel.toggleLike(nft) } }
                     )
+                    .contentShape(Rectangle())
+                    .onTapGesture { selectedNft = nft }
                 }
             }
             .padding(.horizontal, 16)

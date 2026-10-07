@@ -8,6 +8,7 @@ struct CartView: View {
     @Environment(UserState.self) private var userState
     @State private var viewModel = CartViewModel()
     @State private var isSortSheetPresented = false
+    @State private var selectedNft: Nft?
     @AppStorage(Self.sortOptionKey) private var sortOption: NftSortOption = .byTitle
 
     var body: some View {
@@ -31,6 +32,9 @@ struct CartView: View {
         .task(id: sortOption) { viewModel.applySort(sortOption) }
         .task { await viewModel.load(using: services.cartService) }
         .appAlert(item: $viewModel.alert)
+        .sheet(item: $selectedNft) { nft in
+            NftDetailView(nftId: nft.id)
+        }
         .fullScreenCover(isPresented: isDeleteConfirmationPresented) {
             if let nft = viewModel.nftToDelete {
                 CartDeleteConfirmationView(
@@ -84,6 +88,9 @@ struct CartView: View {
                 CartItemCell(nft: nft) {
                     viewModel.requestDelete(nft)
                 }
+                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
+                    .onTapGesture { selectedNft = nft }
                     .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)

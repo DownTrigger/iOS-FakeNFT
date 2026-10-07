@@ -12,6 +12,7 @@ struct NFTCollectionView: View {
 
     @Environment(Router<StatisticsRoute>.self) private var router
     @State private var viewModel: NFTCollectionViewModel
+    @State private var selectedCell: NftGridCellModel?
 
     private let columns = [
         GridItem(.flexible(), spacing: 9, alignment: .top),
@@ -41,6 +42,9 @@ struct NFTCollectionView: View {
         .backButton { router.pop() }
         .task { await viewModel.loadNfts() }
         .appAlert(item: $viewModel.alert)
+        .sheet(item: $selectedCell) { cell in
+            NftDetailView(nftId: cell.id)
+        }
     }
 
     @ViewBuilder
@@ -63,6 +67,8 @@ struct NFTCollectionView: View {
                         onLike: { Task { await viewModel.toggleLike(cell.id) } },
                         onCart: { Task { await viewModel.toggleCart(cell.id) } }
                     )
+                    .contentShape(Rectangle())
+                    .onTapGesture { selectedCell = cell }
                 }
             }
             .padding(.horizontal, 16)

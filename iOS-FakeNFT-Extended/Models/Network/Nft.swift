@@ -1,6 +1,6 @@
 import Foundation
 
-struct Nft: Decodable, Sendable {
+struct Nft: Decodable, Sendable, Identifiable {
     let id: String
     let name: String
     let images: [URL]

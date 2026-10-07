@@ -10,6 +10,7 @@ struct MyNFTsView: View {
 
     @State private var viewModel: MyNFTsViewModel
     @State private var showSortSheet = false
+    @State private var selectedNft: Nft?
     @AppStorage(Self.sortOptionKey) private var sortOption: NftSortOption = .byRating
     @Environment(\.dismiss) private var dismiss
 
@@ -65,6 +66,9 @@ struct MyNFTsView: View {
         .toolbar(.hidden, for: .tabBar)
         .background(Color(.fnBackground))
         .task { await viewModel.loadNfts() }
+        .sheet(item: $selectedNft) { nft in
+            NftDetailView(nftId: nft.id)
+        }
     }
 
     private var nftList: some View {
@@ -76,6 +80,8 @@ struct MyNFTsView: View {
                 onLike: { Task { await viewModel.toggleLike(nft) } }
             )
             .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .onTapGesture { selectedNft = nft }
             .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 32, trailing: 23))
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
