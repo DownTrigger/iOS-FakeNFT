@@ -25,12 +25,7 @@ struct CatalogRootView: View {
     private func destination(for route: CatalogRoute) -> some View {
         switch route {
         case .collection(let collection):
-            CollectionView(
-                collection: collection,
-                collectionsService: services.collectionsService,
-                nftService: services.nftService,
-                userState: userState
-            )
+            CollectionView(collection: collection, nftService: services.nftService, userState: userState)
         case .website(let url):
             WebViewScreen(url: url)
         }

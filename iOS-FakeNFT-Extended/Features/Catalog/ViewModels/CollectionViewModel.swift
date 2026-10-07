@@ -3,11 +3,10 @@ import Foundation
 @MainActor
 @Observable
 final class CollectionViewModel {
-    private(set) var collection: NftCollection
+    let collection: NftCollection
     private(set) var state: LoadingState<[Nft]> = .idle
     var alert: AlertModel?
 
-    private let collectionsService: CollectionsService
     private let nftService: NftService
     private let userState: UserState
 
@@ -28,14 +27,8 @@ final class CollectionViewModel {
         return nfts.map(makeCellModel)
     }
 
-    init(
-        collection: NftCollection,
-        collectionsService: CollectionsService,
-        nftService: NftService,
-        userState: UserState
-    ) {
+    init(collection: NftCollection, nftService: NftService, userState: UserState) {
         self.collection = collection
-        self.collectionsService = collectionsService
         self.nftService = nftService
         self.userState = userState
     }
@@ -56,26 +49,6 @@ final class CollectionViewModel {
             state = .failed(error)
             alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
                 Task { await self?.loadNfts() }
-            }
-        }
-    }
-
-    func refresh() async {
-        guard case .loaded = state else {
-            await loadNfts()
-            return
-        }
-        do {
-            let fresh = try await collectionsService.loadCollection(id: collection.id)
-            async let nfts = nftService.loadNfts(ids: fresh.nfts)
-            async let user: Void = userState.refresh()
-            let (loaded, _) = try await (nfts, user)
-            collection = fresh
-            state = .loaded(loaded)
-        } catch {
-            guard !error.isCancellation else { return }
-            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
-                Task { await self?.refresh() }
             }
         }
     }

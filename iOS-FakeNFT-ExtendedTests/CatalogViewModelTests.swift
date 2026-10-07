@@ -116,12 +116,4 @@ private actor CollectionsServiceStub: CollectionsService {
         guard start < collections.count else { return [] }
         return Array(collections[start..<min(start + size, collections.count)])
     }
-
-    func loadCollection(id: String) async throws -> NftCollection {
-        if let error { throw error }
-        guard let collection = collections.first(where: { $0.id == id }) else {
-            throw NetworkClientError.urlSessionError
-        }
-        return collection
-    }
 }
