@@ -1,7 +1,10 @@
 import SwiftUI
 
 struct CollectionView: View {
-    private static let columns: [GridItem] = Array(repeating: GridItem(.flexible(), spacing: 9), count: 3)
+    private static let columns: [GridItem] = Array(
+        repeating: GridItem(.flexible(), spacing: 9, alignment: .top),
+        count: 3
+    )
 
     @Environment(Router<CatalogRoute>.self) private var router
     @State private var viewModel: CollectionViewModel

@@ -13,9 +13,9 @@ struct NFTCollectionView: View {
     @State private var viewModel: NFTCollectionViewModel
 
     private let columns = [
-        GridItem(.flexible(), spacing: 8),
-        GridItem(.flexible(), spacing: 8),
-        GridItem(.flexible(), spacing: 8)
+        GridItem(.flexible(), spacing: 8, alignment: .top),
+        GridItem(.flexible(), spacing: 8, alignment: .top),
+        GridItem(.flexible(), spacing: 8, alignment: .top)
     ]
 
     init(nfts: [String], nftService: NftService, userState: UserState) {

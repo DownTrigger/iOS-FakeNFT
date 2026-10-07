@@ -29,7 +29,7 @@ struct NftGridCell: View {
     }
 
     private var info: some View {
-        HStack(alignment: .bottom) {
+        HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(model.name)
                     .font(.bold17)
@@ -41,7 +41,7 @@ struct NftGridCell: View {
                     .foregroundStyle(Color(.fnText))
             }
 
-            Spacer()
+            Spacer(minLength: 4)
 
             CartButton(isInCart: model.isInCart, action: onCart)
                 .disabled(model.isCartPending)
