@@ -82,5 +82,7 @@ struct WebViewScreen: View {
 }
 
 #Preview() {
-    WebViewScreen(url: URL(string: "https://example.com")!)
+    if let url = URL(string: "https://example.com") {
+        WebViewScreen(url: url)
+    }
 }
