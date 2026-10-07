@@ -14,7 +14,7 @@ struct FavouriteNFTCell: View {
             ZStack(alignment: .topTrailing) {
                 RemoteImageView(url: model.imageURL)
                     .frame(width: 80, height: 80)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
 
                 LikeButton(isLiked: model.isLiked, action: onLike)
                     .disabled(model.isLikePending)
@@ -35,9 +35,9 @@ struct FavouriteNFTCell: View {
                 Text(model.priceText)
                     .font(.regular15)
                     .foregroundStyle(Color(.fnText))
+                    .lineLimit(1)
             }
-
-            Spacer(minLength: 0)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }

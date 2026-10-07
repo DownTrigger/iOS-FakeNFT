@@ -78,6 +78,7 @@ struct ProfileView: View {
                             .frame(width: 42, height: 42)
                             .foregroundStyle(Color(.fnText))
                     }
+                    .designToolbarTrailingInset()
                 }
             }
         }
@@ -96,6 +97,7 @@ struct ProfileView: View {
                             .foregroundStyle(Color(.fnBlue))
                             .lineLimit(1)
                             .truncationMode(.tail)
+                            .frame(height: 28)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 16)
                     }

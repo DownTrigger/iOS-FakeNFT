@@ -104,7 +104,7 @@ struct ProfileEditView: View {
             .buttonStyle(.plain)
             Spacer()
         }
-        .padding(.bottom, 8)
+        .padding(.top, -8)
     }
 
     @ViewBuilder
@@ -119,6 +119,7 @@ struct ProfileEditView: View {
             Text(title)
                 .font(.bold22)
                 .foregroundStyle(Color(.fnText))
+                .frame(height: 28)
             AppTextField(placeholder: title, text: text, isMultiline: isMultiline)
         }
     }

@@ -4,7 +4,7 @@ struct FavouriteNFTsView: View {
     @State private var viewModel: FavouriteNFTsViewModel
     @Environment(\.dismiss) private var dismiss
 
-    private let columns = [GridItem(.flexible()), GridItem(.flexible())]
+    private let columns = [GridItem(.flexible(), spacing: 7), GridItem(.flexible())]
 
     init(nftService: NftService, profileService: UserProfileService, userState: UserState) {
         _viewModel = State(initialValue: FavouriteNFTsViewModel(

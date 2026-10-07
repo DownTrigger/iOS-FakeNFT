@@ -78,10 +78,10 @@ struct MyNFTsView: View {
                         onLike: { Task { await viewModel.toggleLike(nft) } }
                     )
                     .padding(.leading, 16)
-                    .padding(.trailing, 39)
+                    .padding(.trailing, 23)
                 }
             }
-            .padding(.top, 20)
+            .padding(.top, 36)
         }
     }
 }

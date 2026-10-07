@@ -12,11 +12,13 @@ struct MyNFTListCell: View {
     let onLike: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 20) {
             image
             info
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
             price
+                .fixedSize()
+                .frame(minWidth: 90, alignment: .leading)
         }
     }
 
@@ -24,7 +26,7 @@ struct MyNFTListCell: View {
         ZStack(alignment: .topTrailing) {
             RemoteImageView(url: nft.images.first)
                 .frame(width: 108, height: 108)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
 
             LikeButton(isLiked: isLiked, action: onLike)
                 .disabled(isLikePending)
@@ -37,10 +39,12 @@ struct MyNFTListCell: View {
             Text(nft.name)
                 .font(.bold17)
                 .foregroundStyle(Color(.fnText))
+                .lineLimit(1)
             RatingView(rating: nft.rating)
             Text(ProfileLocalizedText.nftAuthor(nft.author).key)
                 .font(.regular13)
                 .foregroundStyle(Color(.fnText))
+                .lineLimit(1)
         }
     }
 

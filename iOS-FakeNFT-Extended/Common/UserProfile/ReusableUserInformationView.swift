@@ -26,6 +26,7 @@ struct ReusableUserInformationView: View {
             Text(user.bio)
                 .font(.regular13)
                 .foregroundStyle(Color(.fnText))
+                .lineSpacing(2.5)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)

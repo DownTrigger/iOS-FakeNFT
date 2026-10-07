@@ -30,7 +30,7 @@ struct AppTextField: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 11)
-        .frame(minHeight: 46)
+        .frame(minHeight: isMultiline ? 132 : 44, alignment: .top)
         .background(Color(.fnLightGray), in: .rect(cornerRadius: 12))
         .overlay {
             if isError {
