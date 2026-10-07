@@ -61,6 +61,7 @@ struct PaymentView: View {
             VStack(alignment: .leading, spacing: 0) {
                 Text(CartLocalizedText.agreementText.key)
                     .foregroundStyle(Color(.fnText))
+                    .frame(minHeight: 22)
                 Button {
                     if let url = CartConstants.agreementURL {
                         router.push(.agreement(url))
@@ -68,6 +69,7 @@ struct PaymentView: View {
                 } label: {
                     Text(CartLocalizedText.agreementLink.key)
                         .foregroundStyle(Color(.fnBlue))
+                        .frame(minHeight: 22)
                 }
             }
             .font(.regular13)
