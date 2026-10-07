@@ -68,21 +68,20 @@ struct MyNFTsView: View {
     }
 
     private var nftList: some View {
-        ScrollView {
-            LazyVStack(spacing: 32) {
-                ForEach(viewModel.sortedNfts, id: \.id) { nft in
-                    MyNFTListCell(
-                        nft: nft,
-                        isLiked: viewModel.isLiked(nft),
-                        isLikePending: viewModel.isLikePending(nft),
-                        onLike: { Task { await viewModel.toggleLike(nft) } }
-                    )
-                    .padding(.leading, 16)
-                    .padding(.trailing, 23)
-                }
-            }
-            .padding(.top, 36)
+        List(viewModel.sortedNfts, id: \.id) { nft in
+            MyNFTListCell(
+                nft: nft,
+                isLiked: viewModel.isLiked(nft),
+                isLikePending: viewModel.isLikePending(nft),
+                onLike: { Task { await viewModel.toggleLike(nft) } }
+            )
+            .buttonStyle(.plain)
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 32, trailing: 23))
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
         }
+        .listStyle(.plain)
+        .contentMargins(.top, 36, for: .scrollContent)
     }
 }
 

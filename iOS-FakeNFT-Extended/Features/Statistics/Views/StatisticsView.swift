@@ -49,27 +49,25 @@ struct StatisticsView: View {
     }
 
     private var statisticsList: some View {
-        ScrollView {
-            LazyVStack(spacing: 8) {
-                ForEach(viewModel.statistics) { statistic in
-                    Button {
-                        router.push(.user(statistic))
-                    } label: {
-                        UserStatisticView(
-                            position: statistic.position,
-                            name: statistic.user.username,
-                            avatar: statistic.user.avatar,
-                            countNft: statistic.nfts.count
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .task { await viewModel.loadNextPageIfNeeded(currentItem: statistic) }
-                }
+        List(viewModel.statistics) { statistic in
+            Button {
+                router.push(.user(statistic))
+            } label: {
+                UserStatisticView(
+                    position: statistic.position,
+                    name: statistic.user.username,
+                    avatar: statistic.user.avatar,
+                    countNft: statistic.nfts.count
+                )
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 20)
-            .padding(.bottom, 8)
+            .buttonStyle(.plain)
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+            .task { await viewModel.loadNextPageIfNeeded(currentItem: statistic) }
         }
+        .listStyle(.plain)
+        .contentMargins(.top, 20, for: .scrollContent)
         .refreshable { await viewModel.refresh() }
     }
 }
