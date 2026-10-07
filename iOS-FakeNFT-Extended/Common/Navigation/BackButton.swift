@@ -10,6 +10,7 @@ extension View {
                             .renderingMode(.template)
                             .foregroundStyle(Color(.fnText))
                     }
+                    .designToolbarLeadingInset()
                 }
             }
     }

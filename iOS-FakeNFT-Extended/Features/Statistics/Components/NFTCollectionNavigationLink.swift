@@ -16,8 +16,9 @@ struct NFTCollectionNavigationLink: View {
         Button {
             router.push(.nftCollection(nfts))
         } label: {
-            HStack {
-                Text(StatisticLocalizedText.collectionCount(nfts.count).key)
+            HStack(spacing: 8) {
+                Text(StatisticLocalizedText.title.key)
+                Text(verbatim: "(\(nfts.count))")
 
                 Spacer()
 

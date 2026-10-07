@@ -225,23 +225,6 @@
         }
       }
     },
-    "nft_collection.count %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "NFT Collection (%lld)"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Коллекция NFT (%lld)"
-          }
-        }
-      }
-    },
     "nft_collection.title" : {
       "localizations" : {
         "en" : {
