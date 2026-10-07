@@ -216,22 +216,6 @@
         }
       }
     },
-    "Error.network" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A network error occurred"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Произошла ошибка сети"
-          }
-        }
-      }
-    },
     "Error.repeat" : {
       "localizations" : {
         "en" : {
@@ -244,38 +228,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Повторить"
-          }
-        }
-      }
-    },
-    "Error.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Error"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ошибка"
-          }
-        }
-      }
-    },
-    "Error.unknown" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "An unknown error occurred"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Произошла неизвестная ошибка"
           }
         }
       }

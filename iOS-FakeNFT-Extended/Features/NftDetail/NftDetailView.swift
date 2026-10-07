@@ -1,35 +1,13 @@
 import SwiftUI
 
-@MainActor
-@Observable
-final class NftDetailSmokeViewModel {
-    private let nftId: String
-
-    private(set) var state: LoadingState<Nft> = .idle
-
-    init(nftId: String) {
-        self.nftId = nftId
-    }
-
-    func load(using service: NftService) async {
-        state = .loading
-        do {
-            let nft = try await service.loadNft(id: nftId)
-            state = .loaded(nft)
-        } catch {
-            state = .failed(error)
-        }
-    }
-}
-
-struct NftDetailSmokeView: View {
+struct NftDetailView: View {
     @Environment(ServicesAssembly.self) private var services
     @Environment(\.dismiss) private var dismiss
-    @State private var viewModel: NftDetailSmokeViewModel
+    @State private var viewModel: NftDetailViewModel
     @State private var currentIndex = 0
 
     init(nftId: String) {
-        _viewModel = State(initialValue: NftDetailSmokeViewModel(nftId: nftId))
+        _viewModel = State(initialValue: NftDetailViewModel(nftId: nftId))
     }
 
     var body: some View {
@@ -39,13 +17,7 @@ struct NftDetailSmokeView: View {
         }
         .task { await load() }
         .presentationCornerRadius(10)
-        .alert("Error.title", isPresented: isErrorPresented) {
-            Button("Error.repeat") {
-                Task { await load() }
-            }
-        } message: {
-            Text(errorMessageKey)
-        }
+        .appAlert(item: $viewModel.alert)
     }
 
     @ViewBuilder
@@ -56,7 +28,11 @@ struct NftDetailSmokeView: View {
         case let .loaded(nft):
             gallery(for: nft.images)
         case .failed:
-            Color.clear
+            if viewModel.alert == nil {
+                ErrorStateView(message: CatalogLocalizedText.loadError.key) {
+                    Task { await load() }
+                }
+            }
         }
     }
 
@@ -98,23 +74,6 @@ struct NftDetailSmokeView: View {
     private func load() async {
         await viewModel.load(using: services.nftService)
     }
-
-    private var isErrorPresented: Binding<Bool> {
-        Binding(
-            get: {
-                if case .failed = viewModel.state { return true }
-                return false
-            },
-            set: { _ in }
-        )
-    }
-
-    private var errorMessageKey: LocalizedStringKey {
-        if case let .failed(error) = viewModel.state, error is NetworkClientError {
-            return "Error.network"
-        }
-        return "Error.unknown"
-    }
 }
 
 private struct LinePageIndicator: View {
@@ -136,7 +95,7 @@ private struct LinePageIndicator: View {
 #Preview {
     Color.clear
         .sheet(isPresented: .constant(true)) {
-            NftDetailSmokeView(nftId: "7773e33c-ec15-4230-a102-92426a3a6d5a")
+            NftDetailView(nftId: "7773e33c-ec15-4230-a102-92426a3a6d5a")
                 .environment(
                     ServicesAssembly(
                         networkClient: DefaultNetworkClient(),

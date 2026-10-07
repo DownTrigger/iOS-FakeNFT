@@ -31,7 +31,7 @@ struct CollectionView: View {
         .task { await viewModel.loadNfts() }
         .appAlert(item: $viewModel.alert)
         .sheet(item: $selectedCell) { cell in
-            NftDetailSmokeView(nftId: cell.id)
+            NftDetailView(nftId: cell.id)
         }
     }
 
