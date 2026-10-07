@@ -1,10 +1,3 @@
-//
-//  UserStatisticView.swift
-//  iOS-FakeNFT-Extended
-//
-//  Created by Irina Muravyeva on 24.09.2026.
-//
-
 import SwiftUI
 
 struct UserStatisticView: View {

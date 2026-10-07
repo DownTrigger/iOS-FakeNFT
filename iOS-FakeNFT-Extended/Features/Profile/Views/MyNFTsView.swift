@@ -1,8 +1,3 @@
-//
-//  MyNFTsView.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct MyNFTsView: View {

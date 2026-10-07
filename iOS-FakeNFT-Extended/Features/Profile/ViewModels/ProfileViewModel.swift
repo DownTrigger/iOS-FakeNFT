@@ -1,8 +1,3 @@
-//
-//  ProfileViewModel.swift
-//  iOS-FakeNFT-Extended
-//
-
 import Foundation
 import Observation
 

@@ -1,10 +1,3 @@
-//
-//  NftSortOption.swift
-//  iOS-FakeNFT-Extended
-//
-//  Created by Irina Muravyeva on 23.09.2026.
-//
-
 /// Sorting options for cart and profile screens
 enum NftSortOption: String, SortOptionProtocol, CaseIterable {
     case byTitle

@@ -11,7 +11,6 @@ protocol NetworkRequest: Sendable {
     var rawBody: Data? { get }
 }
 
-// default values
 extension NetworkRequest {
     var httpMethod: HttpMethod { .get }
     var rawBody: Data? { nil }

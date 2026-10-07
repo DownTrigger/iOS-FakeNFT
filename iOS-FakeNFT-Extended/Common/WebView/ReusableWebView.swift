@@ -1,8 +1,3 @@
-//
-//  ReusableWebView.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 import WebKit
 

@@ -1,8 +1,3 @@
-//
-//  ProfileRootView.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct ProfileRootView: View {

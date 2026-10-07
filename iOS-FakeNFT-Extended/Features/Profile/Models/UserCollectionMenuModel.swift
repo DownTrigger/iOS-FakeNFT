@@ -1,8 +1,3 @@
-//
-//  UserCollectionMenuModel.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct UserCollectionMenuModel {

@@ -1,8 +1,3 @@
-//
-//  ReusableUserInformationView.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct ReusableUserInformationView: View {

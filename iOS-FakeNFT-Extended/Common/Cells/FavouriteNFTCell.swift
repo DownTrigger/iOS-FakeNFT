@@ -1,8 +1,3 @@
-//
-//  FavouriteNFTCell.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct FavouriteNFTCell: View {

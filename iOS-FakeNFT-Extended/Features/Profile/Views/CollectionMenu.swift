@@ -1,8 +1,3 @@
-//
-//  CollectionMenu.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct CollectionMenu: View {

@@ -1,10 +1,3 @@
-//
-//  SortSheetModifier.swift
-//  iOS-FakeNFT-Extended
-//
-//  Created by Irina Muravyeva on 25.09.2026.
-//
-
 import SwiftUI
 
 extension View {

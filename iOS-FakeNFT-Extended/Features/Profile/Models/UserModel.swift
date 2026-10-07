@@ -1,8 +1,3 @@
-//
-//  UserModel.swift
-//  iOS-FakeNFT-Extended
-//
-
 struct UserModel: Sendable, Hashable {
     let avatar: String?
     let username: String
