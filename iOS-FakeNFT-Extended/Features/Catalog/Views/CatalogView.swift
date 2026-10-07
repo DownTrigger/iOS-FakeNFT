@@ -78,6 +78,10 @@ private struct PreviewCollectionsService: CollectionsService {
         return (start..<end).map { Self.makeCollection(index: $0) }
     }
 
+    func loadCollection(id: String) async throws -> NftCollection {
+        Self.makeCollection(index: Int(id) ?? 0)
+    }
+
     private static func makeCollection(index: Int) -> NftCollection {
         let name: String = names[index]
         let cover: URL? = URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/\(name).png")

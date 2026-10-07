@@ -7,9 +7,15 @@ struct CollectionView: View {
     @State private var viewModel: CollectionViewModel
     @State private var selectedCell: NftGridCellModel?
 
-    init(collection: NftCollection, nftService: NftService, userState: UserState) {
+    init(
+        collection: NftCollection,
+        collectionsService: CollectionsService,
+        nftService: NftService,
+        userState: UserState
+    ) {
         _viewModel = State(initialValue: CollectionViewModel(
             collection: collection,
+            collectionsService: collectionsService,
             nftService: nftService,
             userState: userState
         ))
@@ -23,6 +29,7 @@ struct CollectionView: View {
             }
             .padding(.bottom, 16)
         }
+        .refreshable { await viewModel.refresh() }
         .ignoresSafeArea(edges: .top)
         .hiddenTopScrollEdgeEffect()
         .background(Color(.fnBackground))
@@ -77,6 +84,18 @@ private extension View {
         } else {
             self
         }
+    }
+}
+
+private struct PreviewCollectionsService: CollectionsService {
+    let collection: NftCollection
+
+    func loadCollections(page: Int, size: Int, sortBy: String?) async throws -> [NftCollection] {
+        []
+    }
+
+    func loadCollection(id: String) async throws -> NftCollection {
+        collection
     }
 }
 
@@ -141,6 +160,7 @@ private struct PreviewUserOrderService: UserOrderService {
     NavigationStack {
         CollectionView(
             collection: collection,
+            collectionsService: PreviewCollectionsService(collection: collection),
             nftService: PreviewNftService(),
             userState: UserState(profileService: PreviewUserProfileService(), orderService: PreviewUserOrderService())
         )

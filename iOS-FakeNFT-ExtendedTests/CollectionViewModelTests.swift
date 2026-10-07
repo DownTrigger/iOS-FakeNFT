@@ -7,6 +7,7 @@ final class CollectionViewModelTests: XCTestCase {
     private func makeViewModel(
         collection: NftCollection,
         service: NftService,
+        collectionsService: CollectionsService? = nil,
         likes: [String] = [],
         cart: [String] = [],
         profileError: Error? = nil,
@@ -22,7 +23,12 @@ final class CollectionViewModelTests: XCTestCase {
             ),
             orderService: UserOrderServiceStub(nfts: cart, updateError: updateError)
         )
-        return CollectionViewModel(collection: collection, nftService: service, userState: userState)
+        return CollectionViewModel(
+            collection: collection,
+            collectionsService: collectionsService ?? CollectionsServiceStub(collection: collection),
+            nftService: service,
+            userState: userState
+        )
     }
 
     private func waitUntil(_ condition: () -> Bool, file: StaticString = #filePath, line: UInt = #line) async {
@@ -217,6 +223,47 @@ final class CollectionViewModelTests: XCTestCase {
         XCTAssertNotNil(viewModel.alert)
     }
 
+    func testRefreshUpdatesCollectionAndCells() async {
+        // Given
+        let fresh = NftCollection.stub(nfts: ["2", "3"])
+        let viewModel = makeViewModel(
+            collection: .stub(nfts: ["1", "2"]),
+            service: NftServiceStub(),
+            collectionsService: CollectionsServiceStub(collection: fresh)
+        )
+        await viewModel.loadNfts()
+
+        // When
+        await viewModel.refresh()
+
+        // Then
+        XCTAssertEqual(viewModel.collection.nfts, ["2", "3"])
+        XCTAssertEqual(viewModel.cells.map(\.id), ["2", "3"])
+        XCTAssertNil(viewModel.alert)
+    }
+
+    func testRefreshFailureKeepsLoadedCellsAndShowsAlert() async {
+        // Given
+        let viewModel = makeViewModel(
+            collection: .stub(nfts: ["1", "2"]),
+            service: NftServiceStub(),
+            collectionsService: CollectionsServiceStub(
+                collection: .stub(nfts: ["3"]),
+                error: NetworkClientError.urlSessionError
+            )
+        )
+        await viewModel.loadNfts()
+
+        // When
+        await viewModel.refresh()
+
+        // Then
+        XCTAssertEqual(viewModel.cells.map(\.id), ["1", "2"])
+        XCTAssertEqual(viewModel.collection.nfts, ["1", "2"])
+        XCTAssertNotNil(viewModel.alert)
+        XCTAssertFalse(viewModel.isFailed)
+    }
+
     func testRepeatedLikeTapWhileRequestIsPendingIsIgnored() async {
         // Given
         let viewModel = makeViewModel(
@@ -315,6 +362,27 @@ private actor NftServiceStub: NftService {
             price: 1.5,
             author: "John Doe"
         )
+    }
+}
+
+private actor CollectionsServiceStub: CollectionsService {
+    private let collection: NftCollection
+    private let error: Error?
+
+    init(collection: NftCollection, error: Error? = nil) {
+        self.collection = collection
+        self.error = error
+    }
+
+    func loadCollections(page: Int, size: Int, sortBy: String?) async throws -> [NftCollection] {
+        []
+    }
+
+    func loadCollection(id: String) async throws -> NftCollection {
+        if let error {
+            throw error
+        }
+        return collection
     }
 }
 
