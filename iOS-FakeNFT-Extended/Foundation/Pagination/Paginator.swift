@@ -27,6 +27,12 @@ final class Paginator<Item: Identifiable> {
         hasMorePages = page.count == pageSize
     }
 
+    func loadAllPages() async throws {
+        while hasMorePages, !isLoading {
+            try await loadNextPage()
+        }
+    }
+
     func loadNextPageIfNeeded(currentItem: Item) async throws {
         guard currentItem.id == items.last?.id else { return }
         try await loadNextPage()
