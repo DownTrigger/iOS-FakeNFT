@@ -27,29 +27,16 @@ struct PrimaryButton: View {
 
 #Preview {
     VStack(spacing: 20) {
-        PrimaryButton(title: .login) {
-            print("Login")
-        }
-        PrimaryButton(title: .register) {
-            print("Register")
-        }
-        PrimaryButton(title: .pay) {
-            print("Pay")
-        }
-        PrimaryButton(title: .save) {
-            print("Save")
-        }
-        PrimaryButton(title: .resetPassword) {
-            print("Reset password")
-        }
-        PrimaryButton(title: .login, action: {}, isDisabled: true)
+        PrimaryButton(title: .pay) {}
+        PrimaryButton(title: .save) {}
+        PrimaryButton(title: .pay, action: {}, isDisabled: true)
     }
     .padding(.horizontal, 16)
 }
 
 #Preview("Dark Mode") {
     PrimaryButton(
-        title: .login,
+        title: .pay,
         action: {}
     )
     .padding(.horizontal, 16)

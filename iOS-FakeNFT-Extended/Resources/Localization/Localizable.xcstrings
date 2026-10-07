@@ -33,22 +33,6 @@
         }
       }
     },
-    "button.login" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Войти"
-          }
-        }
-      }
-    },
     "button.pay" : {
       "localizations" : {
         "en" : {
@@ -61,38 +45,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Оплатить"
-          }
-        }
-      }
-    },
-    "button.register" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign up"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Зарегистрироваться"
-          }
-        }
-      }
-    },
-    "button.reset_password" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reset password"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Сбросить пароль"
           }
         }
       }
