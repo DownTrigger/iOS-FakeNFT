@@ -30,17 +30,9 @@ struct CartDeleteConfirmationView: View {
     }
 
     private var image: some View {
-        AsyncImage(url: nft.images.first) { image in
-            image
-                .resizable()
-                .scaledToFill()
-        } placeholder: {
-            Image(.imgNFTPlaceholder)
-                .resizable()
-                .scaledToFill()
-        }
-        .frame(width: imageSize, height: imageSize)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        RemoteImageView(url: nft.images.first)
+            .frame(width: imageSize, height: imageSize)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private func button(_ title: CartLocalizedText, color: Color, action: @escaping () -> Void) -> some View {

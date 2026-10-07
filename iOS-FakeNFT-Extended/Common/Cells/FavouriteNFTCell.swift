@@ -1,8 +1,3 @@
-//
-//  FavouriteNFTCell.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct FavouriteNFTCell: View {
@@ -12,15 +7,13 @@ struct FavouriteNFTCell: View {
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             ZStack(alignment: .topTrailing) {
-                AsyncImage(url: model.imageURL) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    Image(.imgNFTPlaceholder).resizable().scaledToFill()
-                }
-                .frame(width: 80, height: 80)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                RemoteImageView(url: model.imageURL)
+                    .frame(width: 80, height: 80)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
 
                 LikeButton(isLiked: model.isLiked, action: onLike)
+                    .disabled(model.isLikePending)
+                    .opacity(model.isLikePending ? 0.5 : 1)
                     .offset(x: 6, y: -6)
             }
 
@@ -37,9 +30,9 @@ struct FavouriteNFTCell: View {
                 Text(model.priceText)
                     .font(.regular15)
                     .foregroundStyle(Color(.fnText))
+                    .lineLimit(1)
             }
-
-            Spacer(minLength: 0)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }

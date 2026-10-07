@@ -1,8 +1,3 @@
-//
-//  ReusableWebView.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 import WebKit
 
@@ -66,6 +61,7 @@ struct WebViewScreen: View {
     let url: URL
 
     @State private var isLoading = true
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         WebView(url: url, isLoading: $isLoading)
@@ -77,15 +73,16 @@ struct WebViewScreen: View {
                         .frame(width: 30, height: 30)
                 }
             }
-            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(false)
             .toolbar(.hidden, for: .tabBar)
+            .backButton { dismiss() }
             .toolbarBackground(Color(.fnBackground), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
     }
 }
 
 #Preview() {
-    WebViewScreen(url: URL(string: "https://example.com")!)
+    if let url = URL(string: "https://example.com") {
+        WebViewScreen(url: url)
+    }
 }

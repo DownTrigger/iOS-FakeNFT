@@ -1,10 +1,3 @@
-//
-//  SortingLocalizedText.swift
-//  iOS-FakeNFT-Extended
-//
-//  Created by Irina Muravyeva on 23.09.2026.
-//
-
 import SwiftUI
 
 enum SortingLocalizedText {

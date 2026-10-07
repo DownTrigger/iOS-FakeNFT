@@ -1,266 +1,209 @@
-//
-//  StatisticsViewModelTests.swift
-//  iOS-FakeNFT-ExtendedTests
-//
-//  Created by Irina Muravyeva on 05.10.2026.
-//
-
 import XCTest
 @testable import iOS_FakeNFT_Extended
 
 @MainActor
 final class StatisticsViewModelTests: XCTestCase {
-    func testLoadStatistics_success_loadsUsersAndCreatesStatistics() async {
+    func testApplySortByRatingLoadsFirstPageWithServerOrder() async {
         // Given
-        let users = [
-            makeUser(
-                name: "Anna",
-                nfts: ["1", "2", "3"]
-            ),
-            makeUser(
-                name: "Maria",
-                nfts: ["4"]
-            )
-        ]
-
-        let service = MockUserService()
-        service.result = .success(users)
-
-        let viewModel = StatisticsViewModel(
-            userService: service
-        )
+        let service = UserServiceStub(users: makeUsers(count: 30))
+        let viewModel = StatisticsViewModel(userService: service)
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.applySort(.byRating)
 
         // Then
-        XCTAssertEqual(service.loadUsersCallCount, 1)
-        XCTAssertEqual(viewModel.statistics.count, 2)
-
-        XCTAssertEqual(viewModel.statistics[0].user.username, "Anna")
-        XCTAssertEqual(viewModel.statistics[0].nfts.count, 3)
-        XCTAssertEqual(viewModel.statistics[0].position, 1)
-
-        XCTAssertEqual(viewModel.statistics[1].user.username, "Maria")
-        XCTAssertEqual(viewModel.statistics[1].nfts.count, 1)
-        XCTAssertEqual(viewModel.statistics[1].position, 2)
-
-        XCTAssertFalse(viewModel.isLoading)
+        let requests = await service.requests
+        XCTAssertEqual(requests, [.init(page: 0, sortBy: "rating,desc")])
+        XCTAssertEqual(viewModel.statistics.count, 25)
+        XCTAssertEqual(viewModel.statistics.map(\.position), Array(1...25))
+        XCTAssertEqual(viewModel.statistics.map(\.id), (0..<25).map { "user-\($0)" })
+        XCTAssertFalse(viewModel.isInitialLoading)
     }
-    
-    func testLoadStatistics_mapsUserDataCorrectly() async {
+
+    func testLoadNextPageIfNeededLoadsNextPageForLastItem() async throws {
         // Given
-        let user = makeUser(
-            name: "Anna",
-            avatar: "avatar-url",
-            description: "My bio",
-            website: "https://example.com",
-            nfts: ["1", "2", "3"]
-        )
-
-        let service = MockUserService()
-        service.result = .success([user])
-
-        let viewModel = StatisticsViewModel(
-            userService: service
-        )
+        let service = UserServiceStub(users: makeUsers(count: 30))
+        let viewModel = StatisticsViewModel(userService: service)
+        await viewModel.applySort(.byRating)
+        let firstItem = try XCTUnwrap(viewModel.statistics.first)
+        let lastItem = try XCTUnwrap(viewModel.statistics.last)
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.loadNextPageIfNeeded(currentItem: firstItem)
+        let requestsAfterFirstItem = await service.requests.count
+        await viewModel.loadNextPageIfNeeded(currentItem: lastItem)
 
         // Then
-        let statistic = viewModel.statistics[0]
-
-        XCTAssertEqual(statistic.user.username, "Anna")
-        XCTAssertEqual(statistic.user.avatar, "avatar-url")
-        XCTAssertEqual(statistic.user.bio, "My bio")
-        XCTAssertEqual(statistic.user.userWebSite, "https://example.com")
-        XCTAssertEqual(statistic.nfts, ["1", "2", "3"])
+        let requests = await service.requests
+        XCTAssertEqual(requestsAfterFirstItem, 1)
+        XCTAssertEqual(requests.map(\.page), [0, 1])
+        XCTAssertEqual(viewModel.statistics.map(\.position), Array(1...30))
     }
-    
-    func testLoadStatistics_nilDescription_setsEmptyBio() async {
+
+    func testApplySortByNameRecreatesPagination() async {
         // Given
-        let user = makeUser(
-            name: "Anna",
-            description: nil,
-            nfts: ["1"]
-        )
-
-        let service = MockUserService()
-        service.result = .success([user])
-
-        let viewModel = StatisticsViewModel(
-            userService: service
-        )
+        let service = UserServiceStub(users: makeUsers(count: 30))
+        let viewModel = StatisticsViewModel(userService: service)
+        await viewModel.applySort(.byRating)
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.applySort(.byName)
 
         // Then
-        XCTAssertEqual(
-            viewModel.statistics[0].user.bio,
-            ""
-        )
+        let requests = await service.requests
+        XCTAssertEqual(requests, [
+            .init(page: 0, sortBy: "rating,desc"),
+            .init(page: 0, sortBy: "name,asc")
+        ])
+        XCTAssertEqual(viewModel.statistics.count, 25)
     }
-    
-    func testLoadStatistics_emptyResponse_returnsEmptyStatistics() async {
-        // Given
-        let service = MockUserService()
-        service.result = .success([])
 
-        let viewModel = StatisticsViewModel(
-            userService: service
-        )
+    func testIncompletePageDoesNotStopLoadingNextPage() async throws {
+        // Given
+        let service = UserServiceStub(users: makeUsers(count: 30), pageSizeLimit: 24)
+        let viewModel = StatisticsViewModel(userService: service)
+        await viewModel.applySort(.byRating)
+        let lastItem = try XCTUnwrap(viewModel.statistics.last)
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.loadNextPageIfNeeded(currentItem: lastItem)
 
         // Then
-        XCTAssertEqual(service.loadUsersCallCount, 1)
-        XCTAssertTrue(viewModel.statistics.isEmpty)
-        XCTAssertNil(viewModel.alert)
-        XCTAssertFalse(viewModel.isLoading)
+        let requests = await service.requests
+        XCTAssertEqual(viewModel.statistics.count, 29)
+        XCTAssertEqual(requests.map(\.page), [0, 1])
     }
-    
-    func testLoadStatistics_failure_setsAlert() async {
-        // Given
-        let service = MockUserService()
-        service.result = .failure(
-            URLError(.notConnectedToInternet)
-        )
 
-        let viewModel = StatisticsViewModel(
-            userService: service
-        )
+    func testFirstPageFailureSetsLoadErrorAndShowsAlert() async {
+        // Given
+        let service = UserServiceStub(users: makeUsers(count: 30), failingPage: 0)
+        let viewModel = StatisticsViewModel(userService: service)
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.applySort(.byRating)
 
         // Then
-        XCTAssertEqual(service.loadUsersCallCount, 1)
+        XCTAssertTrue(viewModel.hasLoadError)
         XCTAssertNotNil(viewModel.alert)
         XCTAssertTrue(viewModel.statistics.isEmpty)
-        XCTAssertFalse(viewModel.isLoading)
+        XCTAssertFalse(viewModel.isInitialLoading)
     }
-    
-    func testLoadStatistics_cancellation_doesNotSetAlert() async {
-        // Given
-        let service = MockUserService()
-        service.result = .failure(CancellationError())
 
-        let viewModel = StatisticsViewModel(
-            userService: service
-        )
+    func testNextPageFailureKeepsItemsAndShowsAlertWithoutLoadError() async throws {
+        // Given
+        let service = UserServiceStub(users: makeUsers(count: 30), failingPage: 1)
+        let viewModel = StatisticsViewModel(userService: service)
+        await viewModel.applySort(.byRating)
+        let lastItem = try XCTUnwrap(viewModel.statistics.last)
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.loadNextPageIfNeeded(currentItem: lastItem)
 
         // Then
-        XCTAssertNil(viewModel.alert)
-        XCTAssertFalse(viewModel.isLoading)
+        XCTAssertFalse(viewModel.hasLoadError)
+        XCTAssertNotNil(viewModel.alert)
+        XCTAssertEqual(viewModel.statistics.count, 25)
     }
-    
-    func testLoadStatistics_whenAlreadyLoaded_doesNotLoadAgain() async {
+
+    func testRefreshFailureKeepsStatisticsAndShowsAlert() async {
         // Given
-        let users = [
-            makeUser(
-                name: "Anna",
-                nfts: ["1", "2"]
+        let service = UserServiceStub(users: makeUsers(count: 30))
+        let viewModel = StatisticsViewModel(userService: service)
+        await viewModel.applySort(.byRating)
+        await service.setFailingPage(0)
+
+        // When
+        await viewModel.refresh()
+
+        // Then
+        XCTAssertEqual(viewModel.statistics.count, 25)
+        XCTAssertNotNil(viewModel.alert)
+        XCTAssertFalse(viewModel.hasLoadError)
+    }
+
+    func testRefreshReloadsFirstPageWithSameSort() async {
+        // Given
+        let service = UserServiceStub(users: makeUsers(count: 30))
+        let viewModel = StatisticsViewModel(userService: service)
+        await viewModel.applySort(.byName)
+
+        // When
+        await viewModel.refresh()
+
+        // Then
+        let requests = await service.requests
+        XCTAssertEqual(requests.map(\.sortBy), ["name,asc", "name,asc"])
+        XCTAssertEqual(requests.map(\.page), [0, 0])
+        XCTAssertEqual(viewModel.statistics.count, 25)
+    }
+
+    func testStatisticsMapUserFields() async throws {
+        // Given
+        let user = UserResponse(
+            id: "a",
+            name: "Anna",
+            avatar: "avatar-url",
+            description: nil,
+            website: "https://example.com",
+            nfts: ["1", "2"]
+        )
+        let service = UserServiceStub(users: [user])
+        let viewModel = StatisticsViewModel(userService: service)
+
+        // When
+        await viewModel.applySort(.byRating)
+
+        // Then
+        let statistic = try XCTUnwrap(viewModel.statistics.first)
+        XCTAssertEqual(statistic.id, "a")
+        XCTAssertEqual(statistic.user.username, "Anna")
+        XCTAssertEqual(statistic.user.avatar, "avatar-url")
+        XCTAssertEqual(statistic.user.bio, "")
+        XCTAssertEqual(statistic.user.userWebSite, "https://example.com")
+        XCTAssertEqual(statistic.nfts, ["1", "2"])
+    }
+
+    private func makeUsers(count: Int) -> [UserResponse] {
+        (0..<count).map { index in
+            UserResponse(
+                id: "user-\(index)",
+                name: "User \(index)",
+                avatar: nil,
+                description: nil,
+                website: nil,
+                nfts: []
             )
-        ]
-
-        let service = MockUserService()
-        service.result = .success(users)
-
-        let viewModel = StatisticsViewModel(
-            userService: service
-        )
-
-        // When
-        await viewModel.loadStatistics()
-        await viewModel.loadStatistics()
-
-        // Then
-        XCTAssertEqual(service.loadUsersCallCount, 1)
-    }
-    
-    func testRefreshStatistics_loadsUsersAgain() async {
-        // Given
-        let users = [
-            makeUser(
-                name: "Anna",
-                nfts: ["1"]
-            )
-        ]
-
-        let service = MockUserService()
-        service.result = .success(users)
-
-        let viewModel = StatisticsViewModel(
-            userService: service
-        )
-
-        // When
-        await viewModel.loadStatistics()
-        await viewModel.refreshStatistics()
-
-        // Then
-        XCTAssertEqual(service.loadUsersCallCount, 2)
-    }
-    
-    func testResetCache_allowsLoadingAgain() async {
-        // Given
-        let users = [
-            makeUser(
-                name: "Anna",
-                nfts: ["1", "2"]
-            )
-        ]
-
-        let service = MockUserService()
-        service.result = .success(users)
-
-        let viewModel = StatisticsViewModel(
-            userService: service
-        )
-
-        await viewModel.loadStatistics()
-        XCTAssertEqual(service.loadUsersCallCount, 1)
-
-        // When
-        viewModel.resetCache()
-        await viewModel.loadStatistics()
-
-        // Then
-        XCTAssertEqual(service.loadUsersCallCount, 2)
+        }
     }
 }
 
-extension StatisticsViewModelTests {
-    private func makeUser(
-        name: String,
-        avatar: String? = nil,
-        description: String? = nil,
-        website: String? = nil,
-        nfts: [String] = []
-    ) -> UserResponse {
-        UserResponse(
-            name: name,
-            avatar: avatar,
-            description: description,
-            website: website,
-            nfts: nfts
-        )
+private actor UserServiceStub: UserServiceProtocol {
+    struct Request: Equatable {
+        let page: Int
+        let sortBy: String?
     }
-}
 
-@MainActor
-final class MockUserService: UserServiceProtocol {
-    var loadUsersCallCount = 0
-    var result: Result<[UserResponse], Error> = .success([])
+    private let users: [UserResponse]
+    private let pageSizeLimit: Int?
+    private var failingPage: Int?
+    private(set) var requests: [Request] = []
 
-    func loadUsers() async throws -> [UserResponse] {
-        loadUsersCallCount += 1
-        return try result.get()
+    init(users: [UserResponse], pageSizeLimit: Int? = nil, failingPage: Int? = nil) {
+        self.users = users
+        self.pageSizeLimit = pageSizeLimit
+        self.failingPage = failingPage
+    }
+
+    func setFailingPage(_ page: Int?) {
+        failingPage = page
+    }
+
+    func loadUsers(page: Int, size: Int, sortBy: String?) async throws -> [UserResponse] {
+        requests.append(Request(page: page, sortBy: sortBy))
+        if page == failingPage { throw NetworkClientError.urlSessionError }
+        let start = page * size
+        guard start < users.count else { return [] }
+        let count = min(pageSizeLimit ?? size, size)
+        return Array(users[start..<min(start + count, users.count)])
     }
 }

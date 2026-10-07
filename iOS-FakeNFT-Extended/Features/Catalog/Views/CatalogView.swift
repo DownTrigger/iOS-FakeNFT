@@ -28,6 +28,8 @@ struct CatalogView: View {
             }
         }
         .listStyle(.plain)
+        .contentMargins(.top, 16, for: .scrollContent)
+        .animation(.default, value: viewModel.collections)
         .refreshable { await viewModel.refresh() }
         .scrollContentBackground(.hidden)
         .background(Color(.fnBackground))
@@ -43,6 +45,10 @@ struct CatalogView: View {
                 AppLoadingView()
             } else if viewModel.isEmpty {
                 EmptyStateView(message: CatalogLocalizedText.empty.key)
+            } else if viewModel.hasLoadError && viewModel.alert == nil {
+                ErrorStateView(message: CatalogLocalizedText.loadError.key) {
+                    Task { await viewModel.loadNextPage() }
+                }
             }
         }
         .task(id: sortOption) { await viewModel.applySort(sortOption) }

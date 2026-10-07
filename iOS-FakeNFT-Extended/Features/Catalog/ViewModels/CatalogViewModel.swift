@@ -1,4 +1,4 @@
-import SwiftUI
+import Foundation
 
 @MainActor
 @Observable
@@ -6,27 +6,35 @@ final class CatalogViewModel {
     private static let pageSize = 5
 
     private(set) var sortOption: CatalogSortOption = .byNftCount
+    private(set) var hasLoadError = false
     var alert: AlertModel?
 
     private let service: CollectionsService
     private var paginator: Paginator<NftCollection>?
     private var paginatorSortBy: String?
+    private var isLoadingAllPages = false
 
     var collections: [NftCollection] {
         switch sortOption {
         case .byTitle:
             paginator?.items ?? []
         case .byNftCount:
-            (paginator?.items ?? []).sorted { $0.nftCount > $1.nftCount }
+            isLoadingAllPages ? [] : (paginator?.items ?? []).sorted { $0.nftCount > $1.nftCount }
         }
     }
 
-    var isInitialLoading: Bool { paginator?.isLoading == true && paginator?.items.isEmpty == true }
-    var isLoadingNextPage: Bool { paginator?.isLoading == true && paginator?.items.isEmpty == false }
+    var isInitialLoading: Bool {
+        isLoadingAllPages || (paginator?.isLoading == true && paginator?.items.isEmpty == true)
+    }
+    var isLoadingNextPage: Bool {
+        !isLoadingAllPages && paginator?.isLoading == true && paginator?.items.isEmpty == false
+    }
     var isEmpty: Bool {
         guard let paginator else { return false }
         return !paginator.isLoading && paginator.items.isEmpty && !paginator.hasMorePages
     }
+
+    private var loadsAllPages: Bool { sortOption.serverSortBy == nil }
 
     init(service: CollectionsService) {
         self.service = service
@@ -39,17 +47,26 @@ final class CatalogViewModel {
             paginatorSortBy = sortBy
             paginator = Self.makePaginator(service: service, sortBy: sortBy)
         }
-        guard paginator?.items.isEmpty == true else { return }
+        let needsMorePages = loadsAllPages && paginator?.hasMorePages == true
+        guard paginator?.items.isEmpty == true || needsMorePages else { return }
         await loadNextPage()
     }
 
     func loadNextPage() async {
         guard let paginator else { return }
+        hasLoadError = false
         do {
-            try await paginator.loadNextPage()
+            if loadsAllPages {
+                isLoadingAllPages = true
+                defer { isLoadingAllPages = false }
+                try await paginator.loadAllPages()
+            } else {
+                try await paginator.loadNextPage()
+            }
         } catch {
             guard !error.isCancellation else { return }
-            alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
+            hasLoadError = paginator.items.isEmpty
+            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
                 Task { await self?.loadNextPage() }
             }
         }
@@ -58,15 +75,19 @@ final class CatalogViewModel {
     func refresh() async {
         let freshPaginator = Self.makePaginator(service: service, sortBy: paginatorSortBy)
         do {
-            try await freshPaginator.loadNextPage()
-            let currentFirstPage = paginator.map { Array($0.items.prefix(freshPaginator.items.count)) }
-            guard freshPaginator.items != currentFirstPage else { return }
-            withAnimation {
-                paginator = freshPaginator
+            let currentItems: [NftCollection]?
+            if loadsAllPages {
+                try await freshPaginator.loadAllPages()
+                currentItems = paginator?.items
+            } else {
+                try await freshPaginator.loadNextPage()
+                currentItems = paginator.map { Array($0.items.prefix(freshPaginator.items.count)) }
             }
+            guard freshPaginator.items != currentItems else { return }
+            paginator = freshPaginator
         } catch {
             guard !error.isCancellation else { return }
-            alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
+            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
                 Task { await self?.refresh() }
             }
         }

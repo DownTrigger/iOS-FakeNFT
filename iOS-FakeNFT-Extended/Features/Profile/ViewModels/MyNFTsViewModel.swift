@@ -1,8 +1,3 @@
-//
-//  MyNFTsViewModel.swift
-//  iOS-FakeNFT-Extended
-//
-
 import Foundation
 import Observation
 
@@ -10,85 +5,69 @@ import Observation
 @Observable
 final class MyNFTsViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
-    private(set) var sortOption: CartSortOption
+    private(set) var sortOption: NftSortOption = .byRating
+
+    var alert: AlertModel?
 
     private let user: UserModel
-    private var likedIds: Set<String>
-    var username: String { user.username }
     private let nftService: NftService
-    private let userService: UserService
-    private let userDefaultsService: UserDefaultsService
-
-    private static let sortOptionKey = "myNFTs.sortOption"
+    private let userState: UserState
 
     init(
         user: UserModel,
         nftService: NftService,
-        userService: UserService,
-        userDefaultsService: UserDefaultsService
+        userState: UserState
     ) {
-        let saved = userDefaultsService.string(forKey: Self.sortOptionKey)
-        self.sortOption = CartSortOption(rawValue: saved ?? "") ?? .byRating
         self.user = user
-        self.likedIds = Set(user.likes)
         self.nftService = nftService
-        self.userService = userService
-        self.userDefaultsService = userDefaultsService
+        self.userState = userState
     }
 
     var sortedNfts: [Nft] {
         guard case .loaded(let nfts) = state else { return [] }
-        switch sortOption {
-        case .byPrice:          return sortBy(nfts, keyPath: \.price)
-        case .byRating:         return sortBy(nfts, keyPath: \.rating)
-        case .byName, .byTitle: return sortBy(nfts, keyPath: \.name)
-        }
+        return sortOption.sorted(nfts)
     }
 
-    func setSortOption(_ option: CartSortOption) {
+    func applySort(_ option: NftSortOption) {
         sortOption = option
-        userDefaultsService.set(option.rawValue, forKey: Self.sortOptionKey)
     }
 
     func isLiked(_ nft: Nft) -> Bool {
-        likedIds.contains(nft.id)
+        userState.isLiked(nft.id)
     }
 
-    func toggleLike(_ nft: Nft) {
-        if likedIds.contains(nft.id) {
-            likedIds.remove(nft.id)
-        } else {
-            likedIds.insert(nft.id)
+    func isLikePending(_ nft: Nft) -> Bool {
+        userState.isLikePending(nft.id)
+    }
+
+    func toggleLike(_ nft: Nft) async {
+        do {
+            try await userState.toggleLike(nft.id)
+        } catch {
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.likeError.resource) { [weak self] in
+                Task { await self?.toggleLike(nft) }
+            }
         }
-        let updatedUser = UserModel(
-            avatar: user.avatar,
-            username: user.username,
-            bio: user.bio,
-            userWebSite: user.userWebSite,
-            nfts: user.nfts,
-            likes: Array(likedIds)
-        )
-        Task { _ = try? await userService.updateUser(updatedUser) }
     }
 
     func loadNfts() async {
-        guard case .idle = state else { return }
+        guard state.canStartLoading else { return }
         state = .loading
         do {
-            var loaded: [Nft] = []
-            try await withThrowingTaskGroup(of: Nft.self) { group in
-                for id in user.nfts {
-                    group.addTask {
-                        try await self.nftService.loadNft(id: id)
-                    }
-                }
-                for try await nft in group {
-                    loaded.append(nft)
-                }
-            }
+            async let nfts = nftService.loadNfts(ids: user.nfts)
+            async let likes: Void = userState.loadIfNeeded()
+            let (loaded, _) = try await (nfts, likes)
             state = .loaded(loaded)
         } catch {
+            guard !error.isCancellation else {
+                state = .idle
+                return
+            }
             state = .failed(error)
+            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
+                Task { await self?.loadNfts() }
+            }
         }
     }
 }

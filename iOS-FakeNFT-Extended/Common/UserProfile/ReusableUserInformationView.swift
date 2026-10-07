@@ -1,8 +1,3 @@
-//
-//  ReusableUserInformationView.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct ReusableUserInformationView: View {
@@ -14,32 +9,26 @@ struct ReusableUserInformationView: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 16) {
 
-                Group {
-                    if let avatar = user.avatar, !avatar.isEmpty, let url = URL(string: avatar) {
-                        AsyncImage(url: url) { image in
-                            image.resizable().scaledToFill()
-                        } placeholder: {
-                            imagePlaceholder
-                        }
-                    } else {
-                        imagePlaceholder
-                    }
-                }
-                .frame(width: ReusableUserInformationView.imageSize, height: ReusableUserInformationView.imageSize)
-                .clipShape(Circle())
+                RemoteImageView(url: avatarURL, placeholder: .avatar)
+                    .frame(width: ReusableUserInformationView.imageSize, height: ReusableUserInformationView.imageSize)
+                    .clipShape(Circle())
 
                 Text(user.username)
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.bold22)
+                    .foregroundStyle(Color(.fnText))
             }
 
             Text(user.bio)
-                .font(.system(size: 13, weight: .regular))
+                .font(.regular13)
+                .foregroundStyle(Color(.fnText))
+                .lineSpacing(2.5)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
     }
 
-    private var imagePlaceholder: some View {
-        Image(.imgAvatarPlaceholder).resizable().scaledToFill()
+    private var avatarURL: URL? {
+        guard let avatar = user.avatar, !avatar.isEmpty else { return nil }
+        return URL(string: avatar)
     }
 }

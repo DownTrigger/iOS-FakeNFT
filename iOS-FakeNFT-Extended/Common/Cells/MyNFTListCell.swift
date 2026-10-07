@@ -1,36 +1,31 @@
-//
-//  MyNFTListCell.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct MyNFTListCell: View {
     let nft: Nft
     let isLiked: Bool
-    let username: String
+    var isLikePending = false
     let onLike: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 20) {
             image
             info
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
             price
+                .fixedSize()
+                .frame(minWidth: 90, alignment: .leading)
         }
     }
 
     private var image: some View {
         ZStack(alignment: .topTrailing) {
-            AsyncImage(url: nft.images.first) { img in
-                img.resizable().scaledToFill()
-            } placeholder: {
-                Image(.imgNFTPlaceholder).resizable().scaledToFill()
-            }
-            .frame(width: 108, height: 108)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            RemoteImageView(url: nft.images.first)
+                .frame(width: 108, height: 108)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
 
             LikeButton(isLiked: isLiked, action: onLike)
+                .disabled(isLikePending)
+                .opacity(isLikePending ? 0.5 : 1)
         }
     }
 
@@ -39,16 +34,18 @@ struct MyNFTListCell: View {
             Text(nft.name)
                 .font(.bold17)
                 .foregroundStyle(Color(.fnText))
+                .lineLimit(1)
             RatingView(rating: nft.rating)
-            Text("от \(nft.author)")
+            Text(ProfileLocalizedText.nftAuthor(nft.author).key)
                 .font(.regular13)
                 .foregroundStyle(Color(.fnText))
+                .lineLimit(1)
         }
     }
 
     private var price: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text("Цена")
+            Text(ProfileLocalizedText.nftPrice.key)
                 .font(.regular13)
                 .foregroundStyle(Color(.fnText))
             Text(PriceFormatter.string(from: nft.price))

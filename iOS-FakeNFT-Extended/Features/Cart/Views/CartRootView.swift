@@ -36,8 +36,7 @@ struct CartRootView: View {
 #Preview {
     let services = ServicesAssembly(
         networkClient: DefaultNetworkClient(),
-        nftStorage: NftStorageImpl(),
-        likesStorage: LikesStorageImpl()
+        nftStorage: NftStorageImpl()
     )
 
     CartRootView()

@@ -25,20 +25,20 @@ enum CatalogLocalizedText {
         }
     }
 
-    var text: String {
+    var resource: LocalizedStringResource {
         switch self {
         case .empty:
-            String(localized: "Catalog.empty")
+            "Catalog.empty"
         case .collectionEmpty:
-            String(localized: "Catalog.collectionEmpty")
+            "Catalog.collectionEmpty"
         case .collectionAuthor:
-            String(localized: "Catalog.collectionAuthor")
+            "Catalog.collectionAuthor"
         case .loadError:
-            String(localized: "Error.loadData")
+            "Error.loadData"
         case .likeError:
-            String(localized: "Catalog.likeError")
+            "Catalog.likeError"
         case .cartError:
-            String(localized: "Catalog.cartError")
+            "Catalog.cartError"
         }
     }
 }

@@ -22,9 +22,16 @@ final class Paginator<Item: Identifiable> {
         defer { isLoading = false }
 
         let page = try await loadPage(nextPage, pageSize)
-        items.append(contentsOf: page)
+        let knownIds = Set(items.map(\.id))
+        items.append(contentsOf: page.filter { !knownIds.contains($0.id) })
         nextPage += 1
-        hasMorePages = page.count == pageSize
+        hasMorePages = !page.isEmpty
+    }
+
+    func loadAllPages() async throws {
+        while hasMorePages, !isLoading {
+            try await loadNextPage()
+        }
     }
 
     func loadNextPageIfNeeded(currentItem: Item) async throws {

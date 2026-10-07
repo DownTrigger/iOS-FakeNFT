@@ -8,7 +8,8 @@ struct CartView: View {
     @Environment(UserState.self) private var userState
     @State private var viewModel = CartViewModel()
     @State private var isSortSheetPresented = false
-    @AppStorage(Self.sortOptionKey) private var sortOption: CartSortOption = .byTitle
+    @State private var selectedNft: Nft?
+    @AppStorage(Self.sortOptionKey) private var sortOption: NftSortOption = .byTitle
 
     var body: some View {
         ZStack {
@@ -18,21 +19,22 @@ struct CartView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationSortButton {
-                    withAnimation {
-                        isSortSheetPresented = true
-                    }
+                    isSortSheetPresented = true
                 }
             }
         }
         .sortSheet(
             isPresented: $isSortSheetPresented,
-            options: [CartSortOption.byPrice, .byRating, .byTitle]
+            options: [NftSortOption.byPrice, .byRating, .byTitle]
         ) { option in
             sortOption = option
         }
         .task(id: sortOption) { viewModel.applySort(sortOption) }
         .task { await viewModel.load(using: services.cartService) }
         .appAlert(item: $viewModel.alert)
+        .sheet(item: $selectedNft) { nft in
+            NftDetailView(nftId: nft.id)
+        }
         .fullScreenCover(isPresented: isDeleteConfirmationPresented) {
             if let nft = viewModel.nftToDelete {
                 CartDeleteConfirmationView(
@@ -72,7 +74,11 @@ struct CartView: View {
         case .loaded:
             cartList(viewModel.items)
         case .failed:
-            Color.clear
+            if viewModel.alert == nil {
+                ErrorStateView(message: CartLocalizedText.loadError.key) {
+                    Task { await viewModel.load(using: services.cartService) }
+                }
+            }
         }
     }
 
@@ -82,11 +88,15 @@ struct CartView: View {
                 CartItemCell(nft: nft) {
                     viewModel.requestDelete(nft)
                 }
+                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
+                    .onTapGesture { selectedNft = nft }
                     .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
             }
             .listStyle(.plain)
+            .contentMargins(.top, 20, for: .scrollContent)
             .refreshable { await viewModel.refresh(using: services.cartService) }
 
             CartSummaryPanel(count: items.count, totalPrice: viewModel.totalPrice) {
@@ -99,8 +109,7 @@ struct CartView: View {
 #Preview {
     let services = ServicesAssembly(
         networkClient: DefaultNetworkClient(),
-        nftStorage: NftStorageImpl(),
-        likesStorage: LikesStorageImpl()
+        nftStorage: NftStorageImpl()
     )
 
     NavigationStack {

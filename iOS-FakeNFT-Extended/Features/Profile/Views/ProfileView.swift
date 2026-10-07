@@ -1,8 +1,3 @@
-//
-//  ProfileView.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct ProfileView: View {
@@ -11,8 +6,13 @@ struct ProfileView: View {
     @Environment(ServicesAssembly.self) private var services
     @Environment(Router<ProfileRoute>.self) private var router
 
-    init(userService: UserService) {
-        _viewModel = State(initialValue: ProfileViewModel(userService: userService))
+    private let profileService: UserProfileService
+    private let userState: UserState
+
+    init(profileService: UserProfileService, userState: UserState) {
+        self.profileService = profileService
+        self.userState = userState
+        _viewModel = State(initialValue: ProfileViewModel(profileService: profileService, userState: userState))
     }
 
     var body: some View {
@@ -23,7 +23,11 @@ struct ProfileView: View {
             case .loaded(let user):
                 profileContent(user: user)
             case .failed:
-                EmptyStateView(message: ProfileLocalizedText.profileLoadError.key)
+                if viewModel.alert == nil {
+                    ErrorStateView(message: ProfileLocalizedText.profileLoadError.key) {
+                        Task { await viewModel.loadUser() }
+                    }
+                }
             }
         }
         .navigationDestination(for: ProfileRoute.self) { route in
@@ -32,21 +36,23 @@ struct ProfileView: View {
                 MyNFTsView(
                     user: user,
                     nftService: services.nftService,
-                    userService: services.userService,
-                    userDefaultsService: services.userDefaultsService
+                    userState: userState
                 )
-            case .favouriteNFTs(let user):
+            case .favouriteNFTs:
                 FavouriteNFTsView(
-                    user: user,
                     nftService: services.nftService,
-                    userService: services.userService
+                    profileService: profileService,
+                    userState: userState
                 )
             case .editProfile(let user):
-                ProfileEditView(user: user, onSave: viewModel.updateUser)
+                ProfileEditView(user: user, onSave: { updated in
+                    Task { await viewModel.save(updated) }
+                })
             case .website(let url):
                 WebViewScreen(url: url)
             }
         }
+        .appAlert(item: $viewModel.alert)
         .task {
             await viewModel.loadUser()
         }
@@ -58,15 +64,16 @@ struct ProfileView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 if let user = viewModel.user {
                     Button {
                         router.push(.editProfile(user: user))
                     } label: {
                         ProfileIcon.editProfile.image
                             .frame(width: 42, height: 42)
-                            .foregroundStyle(Color(.fnBlack))
+                            .foregroundStyle(Color(.fnText))
                     }
+                    .designToolbarTrailingInset()
                 }
             }
         }
@@ -81,10 +88,11 @@ struct ProfileView: View {
                         router.push(.website(url: url))
                     } label: {
                         Text(url.absoluteString)
-                            .font(.system(size: 15, weight: .regular))
-                            .foregroundStyle(.blue)
+                            .font(.regular15)
+                            .foregroundStyle(Color(.fnBlue))
                             .lineLimit(1)
                             .truncationMode(.tail)
+                            .frame(height: 28)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 16)
                     }
@@ -93,12 +101,12 @@ struct ProfileView: View {
             }
             CollectionMenu(
                 nftCount: user.nftCount,
-                favouritesCount: user.favouritesCount,
+                favouritesCount: viewModel.favouritesCount,
                 onMyNFTs: {
                     router.push(.myNFTs(user: user))
                 },
                 onFavouriteNFTs: {
-                    router.push(.favouriteNFTs(user: user))
+                    router.push(.favouriteNFTs)
                 }
             )
             Spacer()

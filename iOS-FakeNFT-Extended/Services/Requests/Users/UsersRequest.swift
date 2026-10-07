@@ -1,14 +1,20 @@
-//
-//  UsersRequest.swift
-//  iOS-FakeNFT-Extended
-//
-//  Created by Irina Muravyeva on 02.10.2026.
-//
-
 import Foundation
 
 struct UsersRequest: NetworkRequest {
+    let page: Int
+    let size: Int
+    var sortBy: String?
+
     var endpoint: URL? {
-        URL(string: "\(RequestConstants.baseURL)/api/v1/users")
+        var components = URLComponents(string: "\(RequestConstants.baseURL)/api/v1/users")
+        var queryItems = [
+            URLQueryItem(name: "page", value: String(page)),
+            URLQueryItem(name: "size", value: String(size))
+        ]
+        if let sortBy {
+            queryItems.append(URLQueryItem(name: "sortBy", value: sortBy))
+        }
+        components?.queryItems = queryItems
+        return components?.url
     }
 }

@@ -1,117 +1,91 @@
 import SwiftUI
 
 struct StatisticsView: View {
-    @State private var viewModel: StatisticsViewModel?
+    private static let sortOptionKey = "statistics.sortOption"
+
+    @Environment(Router<StatisticsRoute>.self) private var router
+    @State private var viewModel: StatisticsViewModel
     @State private var isSortSheetPresented = false
+    @AppStorage(Self.sortOptionKey) private var sortOption: StatisticsSortOption = .byRating
 
-    @Environment(ServicesAssembly.self) private var servicesAssembly
-
-    let isActive: Bool
-
-    // для preview
-    init(
-        isActive: Bool = true,
-        viewModel: StatisticsViewModel? = nil
-    ) {
-        self.isActive = isActive
-        _viewModel = State(initialValue: viewModel)
+    init(service: UserServiceProtocol) {
+        _viewModel = State(initialValue: StatisticsViewModel(userService: service))
     }
 
     var body: some View {
-        Group {
-            if let viewModel {
-                content(viewModel: viewModel)
-            } else {
-                ProgressView()
-                    .task {
-                        viewModel = StatisticsViewModel(
-                            userService: servicesAssembly.usersService
-                        )
-                    }
-            }
-        }
-        .onChange(of: isActive) { oldValue, newValue in
-            if oldValue && !newValue {
-                viewModel?.resetCache()
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func content(viewModel: StatisticsViewModel) -> some View {
-        @Bindable var viewModel = viewModel
-
-        ScrollView {
-            LazyVStack(spacing: 8) {
-                ForEach(viewModel.statistics) { statistic in
-                    NavigationLink {
-                        UserStatisticDetailView(statistic: statistic)
-                    } label: {
-                        UserStatisticView(
-                            position: statistic.position,
-                            name: statistic.user.username,
-                            avatar: statistic.user.avatar,
-                            countNft: statistic.nfts.count
-                        )
-                    }
-                    .buttonStyle(.plain)
+        statisticsList
+            .background(Color(.fnBackground))
+            .safeAreaInset(edge: .bottom) {
+                if viewModel.isLoadingNextPage {
+                    ProgressView()
+                        .tint(Color(.fnText))
+                        .padding(.vertical, 8)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 20)
-            .padding(.bottom, 8)
-        }
-        .background(.background)
-        .refreshable {
-            await viewModel.refreshStatistics()
-        }
-        .sortSheet(
-            isPresented: $isSortSheetPresented,
-            options: [
-                StatisticsSortOption.byName,
-                StatisticsSortOption.byRating
-            ],
-            onSelect: { option in
-                switch option {
-                case .byName:
-                    viewModel.sortStatisticsByName()
-                case .byRating:
-                    viewModel.sortStatisticsByRating()
+            .overlay {
+                if viewModel.isInitialLoading {
+                    AppLoadingView()
+                } else if viewModel.hasLoadError && viewModel.alert == nil {
+                    ErrorStateView(message: StatisticLocalizedText.loadError.key) {
+                        Task { await viewModel.loadNextPage() }
+                    }
+                } else if viewModel.isEmpty {
+                    EmptyStateView(message: StatisticLocalizedText.emptyUsers.key)
                 }
             }
-        )
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationSortButton {
-                    withAnimation {
+            .sortSheet(
+                isPresented: $isSortSheetPresented,
+                options: [StatisticsSortOption.byName, .byRating]
+            ) { option in
+                sortOption = option
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationSortButton {
                         isSortSheetPresented = true
                     }
                 }
             }
-        }
-        .overlay {
-            if viewModel.isLoading {
-                ProgressView()
-                    .tint(.fnText)
-                    .frame(width: 30, height: 30)
+            .task(id: sortOption) { await viewModel.applySort(sortOption) }
+            .appAlert(item: $viewModel.alert)
+    }
+
+    private var statisticsList: some View {
+        List(viewModel.statistics) { statistic in
+            Button {
+                router.push(.user(statistic))
+            } label: {
+                UserStatisticView(
+                    position: statistic.position,
+                    name: statistic.user.username,
+                    avatar: statistic.user.avatar,
+                    countNft: statistic.nfts.count
+                )
             }
+            .buttonStyle(.plain)
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+            .task { await viewModel.loadNextPageIfNeeded(currentItem: statistic) }
         }
-        .task {
-            await viewModel.loadStatistics()
-        }
-        .appAlert(item: $viewModel.alert)
+        .listStyle(.plain)
+        .contentMargins(.top, 20, for: .scrollContent)
+        .refreshable { await viewModel.refresh() }
     }
 }
 
 #Preview("Statistics") {
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl()
+    )
     NavigationStack {
-        StatisticsView(viewModel: .preview)
-            .environment(
-                ServicesAssembly(
-                    networkClient: DefaultNetworkClient(),
-                    nftStorage: NftStorageImpl(),
-                    likesStorage: LikesStorageImpl()
-                )
-            )
+        StatisticsView(service: PreviewUserService())
     }
+    .environment(services)
+    .environment(UserState(
+        profileService: services.userProfileService,
+        orderService: services.userOrderService
+    ))
+    .environment(Router<StatisticsRoute>())
 }

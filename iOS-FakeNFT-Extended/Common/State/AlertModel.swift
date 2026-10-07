@@ -2,17 +2,17 @@ import SwiftUI
 
 struct AlertModel: Identifiable {
     let id = UUID()
-    let title: String
-    let message: String?
+    let title: LocalizedStringResource
+    let message: LocalizedStringResource?
     let primaryButton: Button
     let secondaryButton: Button?
 
     struct Button {
-        let title: String
+        let title: LocalizedStringResource
         let role: ButtonRole?
         let action: () -> Void
 
-        init(title: String, role: ButtonRole? = nil, action: @escaping () -> Void = {}) {
+        init(title: LocalizedStringResource, role: ButtonRole? = nil, action: @escaping () -> Void = {}) {
             self.title = title
             self.role = role
             self.action = action
@@ -21,29 +21,29 @@ struct AlertModel: Identifiable {
 }
 
 extension AlertModel {
-    static func retryError(title: String, onRetry: @escaping () -> Void) -> AlertModel {
+    static func retryError(title: LocalizedStringResource, onRetry: @escaping () -> Void) -> AlertModel {
         AlertModel(
             title: title,
             message: nil,
-            primaryButton: Button(title: String(localized: "Error.repeat"), action: onRetry),
-            secondaryButton: Button(title: String(localized: "Alert.cancel"), role: .cancel)
+            primaryButton: Button(title: AlertLocalizedText.retry.resource, action: onRetry),
+            secondaryButton: Button(title: AlertLocalizedText.cancel.resource, role: .cancel)
         )
     }
 
-    static func info(title: String, message: String? = nil) -> AlertModel {
+    static func info(title: LocalizedStringResource, message: LocalizedStringResource? = nil) -> AlertModel {
         AlertModel(
             title: title,
             message: message,
-            primaryButton: Button(title: String(localized: "Alert.ok"), role: .cancel),
+            primaryButton: Button(title: AlertLocalizedText.ok.resource, role: .cancel),
             secondaryButton: nil
         )
     }
 
     static func confirmation(
-        title: String,
-        message: String? = nil,
-        confirmTitle: String,
-        cancelTitle: String = String(localized: "Alert.cancel"),
+        title: LocalizedStringResource,
+        message: LocalizedStringResource? = nil,
+        confirmTitle: LocalizedStringResource,
+        cancelTitle: LocalizedStringResource = AlertLocalizedText.cancel.resource,
         role: ButtonRole? = nil,
         onConfirm: @escaping () -> Void
     ) -> AlertModel {
@@ -59,19 +59,23 @@ extension AlertModel {
 extension View {
     func appAlert(item: Binding<AlertModel?>) -> some View {
         alert(
-            item.wrappedValue?.title ?? "",
+            item.wrappedValue.map { Text($0.title) } ?? Text(verbatim: ""),
             isPresented: Binding(
                 get: { item.wrappedValue != nil },
                 set: { if !$0 { item.wrappedValue = nil } }
             ),
             presenting: item.wrappedValue
         ) { model in
-            SwiftUI.Button(model.primaryButton.title, role: model.primaryButton.role) {
+            SwiftUI.Button(role: model.primaryButton.role) {
                 model.primaryButton.action()
+            } label: {
+                Text(model.primaryButton.title)
             }
             if let secondary = model.secondaryButton {
-                SwiftUI.Button(secondary.title, role: secondary.role) {
+                SwiftUI.Button(role: secondary.role) {
                     secondary.action()
+                } label: {
+                    Text(secondary.title)
                 }
             }
         } message: { model in
@@ -88,20 +92,23 @@ private struct AlertPreviewHost: View {
     var body: some View {
         VStack(spacing: 16) {
             Button {
-                alert = .retryError(title: "Не удалось получить данные") {}
+                alert = .retryError(title: CatalogLocalizedText.loadError.resource) {}
             } label: {
                 Text(verbatim: "Ошибка + Повторить")
             }
             Button {
-                alert = .info(title: "Что-то пошло не так(", message: "Не удалось войти в систему")
+                alert = .info(
+                    title: CartLocalizedText.paymentError.resource,
+                    message: CatalogLocalizedText.likeError.resource
+                )
             } label: {
                 Text(verbatim: "Сообщение (OK)")
             }
             Button {
                 alert = .confirmation(
-                    title: "Уверены, что хотите выйти?",
-                    confirmTitle: "Выйти",
-                    cancelTitle: "Остаться"
+                    title: CartLocalizedText.deleteConfirmation.resource,
+                    confirmTitle: CartLocalizedText.delete.resource,
+                    cancelTitle: CartLocalizedText.back.resource
                 ) {}
             } label: {
                 Text(verbatim: "Подтверждение")

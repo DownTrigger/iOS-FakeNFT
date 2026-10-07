@@ -1,10 +1,3 @@
-//
-//  PrimaryButton.swift
-//  iOS-FakeNFT-Extended
-//
-//  Created by Irina Muravyeva on 23.09.2026.
-//
-
 import SwiftUI
 
 struct PrimaryButton: View {
@@ -16,7 +9,8 @@ struct PrimaryButton: View {
             Text(title.key)
                 .font(.bold17)
                 .foregroundStyle(Color(.fnBackground))
-                .frame(width: 343, height: 60)
+                .frame(maxWidth: .infinity)
+                .frame(height: 60)
                 .background(Color(.fnText))
                 .clipShape(RoundedRectangle(cornerRadius: 16))
         }
@@ -26,29 +20,18 @@ struct PrimaryButton: View {
 
 #Preview {
     VStack(spacing: 20) {
-        PrimaryButton(title: .login) {
-            print("Login")
-        }
-        PrimaryButton(title: .register) {
-            print("Register")
-        }
-        PrimaryButton(title: .pay) {
-            print("Pay")
-        }
-        PrimaryButton(title: .save) {
-            print("Save")
-        }
-        PrimaryButton(title: .resetPassword) {
-            print("Reset password")
-        }
-        PrimaryButton(title: .login, action: {}, isDisabled: true)
+        PrimaryButton(title: .pay) {}
+        PrimaryButton(title: .save) {}
+        PrimaryButton(title: .pay, action: {}, isDisabled: true)
     }
+    .padding(.horizontal, 16)
 }
 
 #Preview("Dark Mode") {
     PrimaryButton(
-        title: .login,
+        title: .pay,
         action: {}
     )
+    .padding(.horizontal, 16)
     .preferredColorScheme(.dark)
 }

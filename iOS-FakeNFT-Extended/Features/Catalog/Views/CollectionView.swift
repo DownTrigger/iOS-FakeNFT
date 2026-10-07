@@ -1,7 +1,10 @@
 import SwiftUI
 
 struct CollectionView: View {
-    private static let columns: [GridItem] = Array(repeating: GridItem(.flexible(), spacing: 9), count: 3)
+    private static let columns: [GridItem] = Array(
+        repeating: GridItem(.flexible(), spacing: 9, alignment: .top),
+        count: 3
+    )
 
     @Environment(Router<CatalogRoute>.self) private var router
     @State private var viewModel: CollectionViewModel
@@ -27,27 +30,16 @@ struct CollectionView: View {
         .hiddenTopScrollEdgeEffect()
         .background(Color(.fnBackground))
         .toolbar(.hidden, for: .tabBar)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    router.pop()
-                } label: {
-                    Image(.icBack)
-                        .renderingMode(.template)
-                        .foregroundStyle(Color(.fnText))
-                }
-            }
-        }
+        .backButton { router.pop() }
         .task { await viewModel.loadNfts() }
         .appAlert(item: $viewModel.alert)
         .sheet(item: $selectedCell) { cell in
-            NftDetailSmokeView(nftId: cell.id)
+            NftDetailView(nftId: cell.id)
         }
     }
 
     private func openAuthorWebsite() {
-        guard let url = viewModel.collection.websiteURL else { return }
+        guard let url = CatalogConstants.authorWebsiteURL else { return }
         router.push(.website(url))
     }
 
@@ -59,8 +51,12 @@ struct CollectionView: View {
                 .frame(maxWidth: .infinity)
         } else if viewModel.isEmpty {
             EmptyStateView(message: CatalogLocalizedText.collectionEmpty.key)
+        } else if viewModel.isFailed && viewModel.alert == nil {
+            ErrorStateView(message: CatalogLocalizedText.loadError.key) {
+                Task { await viewModel.loadNfts() }
+            }
         } else {
-            LazyVGrid(columns: Self.columns, spacing: 8) {
+            LazyVGrid(columns: Self.columns, spacing: 28) {
                 ForEach(viewModel.cells) { cell in
                     NftGridCell(
                         model: cell,

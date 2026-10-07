@@ -1,31 +1,16 @@
 import SwiftUI
 
-private enum TabBarItem {
-    case profile
-    case catalog
-    case cart
-    case statistics
-}
-
 struct TabBarView: View {
-    @State private var selectedTab: TabBarItem = .profile
-    @Environment(ServicesAssembly.self) private var services
-    @State private var profileRouter = Router<ProfileRoute>()
-
     var body: some View {
-        TabView(selection: $selectedTab) {
-            NavigationStack(path: $profileRouter.path) {
-                ProfileView(userService: services.userService)
-            }
-            .environment(profileRouter)
-            .tabItem {
-                Label {
-                    Text(TabLocalizedText.profile.key)
-                } icon: {
-                    Image(.icTabProfile)
+        TabView {
+            ProfileRootView()
+                .tabItem {
+                    Label {
+                        Text(TabLocalizedText.profile.key)
+                    } icon: {
+                        Image(.icTabProfile)
+                    }
                 }
-            }
-            .tag(TabBarItem.profile)
 
             CatalogRootView()
                 .tabItem {
@@ -35,39 +20,35 @@ struct TabBarView: View {
                         Image(.icTabCatalog)
                     }
                 }
-            .tag(TabBarItem.catalog)
 
             CartRootView()
-            .tabItem {
-                Label {
-                    Text(TabLocalizedText.cart.key)
-                } icon: {
-                    Image(.icTabBasket)
+                .tabItem {
+                    Label {
+                        Text(TabLocalizedText.cart.key)
+                    } icon: {
+                        Image(.icTabBasket)
+                    }
                 }
-            }
-            .tag(TabBarItem.cart)
 
-            NavigationStack {
-                StatisticsView(isActive: selectedTab == .statistics)
-            }
-            .tabItem {
-                Label {
-                    Text(TabLocalizedText.statistics.key)
-                } icon: {
-                    Image(.icTabStatistics)
+            StatisticsRootView()
+                .tabItem {
+                    Label {
+                        Text(TabLocalizedText.statistics.key)
+                    } icon: {
+                        Image(.icTabStatistics)
+                    }
                 }
-            }
-            .tag(TabBarItem.statistics)
         }
         .tint(Color(.fnBlue))
     }
 }
 
 #Preview {
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl()
+    )
     TabBarView()
-        .environment(ServicesAssembly(
-            networkClient: DefaultNetworkClient(),
-            nftStorage: NftStorageImpl(),
-            likesStorage: LikesStorageImpl()
-        ))
+        .environment(services)
+        .environment(UserState(profileService: services.userProfileService, orderService: services.userOrderService))
 }

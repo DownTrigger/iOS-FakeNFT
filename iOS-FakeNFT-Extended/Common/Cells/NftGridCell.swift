@@ -6,28 +6,23 @@ struct NftGridCell: View {
     let onCart: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
             image
             RatingView(rating: model.rating)
+                .padding(.top, 8)
             info
+                .padding(.top, 4)
         }
     }
 
     private var image: some View {
-        // Временный загрузчик через AsyncImage: нужно будет заменить общим загрузчиком 
         ZStack(alignment: .topTrailing) {
-            AsyncImage(url: model.imageURL) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                Image(.imgNFTPlaceholder)
-                    .resizable()
-                    .scaledToFill()
-            }
-            .aspectRatio(1, contentMode: .fit)
-            .frame(width: 108, height: 108)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            Color.clear
+                .aspectRatio(1, contentMode: .fit)
+                .overlay {
+                    RemoteImageView(url: model.imageURL)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 12))
 
             LikeButton(isLiked: model.isLiked, action: onLike)
                 .disabled(model.isLikePending)
@@ -36,7 +31,7 @@ struct NftGridCell: View {
     }
 
     private var info: some View {
-        HStack(alignment: .bottom) {
+        HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(model.name)
                     .font(.bold17)
@@ -48,7 +43,7 @@ struct NftGridCell: View {
                     .foregroundStyle(Color(.fnText))
             }
 
-            Spacer()
+            Spacer(minLength: 0)
 
             CartButton(isInCart: model.isInCart, action: onCart)
                 .disabled(model.isCartPending)

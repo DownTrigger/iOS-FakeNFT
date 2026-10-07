@@ -1,9 +1,15 @@
 import SwiftUI
 
-struct CoverImageView: View {
+struct RemoteImageView: View {
+    enum Placeholder {
+        case nft
+        case avatar
+    }
+
     private static let maxReloadAttempts = 3
 
     let url: URL?
+    var placeholder: Placeholder = .nft
 
     @State private var reloadAttempt = 0
 
@@ -20,33 +26,52 @@ struct CoverImageView: View {
                     loadingView
                         .onAppear { reloadAttempt += 1 }
                 case .failure:
-                    placeholder
+                    placeholderImage
                 default:
                     loadingView
                 }
             }
             .id(reloadAttempt)
         } else {
-            placeholder
+            placeholderImage
         }
     }
 
+    @ViewBuilder
     private var loadingView: some View {
-        ZStack {
-            Color(.fnLightGray)
-            ProgressView()
-                .tint(Color(.fnText))
+        if placeholder == .nft {
+            ZStack {
+                Color(.fnLightGray)
+                ProgressView()
+                    .tint(Color(.fnText))
+            }
+        } else {
+            placeholderImage
         }
     }
 
-    private var placeholder: some View {
-        Image(.imgNFTPlaceholder)
+    private var placeholderImage: some View {
+        Image(placeholderResource)
             .resizable()
             .scaledToFill()
+    }
+
+    private var placeholderResource: ImageResource {
+        switch placeholder {
+        case .nft: .imgNFTPlaceholder
+        case .avatar: .imgAvatarPlaceholder
+        }
     }
 }
 
 #Preview {
-    CoverImageView(url: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Peach.png"))
+    VStack {
+        RemoteImageView(
+            url: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Peach.png")
+        )
         .frame(height: 140)
+        RemoteImageView(url: nil, placeholder: .avatar)
+            .frame(width: 70, height: 70)
+            .clipShape(Circle())
+    }
 }

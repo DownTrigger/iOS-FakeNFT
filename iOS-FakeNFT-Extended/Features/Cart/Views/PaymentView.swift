@@ -19,20 +19,9 @@ struct PaymentView: View {
                 AppLoadingView()
             }
         }
-        .navigationTitle(CartLocalizedText.paymentTitle.text)
+        .navigationTitle(CartLocalizedText.paymentTitle.key)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    router.pop()
-                } label: {
-                    Image(.icBack)
-                        .renderingMode(.template)
-                        .foregroundStyle(Color(.fnText))
-                }
-            }
-        }
+        .backButton { router.pop() }
         .toolbar(.hidden, for: .tabBar)
         .task { await viewModel.load(using: services.paymentService) }
         .appAlert(item: $viewModel.alert)
@@ -46,7 +35,7 @@ struct PaymentView: View {
 
     @ViewBuilder
     private var content: some View {
-        if case .loading = viewModel.state {
+        if viewModel.state.isLoading {
             AppLoadingView()
         } else {
             ScrollView {
@@ -72,6 +61,7 @@ struct PaymentView: View {
             VStack(alignment: .leading, spacing: 0) {
                 Text(CartLocalizedText.agreementText.key)
                     .foregroundStyle(Color(.fnText))
+                    .frame(minHeight: 22)
                 Button {
                     if let url = CartConstants.agreementURL {
                         router.push(.agreement(url))
@@ -79,12 +69,12 @@ struct PaymentView: View {
                 } label: {
                     Text(CartLocalizedText.agreementLink.key)
                         .foregroundStyle(Color(.fnBlue))
+                        .frame(minHeight: 22)
                 }
             }
             .font(.regular13)
 
             PrimaryButton(title: .pay, action: pay, isDisabled: !viewModel.canPay)
-                .frame(maxWidth: .infinity)
         }
         .padding(16)
         .background(
@@ -104,8 +94,7 @@ struct PaymentView: View {
 #Preview {
     let services = ServicesAssembly(
         networkClient: DefaultNetworkClient(),
-        nftStorage: NftStorageImpl(),
-        likesStorage: LikesStorageImpl()
+        nftStorage: NftStorageImpl()
     )
 
     NavigationStack {

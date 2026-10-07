@@ -17,6 +17,11 @@ final class CollectionViewModel {
         return nfts.isEmpty
     }
 
+    var isFailed: Bool {
+        guard case .failed = state else { return false }
+        return true
+    }
+
     var cells: [NftGridCellModel] {
         guard case let .loaded(nfts) = state else { return [] }
         return nfts.map(makeCellModel)
@@ -32,17 +37,17 @@ final class CollectionViewModel {
         guard state.canStartLoading else { return }
         state = .loading
         do {
-            async let nfts = Self.loadNfts(ids: collection.nfts, service: nftService)
+            async let nfts = nftService.loadNfts(ids: collection.nfts)
             async let user: Void = userState.loadIfNeeded()
             let (loaded, _) = try await (nfts, user)
-            state = .loaded(collection.nfts.compactMap { loaded[$0] })
+            state = .loaded(loaded)
         } catch {
             guard !error.isCancellation else {
                 state = .idle
                 return
             }
             state = .failed(error)
-            alert = .retryError(title: CatalogLocalizedText.loadError.text) { [weak self] in
+            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
                 Task { await self?.loadNfts() }
             }
         }
@@ -53,7 +58,7 @@ final class CollectionViewModel {
             try await userState.toggleLike(id)
         } catch {
             guard !error.isCancellation else { return }
-            alert = .retryError(title: CatalogLocalizedText.likeError.text) { [weak self] in
+            alert = .retryError(title: CatalogLocalizedText.likeError.resource) { [weak self] in
                 Task { await self?.toggleLike(id) }
             }
         }
@@ -64,24 +69,9 @@ final class CollectionViewModel {
             try await userState.toggleCart(id)
         } catch {
             guard !error.isCancellation else { return }
-            alert = .retryError(title: CatalogLocalizedText.cartError.text) { [weak self] in
+            alert = .retryError(title: CatalogLocalizedText.cartError.resource) { [weak self] in
                 Task { await self?.toggleCart(id) }
             }
-        }
-    }
-
-    private static func loadNfts(ids: [String], service: NftService) async throws -> [String: Nft] {
-        try await withThrowingTaskGroup(of: Nft.self) { group in
-            for id in ids {
-                group.addTask {
-                    try await service.loadNft(id: id)
-                }
-            }
-            var loaded: [String: Nft] = [:]
-            for try await nft in group {
-                loaded[nft.id] = nft
-            }
-            return loaded
         }
     }
 
@@ -97,21 +87,5 @@ final class CollectionViewModel {
             isLikePending: userState.isLikePending(nft.id),
             isCartPending: userState.isCartPending(nft.id)
         )
-    }
-}
-
-private extension LoadingState {
-    var isLoading: Bool {
-        if case .loading = self { return true }
-        return false
-    }
-
-    var canStartLoading: Bool {
-        switch self {
-        case .idle, .failed:
-            true
-        case .loading, .loaded:
-            false
-        }
     }
 }

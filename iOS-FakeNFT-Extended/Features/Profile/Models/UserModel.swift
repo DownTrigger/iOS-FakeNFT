@@ -1,9 +1,4 @@
-//
-//  UserModel.swift
-//  iOS-FakeNFT-Extended
-//
-
-struct UserModel: Decodable, Sendable, Hashable {
+struct UserModel: Sendable, Hashable {
     let avatar: String?
     let username: String
     let bio: String
@@ -12,14 +7,17 @@ struct UserModel: Decodable, Sendable, Hashable {
     let likes: [String]
 
     var nftCount: Int { nfts.count }
-    var favouritesCount: Int { likes.count }
+}
 
-    enum CodingKeys: String, CodingKey {
-        case avatar
-        case username = "name"
-        case bio = "description"
-        case userWebSite = "website"
-        case nfts
-        case likes
+extension UserModel {
+    init(profile: UserProfile) {
+        self.init(
+            avatar: profile.avatar,
+            username: profile.name,
+            bio: profile.description,
+            userWebSite: profile.website,
+            nfts: profile.nfts,
+            likes: profile.likes
+        )
     }
 }

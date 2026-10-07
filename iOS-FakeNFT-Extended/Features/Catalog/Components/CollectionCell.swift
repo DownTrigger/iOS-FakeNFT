@@ -5,7 +5,7 @@ struct CollectionCell: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            CoverImageView(url: collection.cover)
+            RemoteImageView(url: collection.cover)
                 .frame(height: 140)
                 .frame(maxWidth: .infinity)
                 .clipShape(.rect(cornerRadius: 12))
@@ -13,6 +13,7 @@ struct CollectionCell: View {
             Text(verbatim: "\(collection.name) (\(collection.nftCount))")
                 .font(.bold17)
                 .foregroundStyle(Color(.fnText))
+                .frame(height: 22)
         }
     }
 }

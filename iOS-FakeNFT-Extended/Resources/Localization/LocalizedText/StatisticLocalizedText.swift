@@ -1,17 +1,10 @@
-//
-//  StatisticNFTCollectionLocalizedText.swift
-//  iOS-FakeNFT-Extended
-//
-//  Created by Irina Muravyeva on 25.09.2026.
-//
-
 import SwiftUI
 
 enum StatisticLocalizedText {
     case title
-    case collectionCount
     case openUserWebsite
     case emptyNftCollection
+    case emptyUsers
     case loadError
     case refreshError
 
@@ -19,12 +12,29 @@ enum StatisticLocalizedText {
         switch self {
         case .title:
             "nft_collection.title"
-        case .collectionCount:
-            "nft_collection.count"
         case .openUserWebsite:
             "website.open_user"
         case .emptyNftCollection:
             "stat_nft_emptyCollection"
+        case .emptyUsers:
+            "stat_empty_users"
+        case .loadError:
+            "stat_load_error"
+        case .refreshError:
+            "stat_refresh_error"
+        }
+    }
+
+    var resource: LocalizedStringResource {
+        switch self {
+        case .title:
+            "nft_collection.title"
+        case .openUserWebsite:
+            "website.open_user"
+        case .emptyNftCollection:
+            "stat_nft_emptyCollection"
+        case .emptyUsers:
+            "stat_empty_users"
         case .loadError:
             "stat_load_error"
         case .refreshError:

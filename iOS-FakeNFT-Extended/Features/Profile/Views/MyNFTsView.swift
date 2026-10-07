@@ -1,26 +1,23 @@
-//
-//  MyNFTsView.swift
-//  iOS-FakeNFT-Extended
-//
-
 import SwiftUI
 
 struct MyNFTsView: View {
+    private static let sortOptionKey = "myNFTs.sortOption"
+
     @State private var viewModel: MyNFTsViewModel
     @State private var showSortSheet = false
+    @State private var selectedNft: Nft?
+    @AppStorage(Self.sortOptionKey) private var sortOption: NftSortOption = .byRating
     @Environment(\.dismiss) private var dismiss
 
     init(
         user: UserModel,
         nftService: NftService,
-        userService: UserService,
-        userDefaultsService: UserDefaultsService
+        userState: UserState
     ) {
         _viewModel = State(initialValue: MyNFTsViewModel(
             user: user,
             nftService: nftService,
-            userService: userService,
-            userDefaultsService: userDefaultsService
+            userState: userState
         ))
     }
 
@@ -36,52 +33,56 @@ struct MyNFTsView: View {
                     nftList
                 }
             case .failed:
-                EmptyStateView(message: ProfileLocalizedText.myNFTsLoadError.key)
-            }
-        }
-        .navigationTitle(ScreenLocalizedText.myNFTs.key)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { dismiss() } label: {
-                    Image(.icBack)
-                        .foregroundStyle(Color(.fnText))
+                if viewModel.alert == nil {
+                    ErrorStateView(message: ProfileLocalizedText.myNFTsLoadError.key) {
+                        Task { await viewModel.loadNfts() }
+                    }
                 }
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
+        }
+        .appAlert(item: $viewModel.alert)
+        .navigationTitle(ScreenLocalizedText.myNFTs.key)
+        .navigationBarTitleDisplayMode(.inline)
+        .backButton { dismiss() }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
                 NavigationSortButton {
-                    withAnimation { showSortSheet = true }
+                    showSortSheet = true
                 }
             }
         }
         .sortSheet(
             isPresented: $showSortSheet,
-            options: [CartSortOption.byPrice, .byRating, .byName]
+            options: [NftSortOption.byPrice, .byRating, .byTitle]
         ) { option in
-            viewModel.setSortOption(option)
+            sortOption = option
         }
+        .task(id: sortOption) { viewModel.applySort(sortOption) }
         .toolbar(.hidden, for: .tabBar)
         .background(Color(.fnBackground))
         .task { await viewModel.loadNfts() }
+        .sheet(item: $selectedNft) { nft in
+            NftDetailView(nftId: nft.id)
+        }
     }
 
     private var nftList: some View {
-        ScrollView {
-            LazyVStack(spacing: 32) {
-                ForEach(viewModel.sortedNfts, id: \.id) { nft in
-                    MyNFTListCell(
-                        nft: nft,
-                        isLiked: viewModel.isLiked(nft),
-                        username: viewModel.username,
-                        onLike: { viewModel.toggleLike(nft) }
-                    )
-                    .padding(.leading, 16)
-                    .padding(.trailing, 39)
-                }
-            }
-            .padding(.top, 20)
+        List(viewModel.sortedNfts, id: \.id) { nft in
+            MyNFTListCell(
+                nft: nft,
+                isLiked: viewModel.isLiked(nft),
+                isLikePending: viewModel.isLikePending(nft),
+                onLike: { Task { await viewModel.toggleLike(nft) } }
+            )
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .onTapGesture { selectedNft = nft }
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 32, trailing: 23))
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
         }
+        .listStyle(.plain)
+        .contentMargins(.top, 36, for: .scrollContent)
     }
 }
 
@@ -90,18 +91,13 @@ private struct PreviewNftService: NftService {
         Nft(
             id: id,
             name: ["April", "Spring", "Lilo"].randomElement() ?? "April",
-            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")!],
+            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")].compactMap { $0 },
             description: "Test NFT",
             rating: Int.random(in: 1...5),
             price: 1.78,
             author: "Lin Gen"
         )
     }
-}
-
-private struct MyNFTsPreviewUserService: UserService {
-    func loadUser() async throws -> UserModel { fatalError("preview only") }
-    func updateUser(_ user: UserModel) async throws -> UserModel { user }
 }
 
 #Preview {
@@ -116,9 +112,14 @@ private struct MyNFTsPreviewUserService: UserService {
                 likes: ["1"]
             ),
             nftService: PreviewNftService(),
-            userService: MyNFTsPreviewUserService(),
-            userDefaultsService: UserDefaultsServiceImpl()
+            userState: UserState(
+                profileService: ProfilePreviewUserProfileService(),
+                orderService: ProfilePreviewUserOrderService()
+            )
         )
     }
-    .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl(), likesStorage: LikesStorageImpl()))
+    .environment(ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl()
+    ))
 }

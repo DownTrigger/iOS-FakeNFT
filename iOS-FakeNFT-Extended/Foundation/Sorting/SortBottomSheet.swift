@@ -1,10 +1,3 @@
-//
-//  SortBottomSheet.swift
-//  iOS-FakeNFT-Extended
-//
-//  Created by Irina Muravyeva on 23.09.2026.
-//
-
 import SwiftUI
 
 struct SortBottomSheet<Option: SortOptionProtocol>: View {
@@ -23,7 +16,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
                     .font(.regular13)
                     .tracking(-0.08)
                     .foregroundStyle(.secondary)
-                    .frame(height: 38)
+                    .frame(height: 44)
 
                 Divider()
 
@@ -36,7 +29,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
                             .tracking(0.38)
                             .foregroundStyle(.blue)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 54)
+                            .frame(height: 57)
                     }
 
                     if option.id != options.last?.id {
@@ -59,7 +52,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
                     .tracking(0.38)
                     .foregroundStyle(.blue)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 54)
+                    .frame(height: 57)
             }
             .background(
                 colorScheme == .light
@@ -69,7 +62,6 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
             .clipShape(RoundedRectangle(cornerRadius: 13))
         }
         .padding(.horizontal, 8)
-        .padding(.bottom, 8)
     }
 }
 
@@ -98,9 +90,9 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
         SortBottomSheet(
             screenTitle: .sorting,
             options: [
-                CartSortOption.byPrice,
-                CartSortOption.byRating,
-                CartSortOption.byTitle
+                NftSortOption.byPrice,
+                NftSortOption.byRating,
+                NftSortOption.byTitle
             ],
             onSelect: { _ in },
             onClose: { }
@@ -116,9 +108,9 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
         SortBottomSheet(
             screenTitle: .profilePhoto,
             options: [
-                CartSortOption.byPrice,
-                CartSortOption.byRating,
-                CartSortOption.byTitle
+                NftSortOption.byPrice,
+                NftSortOption.byRating,
+                NftSortOption.byTitle
             ],
             onSelect: { _ in },
             onClose: { }
