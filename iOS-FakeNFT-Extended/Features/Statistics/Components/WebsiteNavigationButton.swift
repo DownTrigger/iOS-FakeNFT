@@ -17,23 +17,23 @@ struct WebsiteNavigationButton: View {
             router.push(.website(url))
         } label: {
             Text(StatisticLocalizedText.openUserWebsite.key)
-                .font(.system(size: 15, weight: .regular))
+                .font(.regular15)
                 .tracking(-0.24)
-                .frame(width: 343, height: 40)
+                .foregroundStyle(Color(.fnText))
+                .frame(maxWidth: .infinity)
+                .frame(height: 40)
                 .overlay {
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(.fnText, lineWidth: 1)
                 }
         }
-        .tint(.fnText)
-        .frame(maxWidth: .infinity)
     }
 }
 
 #Preview {
-    WebsiteNavigationButton(
-        url: URL(string: "https://www.apple.com")!
-    )
-    .padding()
-    .environment(Router<StatisticsRoute>())
+    if let url = URL(string: "https://www.apple.com") {
+        WebsiteNavigationButton(url: url)
+            .padding()
+            .environment(Router<StatisticsRoute>())
+    }
 }

@@ -11,30 +11,25 @@ struct UserStatisticDetailView: View {
     let statistic: UserStatisticItem
 
     var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 0) {
-                    ReusableUserInformationView(user: statistic.user)
-                        .padding(.top, 20)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                ReusableUserInformationView(user: statistic.user)
+                    .padding(.top, 20)
 
-                    if let website = statistic.user.userWebSite,
-                       !website.isEmpty,
-                       let url = URL(string: website) {
-                        WebsiteNavigationButton(url: url)
-                            .padding(.top, 28)
-                    }
+                if let website = statistic.user.userWebSite,
+                   !website.isEmpty,
+                   let url = URL(string: website) {
+                    WebsiteNavigationButton(url: url)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 28)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
 
                 NFTCollectionNavigationLink(nfts: statistic.nfts)
-                    .position(
-                        x: geometry.size.width / 2,
-                        y: geometry.size.height / 2
-                    )
+                    .padding(.top, 40)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .navigationBarBackButtonHidden(false)
+        .background(Color(.fnBackground))
         .toolbar(.hidden, for: .tabBar)
     }
 }

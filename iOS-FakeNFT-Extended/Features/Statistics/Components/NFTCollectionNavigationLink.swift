@@ -18,13 +18,12 @@ struct NFTCollectionNavigationLink: View {
         } label: {
             HStack {
                 Text(StatisticLocalizedText.collectionCount(nfts.count).key)
-                .font(.bold17)
 
                 Spacer()
 
-                Image(systemName: "chevron.forward")
-                    .font(.system(size: 22, weight: .semibold))
+                Image(systemName: "chevron.right")
             }
+            .font(.bold17)
             .padding(16)
             .contentShape(Rectangle())
         }

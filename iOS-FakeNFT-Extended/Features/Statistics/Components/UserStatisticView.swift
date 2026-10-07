@@ -36,8 +36,7 @@ struct UserStatisticView: View {
 
                 Text(verbatim: "\(countNft)")
                     .font(.bold22)
-                    .foregroundStyle(.primary)
-                    .frame(alignment: .trailing)
+                    .foregroundStyle(.fnText)
             }
             .padding(.horizontal, 14)
             .frame(height: 80)
