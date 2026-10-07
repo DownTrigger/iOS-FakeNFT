@@ -48,6 +48,10 @@ struct CollectionView: View {
                 .frame(maxWidth: .infinity)
         } else if viewModel.isEmpty {
             EmptyStateView(message: CatalogLocalizedText.collectionEmpty.key)
+        } else if viewModel.isFailed && viewModel.alert == nil {
+            ErrorStateView(message: CatalogLocalizedText.loadError.key) {
+                Task { await viewModel.loadNfts() }
+            }
         } else {
             LazyVGrid(columns: Self.columns, spacing: 8) {
                 ForEach(viewModel.cells) { cell in

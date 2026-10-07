@@ -80,11 +80,11 @@ final class CartViewModel {
         do {
             let items = try await service.loadCart()
             state = .loaded(items)
-        } catch is CancellationError {
-            resetLoadingState()
-        } catch let error as URLError where error.code == .cancelled {
-            resetLoadingState()
         } catch {
+            guard !error.isCancellation else {
+                resetLoadingState()
+                return
+            }
             if state.isLoading {
                 state = .failed(error)
             }

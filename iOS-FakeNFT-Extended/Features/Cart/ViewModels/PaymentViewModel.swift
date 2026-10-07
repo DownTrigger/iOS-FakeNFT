@@ -26,11 +26,11 @@ final class PaymentViewModel {
         state = .loading
         do {
             state = .loaded(try await service.loadCurrencies())
-        } catch is CancellationError {
-            state = .idle
-        } catch let error as URLError where error.code == .cancelled {
-            state = .idle
         } catch {
+            guard !error.isCancellation else {
+                state = .idle
+                return
+            }
             state = .failed(error)
             alert = .retryError(title: CartLocalizedText.currenciesLoadError.resource) { [weak self] in
                 Task { await self?.load(using: service) }
@@ -59,11 +59,8 @@ final class PaymentViewModel {
             }
             try await cartService.clear()
             isPaid = true
-        } catch is CancellationError {
-            return
-        } catch let error as URLError where error.code == .cancelled {
-            return
         } catch {
+            guard !error.isCancellation else { return }
             alert = .retryError(title: CartLocalizedText.paymentError.resource) { [weak self] in
                 Task { await self?.pay(using: paymentService, cartService: cartService) }
             }

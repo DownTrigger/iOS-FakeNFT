@@ -60,6 +60,18 @@ final class CollectionViewModelTests: XCTestCase {
         }
         XCTAssertNotNil(viewModel.alert)
         XCTAssertTrue(viewModel.cells.isEmpty)
+        XCTAssertTrue(viewModel.isFailed)
+    }
+
+    func testIsFailedIsFalseAfterSuccessfulLoad() async {
+        // Given
+        let viewModel = makeViewModel(collection: .stub(nfts: ["1"]), service: NftServiceStub())
+
+        // When
+        await viewModel.loadNfts()
+
+        // Then
+        XCTAssertFalse(viewModel.isFailed)
     }
 
     func testLoadNftsCancellationDoesNotShowAlert() async {

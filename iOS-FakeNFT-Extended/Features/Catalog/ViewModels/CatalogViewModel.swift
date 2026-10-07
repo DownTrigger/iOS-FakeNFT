@@ -6,6 +6,7 @@ final class CatalogViewModel {
     private static let pageSize = 5
 
     private(set) var sortOption: CatalogSortOption = .byNftCount
+    private(set) var hasLoadError = false
     var alert: AlertModel?
 
     private let service: CollectionsService
@@ -45,10 +46,12 @@ final class CatalogViewModel {
 
     func loadNextPage() async {
         guard let paginator else { return }
+        hasLoadError = false
         do {
             try await paginator.loadNextPage()
         } catch {
             guard !error.isCancellation else { return }
+            hasLoadError = paginator.items.isEmpty
             alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
                 Task { await self?.loadNextPage() }
             }

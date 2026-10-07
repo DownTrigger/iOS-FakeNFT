@@ -43,6 +43,10 @@ struct CatalogView: View {
                 AppLoadingView()
             } else if viewModel.isEmpty {
                 EmptyStateView(message: CatalogLocalizedText.empty.key)
+            } else if viewModel.hasLoadError && viewModel.alert == nil {
+                ErrorStateView(message: CatalogLocalizedText.loadError.key) {
+                    Task { await viewModel.loadNextPage() }
+                }
             }
         }
         .task(id: sortOption) { await viewModel.applySort(sortOption) }

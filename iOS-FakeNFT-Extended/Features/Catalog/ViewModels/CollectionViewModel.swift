@@ -17,6 +17,11 @@ final class CollectionViewModel {
         return nfts.isEmpty
     }
 
+    var isFailed: Bool {
+        guard case .failed = state else { return false }
+        return true
+    }
+
     var cells: [NftGridCellModel] {
         guard case let .loaded(nfts) = state else { return [] }
         return nfts.map(makeCellModel)

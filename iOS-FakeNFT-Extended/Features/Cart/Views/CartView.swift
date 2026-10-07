@@ -72,7 +72,11 @@ struct CartView: View {
         case .loaded:
             cartList(viewModel.items)
         case .failed:
-            Color.clear
+            if viewModel.alert == nil {
+                ErrorStateView(message: CartLocalizedText.loadError.key) {
+                    Task { await viewModel.load(using: services.cartService) }
+                }
+            }
         }
     }
 
