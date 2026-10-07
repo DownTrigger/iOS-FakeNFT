@@ -56,7 +56,7 @@ struct CollectionView: View {
                 Task { await viewModel.loadNfts() }
             }
         } else {
-            LazyVGrid(columns: Self.columns, spacing: 8) {
+            LazyVGrid(columns: Self.columns, spacing: 28) {
                 ForEach(viewModel.cells) { cell in
                     NftGridCell(
                         model: cell,

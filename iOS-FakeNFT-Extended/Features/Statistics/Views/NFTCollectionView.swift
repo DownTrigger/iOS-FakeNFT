@@ -54,7 +54,7 @@ struct NFTCollectionView: View {
                 .tint(Color(.fnText))
                 .frame(maxWidth: .infinity)
         } else {
-            LazyVGrid(columns: columns, spacing: 16) {
+            LazyVGrid(columns: columns, spacing: 28) {
                 ForEach(viewModel.cells) { cell in
                     NftGridCell(
                         model: cell,

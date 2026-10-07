@@ -6,10 +6,12 @@ struct NftGridCell: View {
     let onCart: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
             image
             RatingView(rating: model.rating)
+                .padding(.top, 8)
             info
+                .padding(.top, 4)
         }
     }
 
@@ -41,7 +43,7 @@ struct NftGridCell: View {
                     .foregroundStyle(Color(.fnText))
             }
 
-            Spacer(minLength: 4)
+            Spacer(minLength: 0)
 
             CartButton(isInCart: model.isInCart, action: onCart)
                 .disabled(model.isCartPending)

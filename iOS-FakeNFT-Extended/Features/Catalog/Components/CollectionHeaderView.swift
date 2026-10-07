@@ -29,13 +29,14 @@ struct CollectionHeaderView: View {
                     }
                     .buttonStyle(.plain)
                 }
+                .frame(height: 28)
                 .padding(.top, 8)
 
                 Text(collection.description)
                     .font(.regular13)
                     .foregroundStyle(Color(.fnText))
                     .multilineTextAlignment(.leading)
-                    .padding(.top, 4)
+                    .lineSpacing(2.5)
             }
             .padding(.horizontal, 16)
         }

@@ -28,6 +28,7 @@ struct CatalogView: View {
             }
         }
         .listStyle(.plain)
+        .contentMargins(.top, 16, for: .scrollContent)
         .animation(.default, value: viewModel.collections)
         .refreshable { await viewModel.refresh() }
         .scrollContentBackground(.hidden)

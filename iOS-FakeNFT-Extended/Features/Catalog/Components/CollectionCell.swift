@@ -13,6 +13,7 @@ struct CollectionCell: View {
             Text(verbatim: "\(collection.name) (\(collection.nftCount))")
                 .font(.bold17)
                 .foregroundStyle(Color(.fnText))
+                .frame(height: 22)
         }
     }
 }
