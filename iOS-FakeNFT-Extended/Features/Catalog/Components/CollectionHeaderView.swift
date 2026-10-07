@@ -6,7 +6,7 @@ struct CollectionHeaderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            RemoteImageView(url: collection.cover, showsProgress: true)
+            RemoteImageView(url: collection.cover)
                 .frame(height: 310)
                 .frame(maxWidth: .infinity)
                 .clipShape(.rect(cornerRadius: 12))

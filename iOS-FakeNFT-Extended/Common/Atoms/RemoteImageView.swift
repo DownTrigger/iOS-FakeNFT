@@ -10,7 +10,6 @@ struct RemoteImageView: View {
 
     let url: URL?
     var placeholder: Placeholder = .nft
-    var showsProgress = false
 
     @State private var reloadAttempt = 0
 
@@ -40,7 +39,7 @@ struct RemoteImageView: View {
 
     @ViewBuilder
     private var loadingView: some View {
-        if showsProgress {
+        if placeholder == .nft {
             ZStack {
                 Color(.fnLightGray)
                 ProgressView()
@@ -68,8 +67,7 @@ struct RemoteImageView: View {
 #Preview {
     VStack {
         RemoteImageView(
-            url: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Peach.png"),
-            showsProgress: true
+            url: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Peach.png")
         )
         .frame(height: 140)
         RemoteImageView(url: nil, placeholder: .avatar)
