@@ -14,7 +14,7 @@ struct UserStatisticView: View {
     let countNft: Int
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             Text(verbatim: "\(position)")
                 .font(.regular15)
                 .tracking(-0.24)
@@ -22,7 +22,7 @@ struct UserStatisticView: View {
                 .lineLimit(1)
                 .frame(minWidth: 27)
 
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 RemoteImageView(url: avatarURL, placeholder: .avatar)
                     .frame(width: 28, height: 28)
                     .clipShape(Circle())
@@ -38,7 +38,7 @@ struct UserStatisticView: View {
                     .font(.bold22)
                     .foregroundStyle(.fnText)
             }
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 16)
             .frame(height: 80)
             .background(Color(.fnLightGray))
             .clipShape(RoundedRectangle(cornerRadius: 12))

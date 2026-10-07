@@ -10,6 +10,8 @@ import SwiftUI
 struct UserStatisticDetailView: View {
     let statistic: UserStatisticItem
 
+    @Environment(Router<StatisticsRoute>.self) private var router
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -25,12 +27,13 @@ struct UserStatisticDetailView: View {
                 }
 
                 NFTCollectionNavigationLink(nfts: statistic.nfts)
-                    .padding(.top, 40)
+                    .padding(.top, 42)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(Color(.fnBackground))
         .toolbar(.hidden, for: .tabBar)
+        .backButton { router.pop() }
     }
 }
 

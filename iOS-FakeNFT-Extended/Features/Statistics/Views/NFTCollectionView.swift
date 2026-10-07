@@ -10,12 +10,13 @@ import SwiftUI
 struct NFTCollectionView: View {
     let nfts: [String]
 
+    @Environment(Router<StatisticsRoute>.self) private var router
     @State private var viewModel: NFTCollectionViewModel
 
     private let columns = [
-        GridItem(.flexible(), spacing: 8, alignment: .top),
-        GridItem(.flexible(), spacing: 8, alignment: .top),
-        GridItem(.flexible(), spacing: 8, alignment: .top)
+        GridItem(.flexible(), spacing: 9, alignment: .top),
+        GridItem(.flexible(), spacing: 9, alignment: .top),
+        GridItem(.flexible(), spacing: 9, alignment: .top)
     ]
 
     init(nfts: [String], nftService: NftService, userState: UserState) {
@@ -37,6 +38,7 @@ struct NFTCollectionView: View {
         .navigationTitle(StatisticLocalizedText.title.key)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .backButton { router.pop() }
         .task { await viewModel.loadNfts() }
         .appAlert(item: $viewModel.alert)
     }
@@ -84,4 +86,5 @@ struct NFTCollectionView: View {
             )
         )
     }
+    .environment(Router<StatisticsRoute>())
 }
