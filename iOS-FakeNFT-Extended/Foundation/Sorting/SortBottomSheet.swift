@@ -23,7 +23,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
                     .font(.regular13)
                     .tracking(-0.08)
                     .foregroundStyle(.secondary)
-                    .frame(height: 38)
+                    .frame(height: 44)
 
                 Divider()
 
@@ -36,7 +36,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
                             .tracking(0.38)
                             .foregroundStyle(.blue)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 54)
+                            .frame(height: 57)
                     }
 
                     if option.id != options.last?.id {
@@ -59,7 +59,7 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
                     .tracking(0.38)
                     .foregroundStyle(.blue)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 54)
+                    .frame(height: 57)
             }
             .background(
                 colorScheme == .light
@@ -69,7 +69,6 @@ struct SortBottomSheet<Option: SortOptionProtocol>: View {
             .clipShape(RoundedRectangle(cornerRadius: 13))
         }
         .padding(.horizontal, 8)
-        .padding(.bottom, 8)
     }
 }
 
