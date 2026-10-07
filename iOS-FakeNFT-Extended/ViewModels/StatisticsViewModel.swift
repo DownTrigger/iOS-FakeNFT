@@ -5,8 +5,9 @@
 //  Created by Irina Muravyeva on 24.09.2026.
 //
 
-import Observation
+import Foundation
 
+@MainActor
 @Observable
 final class StatisticsViewModel {
     var statistics: [UserStatisticItem] = []
@@ -14,8 +15,8 @@ final class StatisticsViewModel {
 
     private let userService: UserServiceProtocol
 
-    private var isLoaded = false // для кэша
-    var isLoading = false // для индикатора загрузки
+    private var isLoaded = false
+    var isLoading = false
 
     init(userService: UserServiceProtocol) {
         self.userService = userService
@@ -41,18 +42,16 @@ final class StatisticsViewModel {
             let users = try await userService.loadUsers()
             statistics = makeStatistics(from: users)
             isLoaded = true
-        } catch is CancellationError {
-            return
         } catch {
+            guard !error.isCancellation else { return }
             alert = .retryError(
-                title: "stat_load_error",
-                onRetry: {
+                title: StatisticLocalizedText.loadError.resource,
+                onRetry: { [weak self] in
                     Task {
-                        await self.loadStatistics()
+                        await self?.loadStatistics()
                     }
                 }
             )
-            print("Failed to load statistics: \(error)")
         }
     }
 
@@ -69,18 +68,16 @@ final class StatisticsViewModel {
             let users = try await userService.loadUsers()
             statistics = makeStatistics(from: users)
             isLoaded = true
-        } catch is CancellationError {
-            return
         } catch {
+            guard !error.isCancellation else { return }
             alert = .retryError(
-                title: "stat_refresh_error",
-                onRetry: {
+                title: StatisticLocalizedText.refreshError.resource,
+                onRetry: { [weak self] in
                     Task {
-                        await self.refreshStatistics()
+                        await self?.refreshStatistics()
                     }
                 }
             )
-            print("Failed to refresh statistics: \(error)")
         }
     }
 

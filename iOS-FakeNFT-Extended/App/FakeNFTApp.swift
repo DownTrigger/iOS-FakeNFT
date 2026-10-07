@@ -9,8 +9,7 @@ struct FakeNFTApp: App {
         TabBarAppearance.configure()
         let services = ServicesAssembly(
             networkClient: DefaultNetworkClient(),
-            nftStorage: NftStorageImpl(),
-            likesStorage: LikesStorageImpl()
+            nftStorage: NftStorageImpl()
         )
 
         _services = State(initialValue: services)

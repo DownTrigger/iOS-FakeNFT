@@ -9,7 +9,7 @@ import SwiftUI
 
 enum StatisticLocalizedText {
     case title
-    case collectionCount
+    case collectionCount(Int)
     case openUserWebsite
     case emptyNftCollection
     case loadError
@@ -19,8 +19,25 @@ enum StatisticLocalizedText {
         switch self {
         case .title:
             "nft_collection.title"
-        case .collectionCount:
-            "nft_collection.count"
+        case .collectionCount(let count):
+            "nft_collection.count \(count)"
+        case .openUserWebsite:
+            "website.open_user"
+        case .emptyNftCollection:
+            "stat_nft_emptyCollection"
+        case .loadError:
+            "stat_load_error"
+        case .refreshError:
+            "stat_refresh_error"
+        }
+    }
+
+    var resource: LocalizedStringResource {
+        switch self {
+        case .title:
+            "nft_collection.title"
+        case .collectionCount(let count):
+            "nft_collection.count \(count)"
         case .openUserWebsite:
             "website.open_user"
         case .emptyNftCollection:

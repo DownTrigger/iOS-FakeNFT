@@ -120,7 +120,6 @@ private struct PreviewNftService: NftService {
     }
     .environment(ServicesAssembly(
         networkClient: DefaultNetworkClient(),
-        nftStorage: NftStorageImpl(),
-        likesStorage: LikesStorageImpl()
+        nftStorage: NftStorageImpl()
     ))
 }

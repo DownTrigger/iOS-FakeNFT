@@ -10,74 +10,89 @@ import Foundation
 @MainActor
 @Observable
 final class NFTCollectionViewModel {
-    var nftItems: [NftGridCellModel] = []
-    var isLoading = false
-    var error: Error?
+    private(set) var state: LoadingState<[Nft]> = .idle
+    var alert: AlertModel?
 
-    private let networkClient: NetworkClient
+    private let nftIds: [String]
+    private let nftService: NftService
+    private let userState: UserState
 
-    init(networkClient: NetworkClient) {
-        self.networkClient = networkClient
+    var isLoading: Bool { state.isLoading }
+
+    var isEmpty: Bool {
+        guard case let .loaded(nfts) = state else { return false }
+        return nfts.isEmpty
     }
 
-    func load(
-        nftIDs: [String],
-        isLiked: @escaping (String) async -> Bool,
-        isInCart: @escaping (String) async -> Bool
-    ) async {
-        isLoading = true
-        error = nil
+    var isFailed: Bool {
+        guard case .failed = state else { return false }
+        return true
+    }
 
+    var cells: [NftGridCellModel] {
+        guard case let .loaded(nfts) = state else { return [] }
+        return nfts.map(makeCellModel)
+    }
+
+    init(nftIds: [String], nftService: NftService, userState: UserState) {
+        self.nftIds = nftIds
+        self.nftService = nftService
+        self.userState = userState
+    }
+
+    func loadNfts() async {
+        guard state.canStartLoading else { return }
+        state = .loading
         do {
-            let responses = try await withThrowingTaskGroup(
-                of: Nft.self
-            ) { group in
-                for id in nftIDs {
-                    group.addTask {
-                        let request = NFTRequest(id: id)
-
-                        let nft: Nft = try await self.networkClient.send(
-                            request: request
-                        )
-
-                        return nft
-                    }
-                }
-
-                var result: [Nft] = []
-
-                for try await response in group {
-                    result.append(response)
-                }
-
-                return result
-            }
-
-            var items: [NftGridCellModel] = []
-
-            for nft in responses {
-                let liked = await isLiked(nft.id)
-                let inCart = await isInCart(nft.id)
-
-                let item = NftGridCellModel(
-                    id: nft.id,
-                    imageURL: nft.images.first,
-                    name: nft.name,
-                    rating: nft.rating,
-                    priceText: "\(nft.price)",
-                    isLiked: liked,
-                    isInCart: inCart
-                )
-
-                items.append(item)
-            }
-
-            nftItems = items
+            async let nfts = nftService.loadNfts(ids: nftIds)
+            async let user: Void = userState.loadIfNeeded()
+            let (loaded, _) = try await (nfts, user)
+            state = .loaded(loaded)
         } catch {
-            self.error = error
-            print("NFT load error:", error)
+            guard !error.isCancellation else {
+                state = .idle
+                return
+            }
+            state = .failed(error)
+            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
+                Task { await self?.loadNfts() }
+            }
         }
+    }
 
-        isLoading = false
+    func toggleLike(_ id: String) async {
+        do {
+            try await userState.toggleLike(id)
+        } catch {
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.likeError.resource) { [weak self] in
+                Task { await self?.toggleLike(id) }
+            }
+        }
+    }
+
+    func toggleCart(_ id: String) async {
+        do {
+            try await userState.toggleCart(id)
+        } catch {
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.cartError.resource) { [weak self] in
+                Task { await self?.toggleCart(id) }
+            }
+        }
+    }
+
+    private func makeCellModel(from nft: Nft) -> NftGridCellModel {
+        NftGridCellModel(
+            id: nft.id,
+            imageURL: nft.images.first,
+            name: nft.name,
+            rating: nft.rating,
+            priceText: PriceFormatter.string(from: nft.price),
+            isLiked: userState.isLiked(nft.id),
+            isInCart: userState.isInCart(nft.id),
+            isLikePending: userState.isLikePending(nft.id),
+            isCartPending: userState.isCartPending(nft.id)
+        )
     }
 }

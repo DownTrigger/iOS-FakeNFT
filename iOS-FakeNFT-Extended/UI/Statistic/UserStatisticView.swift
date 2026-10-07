@@ -15,7 +15,7 @@ struct UserStatisticView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Text("\(position)")
+            Text(verbatim: "\(position)")
                 .font(.regular15)
                 .tracking(-0.24)
                 .foregroundStyle(.fnText)
@@ -33,7 +33,7 @@ struct UserStatisticView: View {
 
                 Spacer()
 
-                Text("\(countNft)")
+                Text(verbatim: "\(countNft)")
                     .font(.bold22)
                     .foregroundStyle(.primary)
                     .frame(alignment: .trailing)

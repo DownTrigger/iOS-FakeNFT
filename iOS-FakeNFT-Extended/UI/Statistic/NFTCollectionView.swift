@@ -8,9 +8,6 @@
 import SwiftUI
 
 struct NFTCollectionView: View {
-    @Environment(ServicesAssembly.self) private var services
-
-    let user: UserModel
     let nfts: [String]
 
     @State private var viewModel: NFTCollectionViewModel
@@ -21,78 +18,70 @@ struct NFTCollectionView: View {
         GridItem(.flexible(), spacing: 8)
     ]
 
-    init(user: UserModel, nfts: [String]) {
-        self.user = user
+    init(nfts: [String], nftService: NftService, userState: UserState) {
         self.nfts = nfts
         _viewModel = State(
             initialValue: NFTCollectionViewModel(
-                networkClient: DefaultNetworkClient()
+                nftIds: nfts,
+                nftService: nftService,
+                userState: userState
             )
         )
     }
 
     var body: some View {
         ScrollView {
-            if nfts.isEmpty {
-                EmptyStateView(message: "stat_nft_emptyCollection")
-            } else {
-                LazyVGrid(columns: columns, spacing: 16) {
-                    ForEach(viewModel.nftItems) { model in
-                        NftGridCell(
-                            model: model,
-                            onLike: {
-                                // обработка Like
-                            },
-                            onCart: {
-                                // обработка Cart
-                            }
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 20)
-            }
+            content
         }
+        .background(Color(.fnBackground))
         .navigationTitle(StatisticLocalizedText.title.key)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(false)
         .toolbar(.hidden, for: .tabBar)
-        .task {
-            await viewModel.load(
-                nftIDs: nfts,
-                isLiked: { nftID in
-                    await services.isLiked(nftID: nftID)
-                },
-                isInCart: { nftID in
-                    await services.isInCart(nftID: nftID)
-                }
-            )
-        }
-        .overlay {
-            if viewModel.isLoading {
-                ZStack {
-                    Color.black.opacity(0.2)
-                        .ignoresSafeArea()
+        .task { await viewModel.loadNfts() }
+        .appAlert(item: $viewModel.alert)
+    }
 
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .tint(.fnText)
-                        .frame(width: 30, height: 30)
+    @ViewBuilder
+    private var content: some View {
+        if nfts.isEmpty || viewModel.isEmpty {
+            EmptyStateView(message: StatisticLocalizedText.emptyNftCollection.key)
+        } else if viewModel.isFailed && viewModel.alert == nil {
+            ErrorStateView(message: CatalogLocalizedText.loadError.key) {
+                Task { await viewModel.loadNfts() }
+            }
+        } else if viewModel.isLoading {
+            ProgressView()
+                .tint(Color(.fnText))
+                .frame(maxWidth: .infinity)
+        } else {
+            LazyVGrid(columns: columns, spacing: 16) {
+                ForEach(viewModel.cells) { cell in
+                    NftGridCell(
+                        model: cell,
+                        onLike: { Task { await viewModel.toggleLike(cell.id) } },
+                        onCart: { Task { await viewModel.toggleCart(cell.id) } }
+                    )
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 20)
         }
     }
 }
 
 #Preview {
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl()
+    )
     NavigationStack {
-        if let statistic = StatisticsViewModel.preview.statistics.first(
-            where: { $0.user.username == "Alex" }
-        ) {
-            NFTCollectionView(
-                user: statistic.user,
-                nfts: statistic.nfts
+        NFTCollectionView(
+            nfts: ["1", "2", "3"],
+            nftService: services.nftService,
+            userState: UserState(
+                profileService: services.userProfileService,
+                orderService: services.userOrderService
             )
-        }
+        )
     }
 }

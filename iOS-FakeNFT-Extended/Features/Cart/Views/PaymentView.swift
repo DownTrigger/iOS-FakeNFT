@@ -92,8 +92,7 @@ struct PaymentView: View {
 #Preview {
     let services = ServicesAssembly(
         networkClient: DefaultNetworkClient(),
-        nftStorage: NftStorageImpl(),
-        likesStorage: LikesStorageImpl()
+        nftStorage: NftStorageImpl()
     )
 
     NavigationStack {

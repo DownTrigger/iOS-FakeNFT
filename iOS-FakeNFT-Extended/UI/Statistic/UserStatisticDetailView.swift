@@ -26,10 +26,7 @@ struct UserStatisticDetailView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                NFTCollectionNavigationLink(
-                    user: statistic.user,
-                    nfts: statistic.nfts
-                )
+                NFTCollectionNavigationLink(nfts: statistic.nfts)
                     .position(
                         x: geometry.size.width / 2,
                         y: geometry.size.height / 2
@@ -43,6 +40,10 @@ struct UserStatisticDetailView: View {
 }
 
 #Preview("Alex — Website") {
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl()
+    )
     NavigationStack {
         if let statistic = StatisticsViewModel.preview.statistics.first(
             where: { $0.user.username == "Alex" }
@@ -50,4 +51,6 @@ struct UserStatisticDetailView: View {
             UserStatisticDetailView(statistic: statistic)
         }
     }
+    .environment(services)
+    .environment(UserState(profileService: services.userProfileService, orderService: services.userOrderService))
 }

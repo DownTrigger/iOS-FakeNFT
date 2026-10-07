@@ -21,8 +21,7 @@ struct ProfileRootView: View {
 #Preview {
     let services = ServicesAssembly(
         networkClient: DefaultNetworkClient(),
-        nftStorage: NftStorageImpl(),
-        likesStorage: LikesStorageImpl())
+        nftStorage: NftStorageImpl())
     ProfileRootView()
         .environment(services)
         .environment(UserState(profileService: services.userProfileService, orderService: services.userOrderService))

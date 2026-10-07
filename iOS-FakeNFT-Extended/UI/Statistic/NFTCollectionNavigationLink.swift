@@ -8,23 +8,17 @@
 import SwiftUI
 
 struct NFTCollectionNavigationLink: View {
-    let user: UserModel
+    @Environment(ServicesAssembly.self) private var services
+    @Environment(UserState.self) private var userState
+
     let nfts: [String]
 
     var body: some View {
         NavigationLink {
-            NFTCollectionView(user: user, nfts: nfts)
+            NFTCollectionView(nfts: nfts, nftService: services.nftService, userState: userState)
         } label: {
             HStack {
-                Text(
-                    String(
-                        format: NSLocalizedString(
-                            "nft_collection.count",
-                            comment: ""
-                        ),
-                        String(nfts.count)
-                    )
-                )
+                Text(StatisticLocalizedText.collectionCount(nfts.count).key)
                 .font(.bold17)
 
                 Spacer()
@@ -41,14 +35,17 @@ struct NFTCollectionNavigationLink: View {
 }
 
 #Preview("Alex") {
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl()
+    )
     NavigationStack {
         if let statistic = StatisticsViewModel.preview.statistics.first(
             where: { $0.user.username == "Alex" }
         ) {
-            NFTCollectionNavigationLink(
-                user: statistic.user,
-                nfts: statistic.nfts
-            )
+            NFTCollectionNavigationLink(nfts: statistic.nfts)
         }
     }
+    .environment(services)
+    .environment(UserState(profileService: services.userProfileService, orderService: services.userOrderService))
 }

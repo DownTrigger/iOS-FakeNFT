@@ -40,8 +40,7 @@ struct CatalogRootView: View {
 #Preview {
     let services = ServicesAssembly(
         networkClient: DefaultNetworkClient(),
-        nftStorage: NftStorageImpl(),
-        likesStorage: LikesStorageImpl())
+        nftStorage: NftStorageImpl())
     CatalogRootView()
         .environment(services)
         .environment(UserState(profileService: services.userProfileService, orderService: services.userOrderService))

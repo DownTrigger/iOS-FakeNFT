@@ -59,10 +59,11 @@ struct TabBarView: View {
 }
 
 #Preview {
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl()
+    )
     TabBarView()
-        .environment(ServicesAssembly(
-            networkClient: DefaultNetworkClient(),
-            nftStorage: NftStorageImpl(),
-            likesStorage: LikesStorageImpl()
-        ))
+        .environment(services)
+        .environment(UserState(profileService: services.userProfileService, orderService: services.userOrderService))
 }

@@ -104,14 +104,16 @@ struct StatisticsView: View {
 }
 
 #Preview("Statistics") {
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl()
+    )
     NavigationStack {
         StatisticsView(viewModel: .preview)
-            .environment(
-                ServicesAssembly(
-                    networkClient: DefaultNetworkClient(),
-                    nftStorage: NftStorageImpl(),
-                    likesStorage: LikesStorageImpl()
-                )
-            )
+            .environment(services)
+            .environment(UserState(
+                profileService: services.userProfileService,
+                orderService: services.userOrderService
+            ))
     }
 }
