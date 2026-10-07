@@ -1,26 +1,16 @@
 import SwiftUI
 
-private enum TabBarItem {
-    case profile
-    case catalog
-    case cart
-    case statistics
-}
-
 struct TabBarView: View {
-    @State private var selectedTab: TabBarItem = .profile
-
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView {
             ProfileRootView()
-            .tabItem {
-                Label {
-                    Text(TabLocalizedText.profile.key)
-                } icon: {
-                    Image(.icTabProfile)
+                .tabItem {
+                    Label {
+                        Text(TabLocalizedText.profile.key)
+                    } icon: {
+                        Image(.icTabProfile)
+                    }
                 }
-            }
-            .tag(TabBarItem.profile)
 
             CatalogRootView()
                 .tabItem {
@@ -30,29 +20,24 @@ struct TabBarView: View {
                         Image(.icTabCatalog)
                     }
                 }
-            .tag(TabBarItem.catalog)
 
             CartRootView()
-            .tabItem {
-                Label {
-                    Text(TabLocalizedText.cart.key)
-                } icon: {
-                    Image(.icTabBasket)
+                .tabItem {
+                    Label {
+                        Text(TabLocalizedText.cart.key)
+                    } icon: {
+                        Image(.icTabBasket)
+                    }
                 }
-            }
-            .tag(TabBarItem.cart)
 
-            NavigationStack {
-                StatisticsView(isActive: selectedTab == .statistics)
-            }
-            .tabItem {
-                Label {
-                    Text(TabLocalizedText.statistics.key)
-                } icon: {
-                    Image(.icTabStatistics)
+            StatisticsRootView()
+                .tabItem {
+                    Label {
+                        Text(TabLocalizedText.statistics.key)
+                    } icon: {
+                        Image(.icTabStatistics)
+                    }
                 }
-            }
-            .tag(TabBarItem.statistics)
         }
         .tint(Color(.fnBlue))
     }

@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct UserStatisticItem: Identifiable {
-    let id = UUID()
+struct UserStatisticItem: Identifiable, Hashable {
+    let id: String
     let position: Int
     let user: UserModel
     let nfts: [String]

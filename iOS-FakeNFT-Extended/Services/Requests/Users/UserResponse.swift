@@ -8,6 +8,7 @@
 import Foundation
 
 struct UserResponse: Decodable, Sendable {
+    let id: String
     let name: String
     let avatar: String?
     let description: String?
@@ -15,6 +16,7 @@ struct UserResponse: Decodable, Sendable {
     let nfts: [String]
 
     enum CodingKeys: String, CodingKey {
+        case id
         case name
         case avatar
         case description

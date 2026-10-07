@@ -10,7 +10,7 @@ import XCTest
 
 @MainActor
 final class StatisticsViewModelTests: XCTestCase {
-    func testLoadStatistics_success_loadsUsersAndCreatesStatistics() async {
+    func testLoad_success_loadsUsersAndCreatesStatistics() async {
         // Given
         let users = [
             makeUser(
@@ -31,7 +31,7 @@ final class StatisticsViewModelTests: XCTestCase {
         )
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.load()
 
         // Then
         XCTAssertEqual(service.loadUsersCallCount, 1)
@@ -48,7 +48,7 @@ final class StatisticsViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isLoading)
     }
     
-    func testLoadStatistics_mapsUserDataCorrectly() async {
+    func testLoad_mapsUserDataCorrectly() async {
         // Given
         let user = makeUser(
             name: "Anna",
@@ -66,7 +66,7 @@ final class StatisticsViewModelTests: XCTestCase {
         )
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.load()
 
         // Then
         let statistic = viewModel.statistics[0]
@@ -78,7 +78,7 @@ final class StatisticsViewModelTests: XCTestCase {
         XCTAssertEqual(statistic.nfts, ["1", "2", "3"])
     }
     
-    func testLoadStatistics_nilDescription_setsEmptyBio() async {
+    func testLoad_nilDescription_setsEmptyBio() async {
         // Given
         let user = makeUser(
             name: "Anna",
@@ -94,7 +94,7 @@ final class StatisticsViewModelTests: XCTestCase {
         )
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.load()
 
         // Then
         XCTAssertEqual(
@@ -103,7 +103,7 @@ final class StatisticsViewModelTests: XCTestCase {
         )
     }
     
-    func testLoadStatistics_emptyResponse_returnsEmptyStatistics() async {
+    func testLoad_emptyResponse_returnsEmptyStatistics() async {
         // Given
         let service = MockUserService()
         service.result = .success([])
@@ -113,7 +113,7 @@ final class StatisticsViewModelTests: XCTestCase {
         )
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.load()
 
         // Then
         XCTAssertEqual(service.loadUsersCallCount, 1)
@@ -122,7 +122,7 @@ final class StatisticsViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isLoading)
     }
     
-    func testLoadStatistics_failure_setsAlert() async {
+    func testLoad_failure_setsAlert() async {
         // Given
         let service = MockUserService()
         service.result = .failure(
@@ -134,16 +134,17 @@ final class StatisticsViewModelTests: XCTestCase {
         )
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.load()
 
         // Then
         XCTAssertEqual(service.loadUsersCallCount, 1)
         XCTAssertNotNil(viewModel.alert)
+        XCTAssertTrue(viewModel.isFailed)
         XCTAssertTrue(viewModel.statistics.isEmpty)
         XCTAssertFalse(viewModel.isLoading)
     }
     
-    func testLoadStatistics_cancellation_doesNotSetAlert() async {
+    func testLoad_cancellation_doesNotSetAlert() async {
         // Given
         let service = MockUserService()
         service.result = .failure(CancellationError())
@@ -153,14 +154,14 @@ final class StatisticsViewModelTests: XCTestCase {
         )
 
         // When
-        await viewModel.loadStatistics()
+        await viewModel.load()
 
         // Then
         XCTAssertNil(viewModel.alert)
         XCTAssertFalse(viewModel.isLoading)
     }
     
-    func testLoadStatistics_whenAlreadyLoaded_doesNotLoadAgain() async {
+    func testLoad_whenAlreadyLoaded_doesNotLoadAgain() async {
         // Given
         let users = [
             makeUser(
@@ -177,14 +178,14 @@ final class StatisticsViewModelTests: XCTestCase {
         )
 
         // When
-        await viewModel.loadStatistics()
-        await viewModel.loadStatistics()
+        await viewModel.load()
+        await viewModel.load()
 
         // Then
         XCTAssertEqual(service.loadUsersCallCount, 1)
     }
     
-    func testRefreshStatistics_loadsUsersAgain() async {
+    func testRefresh_loadsUsersAgain() async {
         // Given
         let users = [
             makeUser(
@@ -201,20 +202,18 @@ final class StatisticsViewModelTests: XCTestCase {
         )
 
         // When
-        await viewModel.loadStatistics()
-        await viewModel.refreshStatistics()
+        await viewModel.load()
+        await viewModel.refresh()
 
         // Then
         XCTAssertEqual(service.loadUsersCallCount, 2)
     }
     
-    func testResetCache_allowsLoadingAgain() async {
+    func testRefresh_afterLoad_keepsStableIds() async {
         // Given
         let users = [
-            makeUser(
-                name: "Anna",
-                nfts: ["1", "2"]
-            )
+            makeUser(id: "a", name: "Anna", nfts: ["1"]),
+            makeUser(id: "b", name: "Maria", nfts: ["1", "2"])
         ]
 
         let service = MockUserService()
@@ -224,20 +223,105 @@ final class StatisticsViewModelTests: XCTestCase {
             userService: service
         )
 
-        await viewModel.loadStatistics()
-        XCTAssertEqual(service.loadUsersCallCount, 1)
-
         // When
-        viewModel.resetCache()
-        await viewModel.loadStatistics()
+        await viewModel.load()
+        await viewModel.refresh()
 
         // Then
-        XCTAssertEqual(service.loadUsersCallCount, 2)
+        XCTAssertEqual(Set(viewModel.statistics.map(\.id)), ["a", "b"])
+        XCTAssertEqual(viewModel.statistics.map(\.id), ["b", "a"])
+    }
+
+    func testRefresh_failure_keepsStatisticsAndSetsAlert() async {
+        // Given
+        let service = MockUserService()
+        service.result = .success([makeUser(name: "Anna", nfts: ["1"])])
+
+        let viewModel = StatisticsViewModel(
+            userService: service
+        )
+        await viewModel.load()
+
+        // When
+        service.result = .failure(URLError(.notConnectedToInternet))
+        await viewModel.refresh()
+
+        // Then
+        XCTAssertEqual(viewModel.statistics.count, 1)
+        XCTAssertNotNil(viewModel.alert)
+        XCTAssertFalse(viewModel.isFailed)
+    }
+
+    func testRefresh_whenNotLoaded_loads() async {
+        // Given
+        let service = MockUserService()
+        service.result = .success([makeUser(name: "Anna", nfts: ["1"])])
+
+        let viewModel = StatisticsViewModel(
+            userService: service
+        )
+
+        // When
+        await viewModel.refresh()
+
+        // Then
+        XCTAssertEqual(service.loadUsersCallCount, 1)
+        XCTAssertEqual(viewModel.statistics.count, 1)
+    }
+
+    func testApplySort_byName_sortsAscending() async {
+        // Given
+        let service = MockUserService()
+        service.result = .success([
+            makeUser(name: "Maria", nfts: ["1", "2", "3"]),
+            makeUser(name: "Anna", nfts: ["1"]),
+            makeUser(name: "Boris", nfts: ["1", "2"])
+        ])
+
+        let viewModel = StatisticsViewModel(
+            userService: service
+        )
+        await viewModel.load()
+
+        // When
+        viewModel.applySort(.byName)
+
+        // Then
+        XCTAssertEqual(
+            viewModel.statistics.map(\.user.username),
+            ["Anna", "Boris", "Maria"]
+        )
+    }
+
+    func testApplySort_byRating_sortsByNftCountDescending() async {
+        // Given
+        let service = MockUserService()
+        service.result = .success([
+            makeUser(name: "Anna", nfts: ["1"]),
+            makeUser(name: "Maria", nfts: ["1", "2", "3"]),
+            makeUser(name: "Boris", nfts: ["1", "2"])
+        ])
+
+        let viewModel = StatisticsViewModel(
+            userService: service
+        )
+        await viewModel.load()
+        viewModel.applySort(.byName)
+
+        // When
+        viewModel.applySort(.byRating)
+
+        // Then
+        XCTAssertEqual(
+            viewModel.statistics.map(\.user.username),
+            ["Maria", "Boris", "Anna"]
+        )
     }
 }
 
 extension StatisticsViewModelTests {
     private func makeUser(
+        id: String = UUID().uuidString,
         name: String,
         avatar: String? = nil,
         description: String? = nil,
@@ -245,6 +329,7 @@ extension StatisticsViewModelTests {
         nfts: [String] = []
     ) -> UserResponse {
         UserResponse(
+            id: id,
             name: name,
             avatar: avatar,
             description: description,

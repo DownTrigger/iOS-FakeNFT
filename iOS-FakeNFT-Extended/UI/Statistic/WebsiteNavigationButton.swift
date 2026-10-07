@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct WebsiteNavigationButton: View {
+    @Environment(Router<StatisticsRoute>.self) private var router
+
     let url: URL
 
     var body: some View {
-        NavigationLink {
-            WebViewScreen(url: url)
+        Button {
+            router.push(.website(url))
         } label: {
             Text(StatisticLocalizedText.openUserWebsite.key)
                 .font(.system(size: 15, weight: .regular))
@@ -33,4 +35,5 @@ struct WebsiteNavigationButton: View {
         url: URL(string: "https://www.apple.com")!
     )
     .padding()
+    .environment(Router<StatisticsRoute>())
 }

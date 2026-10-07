@@ -40,10 +40,6 @@ struct UserStatisticDetailView: View {
 }
 
 #Preview("Alex — Website") {
-    let services = ServicesAssembly(
-        networkClient: DefaultNetworkClient(),
-        nftStorage: NftStorageImpl()
-    )
     NavigationStack {
         if let statistic = StatisticsViewModel.preview.statistics.first(
             where: { $0.user.username == "Alex" }
@@ -51,6 +47,5 @@ struct UserStatisticDetailView: View {
             UserStatisticDetailView(statistic: statistic)
         }
     }
-    .environment(services)
-    .environment(UserState(profileService: services.userProfileService, orderService: services.userOrderService))
+    .environment(Router<StatisticsRoute>())
 }

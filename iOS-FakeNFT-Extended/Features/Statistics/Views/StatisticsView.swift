@@ -1,51 +1,64 @@
 import SwiftUI
 
 struct StatisticsView: View {
-    @State private var viewModel: StatisticsViewModel?
+    private static let sortOptionKey = "statistics.sortOption"
+
+    @Environment(Router<StatisticsRoute>.self) private var router
+    @State private var viewModel: StatisticsViewModel
     @State private var isSortSheetPresented = false
+    @AppStorage(Self.sortOptionKey) private var sortOption: StatisticsSortOption = .byRating
 
-    @Environment(ServicesAssembly.self) private var servicesAssembly
+    init(service: UserServiceProtocol) {
+        _viewModel = State(initialValue: StatisticsViewModel(userService: service))
+    }
 
-    let isActive: Bool
-
-    // для preview
-    init(
-        isActive: Bool = true,
-        viewModel: StatisticsViewModel? = nil
-    ) {
-        self.isActive = isActive
+    init(viewModel: StatisticsViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
 
     var body: some View {
-        Group {
-            if let viewModel {
-                content(viewModel: viewModel)
-            } else {
-                ProgressView()
-                    .task {
-                        viewModel = StatisticsViewModel(
-                            userService: servicesAssembly.usersService
-                        )
-                    }
+        content
+            .background(Color(.fnBackground))
+            .sortSheet(
+                isPresented: $isSortSheetPresented,
+                options: [StatisticsSortOption.byName, .byRating]
+            ) { option in
+                sortOption = option
             }
-        }
-        .onChange(of: isActive) { oldValue, newValue in
-            if oldValue && !newValue {
-                viewModel?.resetCache()
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationSortButton {
+                        isSortSheetPresented = true
+                    }
+                }
+            }
+            .task(id: sortOption) { viewModel.applySort(sortOption) }
+            .task { await viewModel.load() }
+            .appAlert(item: $viewModel.alert)
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.state {
+        case .idle, .loading:
+            AppLoadingView()
+        case .loaded:
+            statisticsList
+        case .failed:
+            if viewModel.alert == nil {
+                ErrorStateView(message: StatisticLocalizedText.loadError.key) {
+                    Task { await viewModel.load() }
+                }
             }
         }
     }
 
-    @ViewBuilder
-    private func content(viewModel: StatisticsViewModel) -> some View {
-        @Bindable var viewModel = viewModel
-
+    private var statisticsList: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
                 ForEach(viewModel.statistics) { statistic in
-                    NavigationLink {
-                        UserStatisticDetailView(statistic: statistic)
+                    Button {
+                        router.push(.user(statistic))
                     } label: {
                         UserStatisticView(
                             position: statistic.position,
@@ -61,45 +74,7 @@ struct StatisticsView: View {
             .padding(.top, 20)
             .padding(.bottom, 8)
         }
-        .background(.background)
-        .refreshable {
-            await viewModel.refreshStatistics()
-        }
-        .sortSheet(
-            isPresented: $isSortSheetPresented,
-            options: [
-                StatisticsSortOption.byName,
-                StatisticsSortOption.byRating
-            ],
-            onSelect: { option in
-                switch option {
-                case .byName:
-                    viewModel.sortStatisticsByName()
-                case .byRating:
-                    viewModel.sortStatisticsByRating()
-                }
-            }
-        )
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationSortButton {
-                    withAnimation {
-                        isSortSheetPresented = true
-                    }
-                }
-            }
-        }
-        .overlay {
-            if viewModel.isLoading {
-                ProgressView()
-                    .tint(.fnText)
-                    .frame(width: 30, height: 30)
-            }
-        }
-        .task {
-            await viewModel.loadStatistics()
-        }
-        .appAlert(item: $viewModel.alert)
+        .refreshable { await viewModel.refresh() }
     }
 }
 
@@ -110,10 +85,11 @@ struct StatisticsView: View {
     )
     NavigationStack {
         StatisticsView(viewModel: .preview)
-            .environment(services)
-            .environment(UserState(
-                profileService: services.userProfileService,
-                orderService: services.userOrderService
-            ))
     }
+    .environment(services)
+    .environment(UserState(
+        profileService: services.userProfileService,
+        orderService: services.userOrderService
+    ))
+    .environment(Router<StatisticsRoute>())
 }
