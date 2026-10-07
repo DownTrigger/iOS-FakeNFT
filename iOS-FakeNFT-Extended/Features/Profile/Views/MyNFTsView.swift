@@ -36,7 +36,11 @@ struct MyNFTsView: View {
                     nftList
                 }
             case .failed:
-                EmptyStateView(message: ProfileLocalizedText.myNFTsLoadError.key)
+                if viewModel.alert == nil {
+                    ErrorStateView(message: ProfileLocalizedText.myNFTsLoadError.key) {
+                        Task { await viewModel.loadNfts() }
+                    }
+                }
             }
         }
         .appAlert(item: $viewModel.alert)
@@ -94,37 +98,6 @@ private struct PreviewNftService: NftService {
     }
 }
 
-struct ProfilePreviewUserProfileService: UserProfileService {
-    private let profile = UserProfile(
-        id: "1",
-        name: "John Doe",
-        description: "",
-        website: nil,
-        avatar: nil,
-        nfts: ["1", "2", "3"],
-        likes: ["1"]
-    )
-
-    func loadProfile() async throws -> UserProfile { profile }
-    func updateLikes(_ change: IdChange) async throws -> UserProfile { profile }
-    func updateProfile(
-        name: String,
-        description: String,
-        avatar: String?,
-        website: String?
-    ) async throws -> UserProfile {
-        profile
-    }
-}
-
-struct ProfilePreviewUserOrderService: UserOrderService {
-    private let order = UserOrder(id: "1", nfts: [])
-
-    func loadOrder() async throws -> UserOrder { order }
-    func updateNfts(_ change: IdChange) async throws -> UserOrder { order }
-    func clearOrder() async throws -> UserOrder { order }
-}
-
 #Preview {
     NavigationStack {
         MyNFTsView(
@@ -144,5 +117,9 @@ struct ProfilePreviewUserOrderService: UserOrderService {
             userDefaultsService: UserDefaultsServiceImpl()
         )
     }
-    .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl(), likesStorage: LikesStorageImpl()))
+    .environment(ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl(),
+        likesStorage: LikesStorageImpl()
+    ))
 }

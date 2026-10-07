@@ -38,7 +38,7 @@ struct MyNFTListCell: View {
                 .font(.bold17)
                 .foregroundStyle(Color(.fnText))
             RatingView(rating: nft.rating)
-            Text("от \(nft.author)")
+            Text(ProfileLocalizedText.nftAuthor(nft.author).key)
                 .font(.regular13)
                 .foregroundStyle(Color(.fnText))
         }
@@ -46,7 +46,7 @@ struct MyNFTListCell: View {
 
     private var price: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text("Цена")
+            Text(ProfileLocalizedText.nftPrice.key)
                 .font(.regular13)
                 .foregroundStyle(Color(.fnText))
             Text(PriceFormatter.string(from: nft.price))

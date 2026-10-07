@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AppTextField: View {
-    let placeholder: String
+    let placeholder: LocalizedStringKey
     @Binding var text: String
     var isError = false
     var isMultiline = false
@@ -24,7 +24,7 @@ struct AppTextField: View {
             if showsClearButton {
                 Button { text = "" } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(Color(uiColor: .systemGray))
+                        .foregroundStyle(Color(.fnGray))
                 }
             }
         }

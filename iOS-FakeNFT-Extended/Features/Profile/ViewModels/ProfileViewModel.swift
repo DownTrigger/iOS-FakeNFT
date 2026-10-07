@@ -68,7 +68,7 @@ final class ProfileViewModel {
             state = .loaded(UserModel(profile: updated))
         } catch {
             guard !error.isCancellation else { return }
-            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
+            alert = .retryError(title: ProfileLocalizedText.saveError.resource) { [weak self] in
                 Task { await self?.save(user) }
             }
         }

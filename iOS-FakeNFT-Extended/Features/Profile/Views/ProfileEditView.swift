@@ -26,9 +26,17 @@ struct ProfileEditView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     avatarSection
-                    fieldSection(title: "Имя", text: $viewModel.name, isMultiline: false)
-                    fieldSection(title: "Описание", text: $viewModel.bio, isMultiline: true)
-                    fieldSection(title: "Сайт", text: $viewModel.website, isMultiline: false)
+                    fieldSection(title: ProfileLocalizedText.editName.key, text: $viewModel.name, isMultiline: false)
+                    fieldSection(
+                        title: ProfileLocalizedText.editDescription.key,
+                        text: $viewModel.bio,
+                        isMultiline: true
+                    )
+                    fieldSection(
+                        title: ProfileLocalizedText.editWebsite.key,
+                        text: $viewModel.website,
+                        isMultiline: false
+                    )
                 }
                 .padding(.horizontal, 16)
             }
@@ -50,31 +58,31 @@ struct ProfileEditView: View {
             }
         }
         .confirmationDialog(
-            "Фото профиля",
+            ScreenLocalizedText.profilePhoto.key,
             isPresented: $showAvatarOptions,
             titleVisibility: .visible
         ) {
-            Button("Изменить фото") {
+            Button(ProfileLocalizedText.changePhoto.key) {
                 pendingAvatarURLString = viewModel.avatarURL
                 showURLInput = true
             }
-            Button("Удалить фото", role: .destructive) {
+            Button(ProfileLocalizedText.deletePhoto.key, role: .destructive) {
                 viewModel.avatarURL = ""
             }
-            Button("Отмена", role: .cancel) {}
+            Button(role: .cancel) {} label: { Text(AlertLocalizedText.cancel.resource) }
         }
-        .alert("Уверены, что хотите выйти?", isPresented: $showExitAlert) {
-            Button("Остаться", role: .cancel) {}
-            Button("Выйти") { dismiss() }
+        .alert(ProfileLocalizedText.exitConfirmation.key, isPresented: $showExitAlert) {
+            Button(ProfileLocalizedText.stay.key, role: .cancel) {}
+            Button(ProfileLocalizedText.exit.key) { dismiss() }
         }
-        .alert("Ссылка на фото", isPresented: $showURLInput) {
-            TextField("http://www.example.com", text: $pendingAvatarURLString)
+        .alert(ProfileLocalizedText.photoLink.key, isPresented: $showURLInput) {
+            TextField(text: $pendingAvatarURLString, prompt: Text(verbatim: "http://www.example.com")) { EmptyView() }
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
-            Button("Сохранить") {
+            Button(PrimaryButtonLocalizedText.save.key) {
                 viewModel.avatarURL = pendingAvatarURLString
             }
-            Button("Отмена", role: .cancel) {}
+            Button(role: .cancel) {} label: { Text(AlertLocalizedText.cancel.resource) }
         }
     }
 
@@ -88,7 +96,7 @@ struct ProfileEditView: View {
                     .overlay(alignment: .bottomTrailing) {
                         ProfileIcon.camera.image
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(Color(.label))
+                            .foregroundStyle(Color(.fnText))
                             .padding(6)
                             .background(Color(.fnLightGray), in: Circle())
                     }
@@ -106,7 +114,7 @@ struct ProfileEditView: View {
             .clipShape(Circle())
     }
 
-    private func fieldSection(title: String, text: Binding<String>, isMultiline: Bool) -> some View {
+    private func fieldSection(title: LocalizedStringKey, text: Binding<String>, isMultiline: Bool) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.bold22)

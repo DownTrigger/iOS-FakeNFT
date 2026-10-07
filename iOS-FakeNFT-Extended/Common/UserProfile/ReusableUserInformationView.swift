@@ -19,11 +19,13 @@ struct ReusableUserInformationView: View {
                     .clipShape(Circle())
 
                 Text(user.username)
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.bold22)
+                    .foregroundStyle(Color(.fnText))
             }
 
             Text(user.bio)
-                .font(.system(size: 13, weight: .regular))
+                .font(.regular13)
+                .foregroundStyle(Color(.fnText))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)

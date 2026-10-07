@@ -28,7 +28,11 @@ struct ProfileView: View {
             case .loaded(let user):
                 profileContent(user: user)
             case .failed:
-                EmptyStateView(message: ProfileLocalizedText.profileLoadError.key)
+                if viewModel.alert == nil {
+                    ErrorStateView(message: ProfileLocalizedText.profileLoadError.key) {
+                        Task { await viewModel.loadUser() }
+                    }
+                }
             }
         }
         .navigationDestination(for: ProfileRoute.self) { route in
@@ -66,14 +70,14 @@ struct ProfileView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 if let user = viewModel.user {
                     Button {
                         router.push(.editProfile(user: user))
                     } label: {
                         ProfileIcon.editProfile.image
                             .frame(width: 42, height: 42)
-                            .foregroundStyle(Color(.fnBlack))
+                            .foregroundStyle(Color(.fnText))
                     }
                 }
             }
@@ -89,8 +93,8 @@ struct ProfileView: View {
                         router.push(.website(url: url))
                     } label: {
                         Text(url.absoluteString)
-                            .font(.system(size: 15, weight: .regular))
-                            .foregroundStyle(.blue)
+                            .font(.regular15)
+                            .foregroundStyle(Color(.fnBlue))
                             .lineLimit(1)
                             .truncationMode(.tail)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -106,7 +110,7 @@ struct ProfileView: View {
                     router.push(.myNFTs(user: user))
                 },
                 onFavouriteNFTs: {
-                    router.push(.favouriteNFTs(user: user))
+                    router.push(.favouriteNFTs)
                 }
             )
             Spacer()

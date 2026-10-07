@@ -26,7 +26,11 @@ struct FavouriteNFTsView: View {
                     nftGrid
                 }
             case .failed:
-                EmptyStateView(message: ProfileLocalizedText.favouriteNFTsLoadError.key)
+                if viewModel.alert == nil {
+                    ErrorStateView(message: ProfileLocalizedText.favouriteNFTsLoadError.key) {
+                        Task { await viewModel.loadNfts() }
+                    }
+                }
             }
         }
         .appAlert(item: $viewModel.alert)

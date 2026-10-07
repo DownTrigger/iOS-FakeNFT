@@ -34,13 +34,14 @@ private struct CollectionMenuRow: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Text(item.title)
-                Text("(\(item.count))")
+                Text(verbatim: "(\(item.count))")
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
             }
-            .font(.system(size: 17, weight: .bold))
+            .font(.bold17)
+            .foregroundStyle(Color(.fnText))
         }
         .buttonStyle(.plain)
         .padding(.horizontal, 16)
@@ -59,5 +60,5 @@ private struct CollectionMenuRow: View {
 }
 
 #Preview("Row") {
-    CollectionMenuRow(item: UserCollectionMenuModel(title: "My NFTs", count: 112), action: {})
+    CollectionMenuRow(item: UserCollectionMenuModel(title: ScreenLocalizedText.myNFTs.key, count: 112), action: {})
 }
