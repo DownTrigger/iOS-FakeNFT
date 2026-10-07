@@ -42,11 +42,12 @@ private struct CollectionMenuRow: View {
             }
             .font(.bold17)
             .foregroundStyle(Color(.fnText))
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity)
+            .frame(height: 54)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .padding(.horizontal, 16)
-        .frame(maxWidth: .infinity)
-        .frame(height: 54)
     }
 }
 
