@@ -66,6 +66,7 @@ struct WebViewScreen: View {
     let url: URL
 
     @State private var isLoading = true
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         WebView(url: url, isLoading: $isLoading)
@@ -79,6 +80,7 @@ struct WebViewScreen: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
+            .backButton { dismiss() }
             .toolbarBackground(Color(.fnBackground), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
     }

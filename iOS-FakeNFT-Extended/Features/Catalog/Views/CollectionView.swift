@@ -39,7 +39,7 @@ struct CollectionView: View {
     }
 
     private func openAuthorWebsite() {
-        guard let url = viewModel.collection.websiteURL else { return }
+        guard let url = CatalogConstants.authorWebsiteURL else { return }
         router.push(.website(url))
     }
 

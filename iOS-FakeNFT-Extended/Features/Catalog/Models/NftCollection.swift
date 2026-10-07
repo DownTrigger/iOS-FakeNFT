@@ -10,7 +10,6 @@ struct NftCollection: Decodable, Identifiable, Hashable, Sendable {
     let website: String
 
     var nftCount: Int { nfts.count }
-    var websiteURL: URL? { URL(string: website) }
 }
 
 extension NftCollection {
