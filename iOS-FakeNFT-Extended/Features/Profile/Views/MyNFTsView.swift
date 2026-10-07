@@ -13,13 +13,13 @@ struct MyNFTsView: View {
     init(
         user: UserModel,
         nftService: NftService,
-        userService: UserService,
+        userState: UserState,
         userDefaultsService: UserDefaultsService
     ) {
         _viewModel = State(initialValue: MyNFTsViewModel(
             user: user,
             nftService: nftService,
-            userService: userService,
+            userState: userState,
             userDefaultsService: userDefaultsService
         ))
     }
@@ -39,6 +39,7 @@ struct MyNFTsView: View {
                 EmptyStateView(message: ProfileLocalizedText.myNFTsLoadError.key)
             }
         }
+        .appAlert(item: $viewModel.alert)
         .navigationTitle(ScreenLocalizedText.myNFTs.key)
         .navigationBarTitleDisplayMode(.inline)
         .backButton { dismiss() }
@@ -67,8 +68,8 @@ struct MyNFTsView: View {
                     MyNFTListCell(
                         nft: nft,
                         isLiked: viewModel.isLiked(nft),
-                        username: viewModel.username,
-                        onLike: { viewModel.toggleLike(nft) }
+                        isLikePending: viewModel.isLikePending(nft),
+                        onLike: { Task { await viewModel.toggleLike(nft) } }
                     )
                     .padding(.leading, 16)
                     .padding(.trailing, 39)
@@ -84,7 +85,7 @@ private struct PreviewNftService: NftService {
         Nft(
             id: id,
             name: ["April", "Spring", "Lilo"].randomElement() ?? "April",
-            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")!],
+            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")].compactMap { $0 },
             description: "Test NFT",
             rating: Int.random(in: 1...5),
             price: 1.78,
@@ -93,9 +94,35 @@ private struct PreviewNftService: NftService {
     }
 }
 
-private struct MyNFTsPreviewUserService: UserService {
-    func loadUser() async throws -> UserModel { fatalError("preview only") }
-    func updateUser(_ user: UserModel) async throws -> UserModel { user }
+struct ProfilePreviewUserProfileService: UserProfileService {
+    private let profile = UserProfile(
+        id: "1",
+        name: "John Doe",
+        description: "",
+        website: nil,
+        avatar: nil,
+        nfts: ["1", "2", "3"],
+        likes: ["1"]
+    )
+
+    func loadProfile() async throws -> UserProfile { profile }
+    func updateLikes(_ change: IdChange) async throws -> UserProfile { profile }
+    func updateProfile(
+        name: String,
+        description: String,
+        avatar: String?,
+        website: String?
+    ) async throws -> UserProfile {
+        profile
+    }
+}
+
+struct ProfilePreviewUserOrderService: UserOrderService {
+    private let order = UserOrder(id: "1", nfts: [])
+
+    func loadOrder() async throws -> UserOrder { order }
+    func updateNfts(_ change: IdChange) async throws -> UserOrder { order }
+    func clearOrder() async throws -> UserOrder { order }
 }
 
 #Preview {
@@ -110,7 +137,10 @@ private struct MyNFTsPreviewUserService: UserService {
                 likes: ["1"]
             ),
             nftService: PreviewNftService(),
-            userService: MyNFTsPreviewUserService(),
+            userState: UserState(
+                profileService: ProfilePreviewUserProfileService(),
+                orderService: ProfilePreviewUserOrderService()
+            ),
             userDefaultsService: UserDefaultsServiceImpl()
         )
     }

@@ -29,10 +29,6 @@ final class ServicesAssembly {
         CollectionsServiceImpl(networkClient: networkClient)
     }
 
-    var userService: UserService {
-        UserServiceImpl(networkClient: networkClient)
-    }
-
     var usersService: UserServiceProtocol {
         UsersServiceImpl(networkClient: networkClient)
     }

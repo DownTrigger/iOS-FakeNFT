@@ -6,11 +6,11 @@ struct FavouriteNFTsView: View {
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
-    init(user: UserModel, nftService: NftService, userService: UserService) {
+    init(nftService: NftService, profileService: UserProfileService, userState: UserState) {
         _viewModel = State(initialValue: FavouriteNFTsViewModel(
-            user: user,
             nftService: nftService,
-            userService: userService
+            profileService: profileService,
+            userState: userState
         ))
     }
 
@@ -29,6 +29,7 @@ struct FavouriteNFTsView: View {
                 EmptyStateView(message: ProfileLocalizedText.favouriteNFTsLoadError.key)
             }
         }
+        .appAlert(item: $viewModel.alert)
         .navigationTitle(ScreenLocalizedText.favouriteNFTs.key)
         .navigationBarTitleDisplayMode(.inline)
         .backButton { dismiss() }
@@ -43,12 +44,39 @@ struct FavouriteNFTsView: View {
                 ForEach(viewModel.displayedNfts, id: \.id) { nft in
                     FavouriteNFTCell(
                         model: viewModel.cellModel(for: nft),
-                        onLike: { viewModel.toggleLike(nft) }
+                        onLike: { Task { await viewModel.toggleLike(nft) } }
                     )
                 }
             }
             .padding(.horizontal, 16)
             .padding(.top, 20)
         }
+    }
+}
+
+private struct FavouritePreviewNftService: NftService {
+    func loadNft(id: String) async throws -> Nft {
+        Nft(
+            id: id,
+            name: "April",
+            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/April/1.png")].compactMap { $0 },
+            description: "Test NFT",
+            rating: 3,
+            price: 1.78,
+            author: "Lin Gen"
+        )
+    }
+}
+
+#Preview {
+    NavigationStack {
+        FavouriteNFTsView(
+            nftService: FavouritePreviewNftService(),
+            profileService: ProfilePreviewUserProfileService(),
+            userState: UserState(
+                profileService: ProfilePreviewUserProfileService(),
+                orderService: ProfilePreviewUserOrderService()
+            )
+        )
     }
 }

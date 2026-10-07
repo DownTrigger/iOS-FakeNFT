@@ -11,8 +11,13 @@ struct ProfileView: View {
     @Environment(ServicesAssembly.self) private var services
     @Environment(Router<ProfileRoute>.self) private var router
 
-    init(userService: UserService) {
-        _viewModel = State(initialValue: ProfileViewModel(userService: userService))
+    private let profileService: UserProfileService
+    private let userState: UserState
+
+    init(profileService: UserProfileService, userState: UserState) {
+        self.profileService = profileService
+        self.userState = userState
+        _viewModel = State(initialValue: ProfileViewModel(profileService: profileService, userState: userState))
     }
 
     var body: some View {
@@ -32,21 +37,24 @@ struct ProfileView: View {
                 MyNFTsView(
                     user: user,
                     nftService: services.nftService,
-                    userService: services.userService,
+                    userState: userState,
                     userDefaultsService: services.userDefaultsService
                 )
-            case .favouriteNFTs(let user):
+            case .favouriteNFTs:
                 FavouriteNFTsView(
-                    user: user,
                     nftService: services.nftService,
-                    userService: services.userService
+                    profileService: profileService,
+                    userState: userState
                 )
             case .editProfile(let user):
-                ProfileEditView(user: user, onSave: viewModel.updateUser)
+                ProfileEditView(user: user, onSave: { updated in
+                    Task { await viewModel.save(updated) }
+                })
             case .website(let url):
                 WebViewScreen(url: url)
             }
         }
+        .appAlert(item: $viewModel.alert)
         .task {
             await viewModel.loadUser()
         }
@@ -93,7 +101,7 @@ struct ProfileView: View {
             }
             CollectionMenu(
                 nftCount: user.nftCount,
-                favouritesCount: user.favouritesCount,
+                favouritesCount: viewModel.favouritesCount,
                 onMyNFTs: {
                     router.push(.myNFTs(user: user))
                 },

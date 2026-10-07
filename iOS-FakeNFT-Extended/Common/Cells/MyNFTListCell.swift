@@ -8,7 +8,7 @@ import SwiftUI
 struct MyNFTListCell: View {
     let nft: Nft
     let isLiked: Bool
-    let username: String
+    var isLikePending = false
     let onLike: () -> Void
 
     var body: some View {
@@ -27,6 +27,8 @@ struct MyNFTListCell: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16))
 
             LikeButton(isLiked: isLiked, action: onLike)
+                .disabled(isLikePending)
+                .opacity(isLikePending ? 0.5 : 1)
         }
     }
 

@@ -12,11 +12,11 @@ final class MyNFTsViewModel {
     private(set) var state: LoadingState<[Nft]> = .idle
     private(set) var sortOption: CartSortOption
 
+    var alert: AlertModel?
+
     private let user: UserModel
-    private var likedIds: Set<String>
-    var username: String { user.username }
     private let nftService: NftService
-    private let userService: UserService
+    private let userState: UserState
     private let userDefaultsService: UserDefaultsService
 
     private static let sortOptionKey = "myNFTs.sortOption"
@@ -24,15 +24,14 @@ final class MyNFTsViewModel {
     init(
         user: UserModel,
         nftService: NftService,
-        userService: UserService,
+        userState: UserState,
         userDefaultsService: UserDefaultsService
     ) {
         let saved = userDefaultsService.string(forKey: Self.sortOptionKey)
         self.sortOption = CartSortOption(rawValue: saved ?? "") ?? .byRating
         self.user = user
-        self.likedIds = Set(user.likes)
         self.nftService = nftService
-        self.userService = userService
+        self.userState = userState
         self.userDefaultsService = userDefaultsService
     }
 
@@ -51,34 +50,41 @@ final class MyNFTsViewModel {
     }
 
     func isLiked(_ nft: Nft) -> Bool {
-        likedIds.contains(nft.id)
+        userState.isLiked(nft.id)
     }
 
-    func toggleLike(_ nft: Nft) {
-        if likedIds.contains(nft.id) {
-            likedIds.remove(nft.id)
-        } else {
-            likedIds.insert(nft.id)
+    func isLikePending(_ nft: Nft) -> Bool {
+        userState.isLikePending(nft.id)
+    }
+
+    func toggleLike(_ nft: Nft) async {
+        do {
+            try await userState.toggleLike(nft.id)
+        } catch {
+            guard !error.isCancellation else { return }
+            alert = .retryError(title: CatalogLocalizedText.likeError.resource) { [weak self] in
+                Task { await self?.toggleLike(nft) }
+            }
         }
-        let updatedUser = UserModel(
-            avatar: user.avatar,
-            username: user.username,
-            bio: user.bio,
-            userWebSite: user.userWebSite,
-            nfts: user.nfts,
-            likes: Array(likedIds)
-        )
-        Task { _ = try? await userService.updateUser(updatedUser) }
     }
 
     func loadNfts() async {
-        guard case .idle = state else { return }
+        guard state.canStartLoading else { return }
         state = .loading
         do {
-            let loaded = try await nftService.loadNfts(ids: user.nfts)
+            async let nfts = nftService.loadNfts(ids: user.nfts)
+            async let likes: Void = userState.loadIfNeeded()
+            let (loaded, _) = try await (nfts, likes)
             state = .loaded(loaded)
         } catch {
+            guard !error.isCancellation else {
+                state = .idle
+                return
+            }
             state = .failed(error)
+            alert = .retryError(title: CatalogLocalizedText.loadError.resource) { [weak self] in
+                Task { await self?.loadNfts() }
+            }
         }
     }
 }

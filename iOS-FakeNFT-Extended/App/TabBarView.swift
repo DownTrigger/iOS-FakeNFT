@@ -9,15 +9,10 @@ private enum TabBarItem {
 
 struct TabBarView: View {
     @State private var selectedTab: TabBarItem = .profile
-    @Environment(ServicesAssembly.self) private var services
-    @State private var profileRouter = Router<ProfileRoute>()
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            NavigationStack(path: $profileRouter.path) {
-                ProfileView(userService: services.userService)
-            }
-            .environment(profileRouter)
+            ProfileRootView()
             .tabItem {
                 Label {
                     Text(TabLocalizedText.profile.key)

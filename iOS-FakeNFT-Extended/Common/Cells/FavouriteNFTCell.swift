@@ -17,6 +17,8 @@ struct FavouriteNFTCell: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16))
 
                 LikeButton(isLiked: model.isLiked, action: onLike)
+                    .disabled(model.isLikePending)
+                    .opacity(model.isLikePending ? 0.5 : 1)
                     .offset(x: 6, y: -6)
             }
 
