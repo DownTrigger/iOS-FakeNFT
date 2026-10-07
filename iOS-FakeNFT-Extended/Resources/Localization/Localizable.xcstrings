@@ -674,6 +674,23 @@
         }
       }
     },
+    "stat_empty_users" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to load users"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось загрузить пользователей"
+          }
+        }
+      }
+    },
     "stat_load_error" : {
       "extractionState" : "manual",
       "localizations" : {

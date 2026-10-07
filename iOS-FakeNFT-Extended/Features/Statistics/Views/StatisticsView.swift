@@ -29,6 +29,8 @@ struct StatisticsView: View {
                     ErrorStateView(message: StatisticLocalizedText.loadError.key) {
                         Task { await viewModel.loadNextPage() }
                     }
+                } else if viewModel.isEmpty {
+                    EmptyStateView(message: StatisticLocalizedText.emptyUsers.key)
                 }
             }
             .sortSheet(
