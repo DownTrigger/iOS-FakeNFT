@@ -12,13 +12,25 @@ struct StatisticsView: View {
         _viewModel = State(initialValue: StatisticsViewModel(userService: service))
     }
 
-    init(viewModel: StatisticsViewModel) {
-        _viewModel = State(initialValue: viewModel)
-    }
-
     var body: some View {
-        content
+        statisticsList
             .background(Color(.fnBackground))
+            .safeAreaInset(edge: .bottom) {
+                if viewModel.isLoadingNextPage {
+                    ProgressView()
+                        .tint(Color(.fnText))
+                        .padding(.vertical, 8)
+                }
+            }
+            .overlay {
+                if viewModel.isInitialLoading {
+                    AppLoadingView()
+                } else if viewModel.hasLoadError && viewModel.alert == nil {
+                    ErrorStateView(message: StatisticLocalizedText.loadError.key) {
+                        Task { await viewModel.loadNextPage() }
+                    }
+                }
+            }
             .sortSheet(
                 isPresented: $isSortSheetPresented,
                 options: [StatisticsSortOption.byName, .byRating]
@@ -32,25 +44,8 @@ struct StatisticsView: View {
                     }
                 }
             }
-            .task(id: sortOption) { viewModel.applySort(sortOption) }
-            .task { await viewModel.load() }
+            .task(id: sortOption) { await viewModel.applySort(sortOption) }
             .appAlert(item: $viewModel.alert)
-    }
-
-    @ViewBuilder
-    private var content: some View {
-        switch viewModel.state {
-        case .idle, .loading:
-            AppLoadingView()
-        case .loaded:
-            statisticsList
-        case .failed:
-            if viewModel.alert == nil {
-                ErrorStateView(message: StatisticLocalizedText.loadError.key) {
-                    Task { await viewModel.load() }
-                }
-            }
-        }
     }
 
     private var statisticsList: some View {
@@ -68,6 +63,7 @@ struct StatisticsView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .task { await viewModel.loadNextPageIfNeeded(currentItem: statistic) }
                 }
             }
             .padding(.horizontal, 16)
@@ -84,7 +80,7 @@ struct StatisticsView: View {
         nftStorage: NftStorageImpl()
     )
     NavigationStack {
-        StatisticsView(viewModel: .preview)
+        StatisticsView(service: PreviewUserService())
     }
     .environment(services)
     .environment(UserState(

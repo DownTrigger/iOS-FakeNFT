@@ -28,7 +28,7 @@ final class CatalogViewModelTests: XCTestCase {
 
         // Then
         let requests = await service.requests
-        XCTAssertEqual(requests.map(\.page), [0, 1])
+        XCTAssertEqual(requests.map(\.page), [0, 1, 2])
         XCTAssertTrue(requests.allSatisfy { $0.sortBy == nil })
         XCTAssertEqual(viewModel.collections.count, 7)
         XCTAssertEqual(viewModel.collections.map(\.nftCount), viewModel.collections.map(\.nftCount).sorted(by: >))
@@ -89,7 +89,7 @@ final class CatalogViewModelTests: XCTestCase {
 
         // Then
         let requests = await service.requests
-        XCTAssertEqual(requests.count, 4)
+        XCTAssertEqual(requests.count, 6)
         XCTAssertEqual(viewModel.collections.count, 7)
     }
 }

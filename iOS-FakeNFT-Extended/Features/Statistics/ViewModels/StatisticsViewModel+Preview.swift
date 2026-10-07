@@ -68,7 +68,9 @@ struct PreviewUserService: UserServiceProtocol {
         )
     ]
 
-    func loadUsers() async throws -> [UserResponse] {
-        Self.users
+    func loadUsers(page: Int, size: Int, sortBy: String?) async throws -> [UserResponse] {
+        let start = page * size
+        guard start < Self.users.count else { return [] }
+        return Array(Self.users[start..<min(start + size, Self.users.count)])
     }
 }

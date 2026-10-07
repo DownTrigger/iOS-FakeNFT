@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserResponse: Decodable, Sendable {
+struct UserResponse: Decodable, Sendable, Identifiable {
     let id: String
     let name: String
     let avatar: String?
@@ -26,7 +26,7 @@ struct UserResponse: Decodable, Sendable {
 }
 
 protocol UserServiceProtocol: Sendable {
-    func loadUsers() async throws -> [UserResponse]
+    func loadUsers(page: Int, size: Int, sortBy: String?) async throws -> [UserResponse]
 }
 
 actor UsersServiceImpl: UserServiceProtocol {
@@ -36,8 +36,8 @@ actor UsersServiceImpl: UserServiceProtocol {
         self.networkClient = networkClient
     }
 
-    func loadUsers() async throws -> [UserResponse] {
-        let request = UsersRequest()
+    func loadUsers(page: Int, size: Int, sortBy: String?) async throws -> [UserResponse] {
+        let request = UsersRequest(page: page, size: size, sortBy: sortBy)
 
         return try await networkClient.send(
             request: request

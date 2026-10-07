@@ -41,9 +41,8 @@ struct UserStatisticDetailView: View {
 
 #Preview("Alex — Website") {
     NavigationStack {
-        if let statistic = StatisticsViewModel.preview.statistics.first(
-            where: { $0.user.username == "Alex" }
-        ) {
+        if let user = PreviewUserService.users.first(where: { $0.name == "Alex" }) {
+            let statistic = UserStatisticItem(position: 1, response: user)
             UserStatisticDetailView(statistic: statistic)
         }
     }

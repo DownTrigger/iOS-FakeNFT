@@ -10,71 +10,70 @@ import Foundation
 @MainActor
 @Observable
 final class StatisticsViewModel {
-    private(set) var state: LoadingState<[UserStatisticItem]> = .idle
+    private static let pageSize = 25
+
     private(set) var sortOption: StatisticsSortOption = .byRating
+    private(set) var hasLoadError = false
     var alert: AlertModel?
 
     private let userService: UserServiceProtocol
+    private var paginator: Paginator<UserResponse>?
 
     var statistics: [UserStatisticItem] {
-        guard case let .loaded(items) = state else { return [] }
-        switch sortOption {
-        case .byName:
-            return sortBy(items, keyPath: \.user.username, ascending: true)
-        case .byRating:
-            return sortBy(items, keyPath: \.nfts.count, ascending: false)
+        (paginator?.items ?? []).enumerated().map { index, user in
+            UserStatisticItem(position: index + 1, response: user)
         }
     }
 
-    var isLoading: Bool { state.isLoading }
-
-    var isEmpty: Bool {
-        guard case let .loaded(items) = state else { return false }
-        return items.isEmpty
+    var isInitialLoading: Bool {
+        paginator?.isLoading == true && paginator?.items.isEmpty == true
     }
-
-    var isFailed: Bool {
-        guard case .failed = state else { return false }
-        return true
+    var isLoadingNextPage: Bool {
+        paginator?.isLoading == true && paginator?.items.isEmpty == false
+    }
+    var isEmpty: Bool {
+        guard let paginator else { return false }
+        return !paginator.isLoading && paginator.items.isEmpty && !paginator.hasMorePages
     }
 
     init(userService: UserServiceProtocol) {
         self.userService = userService
     }
 
-    fileprivate init(statistics: [UserStatisticItem]) {
-        self.state = .loaded(statistics)
-        self.userService = PreviewUserService()
-    }
-
-    func applySort(_ option: StatisticsSortOption) {
+    func applySort(_ option: StatisticsSortOption) async {
+        let previousSortBy = sortOption.serverSortBy
         sortOption = option
+        if paginator == nil || option.serverSortBy != previousSortBy {
+            paginator = Self.makePaginator(service: userService, sortBy: option.serverSortBy)
+        }
+        guard paginator?.items.isEmpty == true else { return }
+        await loadNextPage()
     }
 
-    func load() async {
-        guard state.canStartLoading else { return }
-        state = .loading
+    func loadNextPage() async {
+        guard let paginator else { return }
+        hasLoadError = false
         do {
-            state = .loaded(try await fetchStatistics())
+            try await paginator.loadNextPage()
         } catch {
-            guard !error.isCancellation else {
-                state = .idle
-                return
-            }
-            state = .failed(error)
+            guard !error.isCancellation else { return }
+            hasLoadError = paginator.items.isEmpty
             alert = .retryError(title: StatisticLocalizedText.loadError.resource) { [weak self] in
-                Task { await self?.load() }
+                Task { await self?.loadNextPage() }
             }
         }
+    }
+
+    func loadNextPageIfNeeded(currentItem: UserStatisticItem) async {
+        guard currentItem.id == statistics.last?.id else { return }
+        await loadNextPage()
     }
 
     func refresh() async {
-        guard case .loaded = state else {
-            await load()
-            return
-        }
+        let freshPaginator = Self.makePaginator(service: userService, sortBy: sortOption.serverSortBy)
         do {
-            state = .loaded(try await fetchStatistics())
+            try await freshPaginator.loadNextPage()
+            paginator = freshPaginator
         } catch {
             guard !error.isCancellation else { return }
             alert = .retryError(title: StatisticLocalizedText.refreshError.resource) { [weak self] in
@@ -83,47 +82,20 @@ final class StatisticsViewModel {
         }
     }
 
-    private func fetchStatistics() async throws -> [UserStatisticItem] {
-        let users = try await userService.loadUsers()
-        return Self.makeStatistics(from: users)
-    }
-
-    private static func makeStatistics(from users: [UserResponse]) -> [UserStatisticItem] {
-        users
-            .map { user in
-                UserStatisticItem(
-                    id: user.id,
-                    position: 0,
-                    user: UserModel(
-                        avatar: user.avatar,
-                        username: user.name,
-                        bio: user.description ?? "",
-                        userWebSite: user.website,
-                        nfts: user.nfts,
-                        likes: []
-                    ),
-                    nfts: user.nfts
-                )
-            }
-            .sorted {
-                $0.nfts.count > $1.nfts.count
-            }
-            .enumerated()
-            .map { index, statistic in
-                UserStatisticItem(
-                    id: statistic.id,
-                    position: index + 1,
-                    user: statistic.user,
-                    nfts: statistic.nfts
-                )
-            }
+    private static func makePaginator(service: UserServiceProtocol, sortBy: String?) -> Paginator<UserResponse> {
+        Paginator(pageSize: pageSize) { page, size in
+            try await service.loadUsers(page: page, size: size, sortBy: sortBy)
+        }
     }
 }
 
-extension StatisticsViewModel {
-    static var preview: StatisticsViewModel {
-        StatisticsViewModel(
-            statistics: makeStatistics(from: PreviewUserService.users)
-        )
+private extension StatisticsSortOption {
+    var serverSortBy: String {
+        switch self {
+        case .byName:
+            "name,asc"
+        case .byRating:
+            "rating,desc"
+        }
     }
 }

@@ -19,7 +19,8 @@ struct UserStatisticView: View {
                 .font(.regular15)
                 .tracking(-0.24)
                 .foregroundStyle(.fnText)
-                .frame(width: 22)
+                .lineLimit(1)
+                .frame(minWidth: 27)
 
             HStack(spacing: 10) {
                 RemoteImageView(url: avatarURL, placeholder: .avatar)
