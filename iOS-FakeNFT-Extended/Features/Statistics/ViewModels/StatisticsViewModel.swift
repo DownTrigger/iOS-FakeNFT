@@ -11,35 +11,48 @@ final class StatisticsViewModel {
 
     private let userService: UserServiceProtocol
     private var paginator: Paginator<UserResponse>?
+    private var paginatorSortBy: String?
+    private var isLoadingAllPages = false
 
     var statistics: [UserStatisticItem] {
-        (paginator?.items ?? []).enumerated().map { index, user in
+        let users: [UserResponse]
+        switch sortOption {
+        case .byName:
+            users = paginator?.items ?? []
+        case .byRating:
+            users = isLoadingAllPages ? [] : (paginator?.items ?? []).sorted { $0.nfts.count > $1.nfts.count }
+        }
+        return users.enumerated().map { index, user in
             UserStatisticItem(position: index + 1, response: user)
         }
     }
 
     var isInitialLoading: Bool {
-        paginator?.isLoading == true && paginator?.items.isEmpty == true
+        isLoadingAllPages || (paginator?.isLoading == true && paginator?.items.isEmpty == true)
     }
     var isLoadingNextPage: Bool {
-        paginator?.isLoading == true && paginator?.items.isEmpty == false
+        !isLoadingAllPages && paginator?.isLoading == true && paginator?.items.isEmpty == false
     }
     var isEmpty: Bool {
         guard let paginator else { return false }
         return !paginator.isLoading && paginator.items.isEmpty && !paginator.hasMorePages
     }
 
+    private var loadsAllPages: Bool { sortOption.serverSortBy == nil }
+
     init(userService: UserServiceProtocol) {
         self.userService = userService
     }
 
     func applySort(_ option: StatisticsSortOption) async {
-        let previousSortBy = sortOption.serverSortBy
         sortOption = option
-        if paginator == nil || option.serverSortBy != previousSortBy {
-            paginator = Self.makePaginator(service: userService, sortBy: option.serverSortBy)
+        let sortBy = option.serverSortBy
+        if paginator == nil || (sortBy != nil && sortBy != paginatorSortBy) {
+            paginatorSortBy = sortBy
+            paginator = Self.makePaginator(service: userService, sortBy: sortBy)
         }
-        guard paginator?.items.isEmpty == true else { return }
+        let needsMorePages = loadsAllPages && paginator?.hasMorePages == true
+        guard paginator?.items.isEmpty == true || needsMorePages else { return }
         await loadNextPage()
     }
 
@@ -47,7 +60,13 @@ final class StatisticsViewModel {
         guard let paginator else { return }
         hasLoadError = false
         do {
-            try await paginator.loadNextPage()
+            if loadsAllPages {
+                isLoadingAllPages = true
+                defer { isLoadingAllPages = false }
+                try await paginator.loadAllPages()
+            } else {
+                try await paginator.loadNextPage()
+            }
         } catch {
             guard !error.isCancellation else { return }
             hasLoadError = paginator.items.isEmpty
@@ -63,9 +82,13 @@ final class StatisticsViewModel {
     }
 
     func refresh() async {
-        let freshPaginator = Self.makePaginator(service: userService, sortBy: sortOption.serverSortBy)
+        let freshPaginator = Self.makePaginator(service: userService, sortBy: paginatorSortBy)
         do {
-            try await freshPaginator.loadNextPage()
+            if loadsAllPages {
+                try await freshPaginator.loadAllPages()
+            } else {
+                try await freshPaginator.loadNextPage()
+            }
             paginator = freshPaginator
         } catch {
             guard !error.isCancellation else { return }
@@ -83,12 +106,12 @@ final class StatisticsViewModel {
 }
 
 private extension StatisticsSortOption {
-    var serverSortBy: String {
+    var serverSortBy: String? {
         switch self {
         case .byName:
             "name,asc"
         case .byRating:
-            "rating,desc"
+            nil
         }
     }
 }
