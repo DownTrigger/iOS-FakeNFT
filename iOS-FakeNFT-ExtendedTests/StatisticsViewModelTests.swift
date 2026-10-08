@@ -3,7 +3,7 @@ import XCTest
 
 @MainActor
 final class StatisticsViewModelTests: XCTestCase {
-    func testApplySortByRatingLoadsFirstPageWithServerOrder() async {
+    func testApplySortByRatingLoadsAllPagesAndSortsByNftCount() async {
         // Given
         let service = UserServiceStub(users: makeUsers(count: 30))
         let viewModel = StatisticsViewModel(userService: service)
@@ -13,7 +13,28 @@ final class StatisticsViewModelTests: XCTestCase {
 
         // Then
         let requests = await service.requests
-        XCTAssertEqual(requests, [.init(page: 0, sortBy: "rating,desc")])
+        XCTAssertEqual(requests, [
+            .init(page: 0, sortBy: nil),
+            .init(page: 1, sortBy: nil),
+            .init(page: 2, sortBy: nil)
+        ])
+        XCTAssertEqual(viewModel.statistics.count, 30)
+        XCTAssertEqual(viewModel.statistics.map(\.position), Array(1...30))
+        XCTAssertEqual(viewModel.statistics.map(\.id), (0..<30).reversed().map { "user-\($0)" })
+        XCTAssertFalse(viewModel.isInitialLoading)
+    }
+
+    func testApplySortByNameLoadsFirstPageWithServerOrder() async {
+        // Given
+        let service = UserServiceStub(users: makeUsers(count: 30))
+        let viewModel = StatisticsViewModel(userService: service)
+
+        // When
+        await viewModel.applySort(.byName)
+
+        // Then
+        let requests = await service.requests
+        XCTAssertEqual(requests, [.init(page: 0, sortBy: "name,asc")])
         XCTAssertEqual(viewModel.statistics.count, 25)
         XCTAssertEqual(viewModel.statistics.map(\.position), Array(1...25))
         XCTAssertEqual(viewModel.statistics.map(\.id), (0..<25).map { "user-\($0)" })
@@ -24,7 +45,7 @@ final class StatisticsViewModelTests: XCTestCase {
         // Given
         let service = UserServiceStub(users: makeUsers(count: 30))
         let viewModel = StatisticsViewModel(userService: service)
-        await viewModel.applySort(.byRating)
+        await viewModel.applySort(.byName)
         let firstItem = try XCTUnwrap(viewModel.statistics.first)
         let lastItem = try XCTUnwrap(viewModel.statistics.last)
 
@@ -51,10 +72,7 @@ final class StatisticsViewModelTests: XCTestCase {
 
         // Then
         let requests = await service.requests
-        XCTAssertEqual(requests, [
-            .init(page: 0, sortBy: "rating,desc"),
-            .init(page: 0, sortBy: "name,asc")
-        ])
+        XCTAssertEqual(requests.last, .init(page: 0, sortBy: "name,asc"))
         XCTAssertEqual(viewModel.statistics.count, 25)
     }
 
@@ -62,7 +80,7 @@ final class StatisticsViewModelTests: XCTestCase {
         // Given
         let service = UserServiceStub(users: makeUsers(count: 30), pageSizeLimit: 24)
         let viewModel = StatisticsViewModel(userService: service)
-        await viewModel.applySort(.byRating)
+        await viewModel.applySort(.byName)
         let lastItem = try XCTUnwrap(viewModel.statistics.last)
 
         // When
@@ -93,7 +111,7 @@ final class StatisticsViewModelTests: XCTestCase {
         // Given
         let service = UserServiceStub(users: makeUsers(count: 30), failingPage: 1)
         let viewModel = StatisticsViewModel(userService: service)
-        await viewModel.applySort(.byRating)
+        await viewModel.applySort(.byName)
         let lastItem = try XCTUnwrap(viewModel.statistics.last)
 
         // When
@@ -109,7 +127,7 @@ final class StatisticsViewModelTests: XCTestCase {
         // Given
         let service = UserServiceStub(users: makeUsers(count: 30))
         let viewModel = StatisticsViewModel(userService: service)
-        await viewModel.applySort(.byRating)
+        await viewModel.applySort(.byName)
         await service.setFailingPage(0)
 
         // When
@@ -171,7 +189,7 @@ final class StatisticsViewModelTests: XCTestCase {
                 avatar: nil,
                 description: nil,
                 website: nil,
-                nfts: []
+                nfts: (0..<index).map { "nft-\($0)" }
             )
         }
     }
